@@ -12,7 +12,7 @@ import {
   signInAnonymously,
   signInWithPopup,
   type Auth,
-  type UserCredential,
+  type UserCredential
 } from "firebase/auth";
 export { AuthErrorCodes, linkWithCredential } from "firebase/auth";
 export { FirebaseError };

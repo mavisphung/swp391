@@ -2,14 +2,13 @@
   "name": "root",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "yarn@4.0.0-rc.34",
+  "packageManager": "yarn@3.3.1",
   "type": "module",
   "workspaces": [
     "app",
     "edge"
   ],
   "scripts": {
-    "postinstall": "husky install && zx ./scripts/postinstall.js",
     "update-schema": "zx ./scripts/update-schema.js",
     "start": "zx ./scripts/start.js",
     "lint": "eslint --cache --report-unused-disable-directives .",
