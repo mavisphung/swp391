@@ -2,7 +2,6 @@ import logo from './logo.svg';
 import './App.css';
 // import { Home } from './modules/home';
 import { Navigate } from './modules/navigate';
-import React from 'react';
 
 function App() {
   return (
@@ -18,7 +17,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Admin Application
+          Product Application
         </a>
       </header>
       <Navigate />
