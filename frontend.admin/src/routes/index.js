@@ -3,7 +3,7 @@ import config from '~/config';
 // Pages
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
-import Dashboard from '~/pages/Dashboard';
+import { Dashboard } from '~/pages/Dashboard';
 import Orders from '~/pages/Orders';
 import Products from '~/pages/Products';
 
