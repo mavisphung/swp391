@@ -15,7 +15,7 @@ function HomePage() {
       price: 550000,
     },
     {
-      name: "Chim nhồng (chim yển)",
+      name: "Chào mào bẫy đấu Sơn Hà",
       img: "https://www.chimcanhvietnam.vn/images/sanpham/2015465928sh25.jpg",
       price: 850000,
     },
