@@ -1,0 +1,12 @@
+@media (min-width: 1280px) {
+  .container {
+    max-width: 960px !important;
+  }
+}
+
+.home-flex-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.8vw;
+  margin: 3em 0;
+}
