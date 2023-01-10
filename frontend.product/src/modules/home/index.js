@@ -5,7 +5,7 @@ import "./HomeLayout.scss";
 function HomePage() {
   const listBirds = [
     {
-      name: "Chim nhồng (chim yển)",
+      name: "Chim nhồng (chim yểng)",
       img: "https://www.chimcanhvietnam.vn/images/sanpham/2118133704hqdefault.jpg",
       price: 950000,
     },
