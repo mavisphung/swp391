@@ -13,6 +13,8 @@ using Google.Apis.Auth.OAuth2;
 using Backend.Service.Repositories;
 using Backend.Service.Entities;
 using LOSMST.Models.Helper.Login;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
 
 namespace LOSMST.Business.Service
 {
@@ -43,12 +45,21 @@ namespace LOSMST.Business.Service
             }
             string uid = decodedToken.Uid;
             var firebaseUser = await FirebaseAuth.GetAuth(_firebaseApp).GetUserAsync(uid);
+            //Hash default password for new user
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); // divide by 8 to convert bits to bytes
+            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: "123456"!,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA256,
+                    iterationCount: 100000,
+                    numBytesRequested: 256 / 8));
             var account = _accountRepository.GetFirstOrDefault(x => x.Email == firebaseUser.Email);
             if (account == null)
             {
                 User userInfo = new User();
                 userInfo.Email = firebaseUser.Email;
-                userInfo.Password = "123456";
+                userInfo.Password = hashed;
                 userInfo.RoleId = 3;
                 userInfo.Status = true;
                 userInfo.Phone = String.Empty;
@@ -74,7 +85,7 @@ namespace LOSMST.Business.Service
                     Email = account.Email,
                     RoleId = account.RoleId,
                     Phone = account.Phone,
-                    Avatar  = account.Avatar,
+                    Avatar = account.Avatar,
                     Fullname = account.Fullname,
                     Status = account.Status,
                     JwtToken = null,

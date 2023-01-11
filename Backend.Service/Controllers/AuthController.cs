@@ -1,4 +1,5 @@
-﻿using LOSMST.Business.Service;
+﻿using Backend.Service.Consts;
+using LOSMST.Business.Service;
 using LOSMST.Models.Helper.Login;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,10 +36,14 @@ namespace LOSMST.API.Controllers
             var value = await _authService.LoginGoogle(tokenId);
             if (value != null)
             {
-                if (!value.Status) return BadRequest(new { errorCode = 1, message = "Account is disable" });
+                if (!value.Status) return StatusCode(StatusCodes.Status500InternalServerError, new { errorCode = BaseError.BAD_REQUEST_ERROR, message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR)});
                 return Ok(value);
             }
-            return BadRequest("MSG93");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { 
+                    errorCode = BaseError.BAD_REQUEST_ERROR,
+                    message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR) 
+                });
         }
     }
 }
