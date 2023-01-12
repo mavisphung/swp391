@@ -6,6 +6,10 @@ import Store from '~/pages/Store/Store';
 import Orders from '~/pages/Orders';
 import Statistics from '../Statistics';
 import { viewOrdersList, viewStatistics } from '~/system/Constants/LinkURL';
+import Sidebar from '~/components/Sidebar';
+import FooterContent from '~/components/Footer';
+import HeaderContent from '~/components/Header';
+import './Dashboard.scss';
 
 const { Content } = Layout;
 
@@ -36,9 +40,25 @@ function Dashboard() {
   };
 
   return (
-    <DefaultLayout>
-      <Content>{renderRoutes()}</Content>
-    </DefaultLayout>
+    // <DefaultLayout>
+    //   <Content>{renderRoutes()}</Content>
+    // </DefaultLayout>
+
+    <>
+      <Layout
+        style={{
+          minHeight: '100vh',
+        }}
+      >
+        <Sidebar />
+        <Layout>
+          <HeaderContent />
+          <Content className="c-site-layout my-4">{renderRoutes()}</Content>
+          <div className="line"></div>
+          <FooterContent />
+        </Layout>
+      </Layout>
+    </>
   );
 }
 

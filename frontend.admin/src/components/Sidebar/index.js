@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 import {
   faArrowRightFromBracket,
@@ -13,6 +13,8 @@ import { useState } from 'react';
 
 import { viewOrdersList, viewStatistics } from '~/system/Constants/LinkURL';
 import './SideBar.scss';
+import { Image } from 'react-bootstrap';
+import images from '~/assets/img';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -110,6 +112,7 @@ function Sidebar() {
 
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={handleCollapse}>
+      <Image className="logo" src={images.logo} alt="Logo" />
       {renderMenuDependOnRole()}
     </Sider>
   );

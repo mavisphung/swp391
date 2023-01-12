@@ -1,4 +1,5 @@
 import CustomRoute from './routes/Route';
+import './App.css';
 
 function App() {
   return (
