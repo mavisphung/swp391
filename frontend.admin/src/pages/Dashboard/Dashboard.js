@@ -1,7 +1,6 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Layout } from 'antd';
 
-import DefaultLayout from '~/layouts/DefaultLayout';
 import Store from '~/pages/Store/Store';
 import Orders from '~/pages/Orders';
 import Statistics from '../Statistics';
