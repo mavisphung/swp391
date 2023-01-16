@@ -1,11 +1,10 @@
 ﻿using Backend.Service.Consts;
-using LOSMST.Business.Service;
-using LOSMST.Models.Helper.Login;
-using Microsoft.AspNetCore.Http;
+using Backend.Service.Models.Login;
+using Backend.Service.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace LOSMST.API.Controllers
+namespace Backend.Service.Controllers
 {
     [Route("api/auth")]
     [ApiController]
@@ -18,31 +17,60 @@ namespace LOSMST.API.Controllers
             _authService = authService;
         }
 
-        //[HttpPost("sign-in")]
-        //public async Task<ActionResult<ViewModelLogin>> Login(LoginEmailPassword loginRequest)
-        //{
-        //    var value = await _authService.Login(loginRequest);
-        //    if (value != null)
-        //    {
-        //        if (value.StatusId != "1.1") return BadRequest("account is disable");
-        //        return Ok(value);
-        //    }
-        //    return BadRequest("Email or password is not correct. Please try again!");
-        //}
-        [HttpPost("sign-in-google")]
-        public async Task<ActionResult<LoginResponseModel>> LoginGoogle([FromHeader] string tokenId,
-                                                                        [FromBody] LoginRequestModel loginRequest)
+        [HttpPost("sign-in")]
+        public async Task<ActionResult<LoginResponseModel>> SignIn([FromHeader] string? tokenId,
+                                                                    [FromHeader] string signUpMethod,
+                                                                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] LoginRequestModel? loginRequest)
         {
-            var value = await _authService.LoginGoogle(tokenId);
-            if (value != null)
+            LoginResponseModel loginResponseModel = new LoginResponseModel();
+            switch (signUpMethod)
             {
-                if (!value.Status) return StatusCode(StatusCodes.Status500InternalServerError, new { errorCode = BaseError.BAD_REQUEST_ERROR, message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR)});
-                return Ok(value);
+                case "local":
+                    if (loginRequest == null)
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest,
+                        new
+                        {
+                            errorCode = BaseError.BAD_REQUEST_ERROR,
+                            message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR)
+                        });
+                    }
+                    loginResponseModel = await _authService.Login(loginRequest);
+                    
+                    break;
+                case "google":
+                    if (tokenId == null)
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest,
+                        new
+                        {
+                            errorCode = BaseError.BAD_REQUEST_ERROR,
+                            message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR)
+                        });
+                    }
+                    loginResponseModel = await _authService.LoginGoogle(tokenId);
+                    break;
+                default:
+                    break;
             }
+
+            if (loginResponseModel != null)
+            {
+                if (!loginResponseModel.Status)
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new
+                        {
+                            errorCode = BaseError.INTERNAL_SERVER_ERROR,
+                            message = EnumStringMessage.ToDescriptionString(BaseError.INTERNAL_SERVER_ERROR)
+                        });
+                return Ok(loginResponseModel);
+            }
+
             return StatusCode(StatusCodes.Status500InternalServerError,
-                new { 
-                    errorCode = BaseError.BAD_REQUEST_ERROR,
-                    message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR) 
+                new
+                {
+                    errorCode = BaseError.INTERNAL_SERVER_ERROR,
+                    message = EnumStringMessage.ToDescriptionString(BaseError.INTERNAL_SERVER_ERROR)
                 });
         }
     }

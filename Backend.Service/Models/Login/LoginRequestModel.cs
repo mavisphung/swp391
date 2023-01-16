@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LOSMST.Models.Helper.Login
+namespace Backend.Service.Models.Login
 {
     public class LoginRequestModel
     {
-        public string? Email { get; set; }
-        public string? Password { get; set; }
-
-        public string? SignInMethod { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

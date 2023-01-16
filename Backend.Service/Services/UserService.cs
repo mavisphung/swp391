@@ -1,12 +1,6 @@
-﻿using Backend.Service.Entities;
-using Backend.Service.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Backend.Service.Repositories.IRepositories;
 
-namespace LOSMST.Business.Service
+namespace Backend.Service.Services
 {
     public class UserService
     {

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LOSMST.DataAccess.Repository.IRepository
+namespace Backend.Service.Repositories.IRepositories
 {
     public interface IGenericRepository<T> where T : class
     {
