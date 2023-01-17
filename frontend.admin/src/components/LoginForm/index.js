@@ -40,33 +40,35 @@ const LoginForm = () => {
 
   return (
     <>
-      <h1>Login Form</h1>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <Card className="p-2 mb-0">
+        <Card className="p-2 mb-0" style={{ border: '5px solid rgba(0,0,0)' }}>
           <Card.Body>
             <h3 className="text-center">Nhân viên</h3>
             <Form.Group className="mb-3" controlId="validationEmail">
               <Form.Label>
-                Email <span className="text-danger">*</span>
+                <strong>Email</strong> <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="email"
-                value={email}
-                placeholder={templateEmailPlaceholder}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyUp={handleSetAutoDomain}
-                isInvalid={email && !emailPattern.test(email)}
-                autoFocus
-                required
-              />
-              <Form.Control.Feedback type="invalid">
-                {checkEmailMessage(email)}
-              </Form.Control.Feedback>
+              <InputGroup style={{ paddingRight: 44 }}>
+                <Form.Control
+                  type="email"
+                  value={email}
+                  placeholder={templateEmailPlaceholder}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyUp={handleSetAutoDomain}
+                  isInvalid={email && !emailPattern.test(email)}
+                  autoFocus
+                  required
+                  style={{ borderRadius: 5 }}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {checkEmailMessage(email)}
+                </Form.Control.Feedback>
+              </InputGroup>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="validationPassword">
               <Form.Label>
-                Mật khẩu <span className="text-danger">*</span>
+                <strong>Mật khẩu</strong> <span className="text-danger">*</span>
               </Form.Label>
               <InputGroup>
                 <Form.Control
@@ -77,6 +79,7 @@ const LoginForm = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="password"
                   required
+                  style={{ borderRadius: 5 }}
                 />
                 <div className="c-input-group-append">
                   <InputGroup.Text>
@@ -97,6 +100,7 @@ const LoginForm = () => {
                   variant="primary"
                   className="px-4 mx-2 my-2"
                   type="submit"
+                  style={{ backgroundColor: 'black' }}
                 >
                   Đăng nhập
                 </Button>
