@@ -1,19 +1,16 @@
 ﻿using Backend.Service.Entities;
-using LOSMST.DataAccess.Repository.IRepository;
+using Backend.Service.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
-namespace LOSMST.DataAccess.Repository
+namespace Backend.Service.Repositories
 {
     public class GeneralRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly BirdStoreContext _db;
+        private readonly birdstoredatabaseContext _db;
         internal DbSet<T> dbSet;
 
-        public GeneralRepository(BirdStoreContext db)
+        public GeneralRepository(birdstoredatabaseContext db)
         {
             _db = db;
             this.dbSet = _db.Set<T>();
