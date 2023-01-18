@@ -1,8 +1,10 @@
 ﻿using Backend.Service.Consts;
+using Backend.Service.Exceptions;
 using Backend.Service.Models.Login;
 using Backend.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Net;
 
 namespace Backend.Service.Controllers
 {
@@ -28,25 +30,24 @@ namespace Backend.Service.Controllers
                 case "local":
                     if (loginRequest == null)
                     {
-                        return StatusCode(StatusCodes.Status400BadRequest,
-                        new
+                        throw new BaseException
                         {
-                            errorCode = BaseError.BAD_REQUEST_ERROR,
-                            message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR)
-                        });
+                            StatusCode = (int)BaseError.BAD_REQUEST_ERROR,
+                            ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR),
+                            HttpStatus = HttpStatusCode.BadRequest
+                        };
                     }
                     loginResponseModel = await _authService.Login(loginRequest);
-                    
                     break;
                 case "google":
                     if (tokenId == null)
                     {
-                        return StatusCode(StatusCodes.Status400BadRequest,
-                        new
+                        throw new BaseException
                         {
-                            errorCode = BaseError.BAD_REQUEST_ERROR,
-                            message = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR)
-                        });
+                            StatusCode = (int)BaseError.BAD_REQUEST_ERROR,
+                            ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR),
+                            HttpStatus = HttpStatusCode.BadRequest
+                        };
                     }
                     loginResponseModel = await _authService.LoginGoogle(tokenId);
                     break;
@@ -57,21 +58,21 @@ namespace Backend.Service.Controllers
             if (loginResponseModel != null)
             {
                 if (!loginResponseModel.Status)
-                    return StatusCode(StatusCodes.Status500InternalServerError,
-                        new
-                        {
-                            errorCode = BaseError.INTERNAL_SERVER_ERROR,
-                            message = EnumStringMessage.ToDescriptionString(BaseError.INTERNAL_SERVER_ERROR)
-                        });
+                    throw new BaseException
+                    {
+                        StatusCode = (int) BaseError.USER_INACTIVE,
+                        ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.USER_INACTIVE),
+                        HttpStatus = HttpStatusCode.InternalServerError
+                    };
                 return Ok(loginResponseModel);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                new
-                {
-                    errorCode = BaseError.INTERNAL_SERVER_ERROR,
-                    message = EnumStringMessage.ToDescriptionString(BaseError.INTERNAL_SERVER_ERROR)
-                });
+            throw new BaseException
+            {
+                StatusCode = (int)BaseError.INTERNAL_SERVER_ERROR,
+                ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.INTERNAL_SERVER_ERROR),
+                HttpStatus = HttpStatusCode.InternalServerError
+            };
         }
     }
 }
