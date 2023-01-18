@@ -8,12 +8,22 @@ namespace Backend.Service.Consts
         //400
         [Description("Bad Request")]
         BAD_REQUEST_ERROR = 1,
+
         //500
         [Description("Internal Server Error")]
         INTERNAL_SERVER_ERROR = 2,
-        //500
+
         [Description("Account is disable")]
         USER_INACTIVE = 3,
+
+        [Description("Password is not correct")]
+        INVALID_PASSWORD = 4,
+
+        [Description("User is not exist in database")]
+        USER_NOT_FOUND = 5,
+
+        [Description("Firebase token not found")]
+        FIREBASE_TOKEN_NOT_FOUND = 6,
     }
 
     public static class EnumStringMessage
