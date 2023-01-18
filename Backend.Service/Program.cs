@@ -1,8 +1,10 @@
+using Backend.Service.Consts;
 using Backend.Service.Entities;
+using Backend.Service.Helper.GlobalErrorHanding;
 using Backend.Service.Repositories;
+using Backend.Service.Repositories.IRepositories;
+using Backend.Service.Services;
 using FirebaseAdmin;
-using LOSMST.Business.Service;
-using LOSMST.DataAccess.Repository.DatabaseRepository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // Add datasource sqlserver
-builder.Services.AddDbContext<BirdStoreContext>(options => options.UseSqlServer(
+builder.Services.AddDbContext<birdstoredatabaseContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DataSource")
  ));
 builder.Services.AddEndpointsApiExplorer();
@@ -22,8 +24,10 @@ builder.Services.AddSingleton(FirebaseApp.Create());
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<UserService, UserService>();
 builder.Services.AddTransient<AuthService, AuthService>();
+builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

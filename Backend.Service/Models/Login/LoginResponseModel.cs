@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LOSMST.Models.Helper.Login
+namespace Backend.Service.Models.Login
 {
     public class LoginResponseModel
     {
