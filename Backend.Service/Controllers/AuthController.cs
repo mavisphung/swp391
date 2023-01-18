@@ -44,8 +44,8 @@ namespace Backend.Service.Controllers
                     {
                         throw new BaseException
                         {
-                            StatusCode = (int)BaseError.BAD_REQUEST_ERROR,
-                            ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.BAD_REQUEST_ERROR),
+                            StatusCode = (int)BaseError.FIREBASE_TOKEN_NOT_FOUND,
+                            ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.FIREBASE_TOKEN_NOT_FOUND),
                             HttpStatus = HttpStatusCode.BadRequest
                         };
                     }

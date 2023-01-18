@@ -14,6 +14,8 @@ using System.Security.Cryptography;
 using Backend.Service.Models.Login;
 using Backend.Service.Repositories.IRepositories;
 using Backend.Service.Consts;
+using Backend.Service.Exceptions;
+using System.Net;
 
 namespace Backend.Service.Services
 {
@@ -99,9 +101,23 @@ namespace Backend.Service.Services
             var checkUser = _accountRepository.GetFirstOrDefault(filter: x => x.Email == loginRequest.Email);
             if (checkUser == null)
             {
-                return null;
+                throw new BaseException
+                {
+                    StatusCode = (int)BaseError.USER_NOT_FOUND,
+                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.USER_NOT_FOUND),
+                    HttpStatus = HttpStatusCode.InternalServerError
+                };
             }
             bool verify = this.VerifyPassword(loginRequest.Password, checkUser.Password);
+            if (!verify)
+            {
+                throw new BaseException
+                {
+                    StatusCode = (int)BaseError.INVALID_PASSWORD,
+                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.INVALID_PASSWORD),
+                    HttpStatus = HttpStatusCode.InternalServerError
+                };
+            }
             if (verify)
             {
                 var viewLoginModel = new LoginResponseModel
