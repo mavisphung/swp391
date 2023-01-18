@@ -1,5 +1,6 @@
 using Backend.Service.Consts;
 using Backend.Service.Entities;
+using Backend.Service.Helper.GlobalErrorHanding;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
 using Backend.Service.Services;
@@ -26,6 +27,7 @@ builder.Services.AddTransient<AuthService, AuthService>();
 builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
