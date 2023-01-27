@@ -16,6 +16,7 @@ namespace Backend.Service.Entities
         {
         }
 
+        public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
@@ -30,6 +31,28 @@ namespace Backend.Service.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.ToTable("Category");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CategoryType)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("categoryType");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(512)
+                    .IsUnicode(false)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(256)
+                    .IsUnicode(false)
+                    .HasColumnName("name");
+            });
+
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("Role");
