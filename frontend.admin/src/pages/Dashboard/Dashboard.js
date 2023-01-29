@@ -29,7 +29,7 @@ function Dashboard() {
         return (
           <Routes>
             <Route path="/" element={<Store />} />
-            <Route path={viewOrdersList} element={<Orders />} />
+            <Route path={`${viewOrdersList}`} element={<Orders />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>

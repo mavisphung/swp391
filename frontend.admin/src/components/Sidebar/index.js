@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 import {
   faArrowRightFromBracket,
@@ -11,19 +11,25 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
-import { viewOrdersList, viewStatistics } from '~/system/Constants/LinkURL';
+import {
+  home,
+  viewOrdersList,
+  viewStatistics,
+} from '~/system/Constants/LinkURL';
 import './SideBar.scss';
 import { Image } from 'react-bootstrap';
 import images from '~/assets/img';
+import { useUserAuth } from '~/context/UserAuthContext';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 function Sidebar() {
-  // const { pathname } = useLocation();
-  // console.log(pathname);
   const pathname = '/dashboard';
+  let navigate = useNavigate();
+  const { getCurrentUser, logOut } = useUserAuth();
+  //const user = getCurrentUser();
 
   const user = { name: 'Admin', roleId: 'admin' };
 
@@ -40,7 +46,11 @@ function Sidebar() {
 
   const handleLogOut = async () => {
     try {
-      //
+      await logOut();
+
+      setTimeout(() => {
+        navigate(`/${home}`);
+      }, 500);
     } catch (error) {}
   };
 

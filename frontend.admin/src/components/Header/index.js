@@ -4,6 +4,7 @@ import { Layout, Menu, Row, Space } from 'antd';
 import { Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import images from '~/assets/img';
+import { useUserAuth } from '~/context/UserAuthContext';
 import { home, login } from '~/system/Constants/LinkURL';
 import './Header.scss';
 
@@ -12,8 +13,11 @@ const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
 function HeaderContent() {
+  const { getCurrentUser } = useUserAuth();
+
+  const user = getCurrentUser();
   //const user = { name: 'Admin', roleId: 'admin' };
-  const user = null;
+  //const user = null;
 
   const handleRenderHeader = () => {
     if (user && user.roleId === 'admin') {

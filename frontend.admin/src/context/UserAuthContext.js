@@ -10,10 +10,20 @@ export function UserAuthContextProvider({ children }) {
 
   async function loginEmailAndPassword(email, password) {
     try {
-      const response = await api.post('/auth/sign-in', {
-        email,
-        password,
-      });
+      // const response = await api.post('/auth/sign-in', {
+      //   email,
+      //   password,
+      // });
+      const response = {
+        type: 'get',
+        data: {
+          name: 'Bao Khang',
+          email: 'admin@chytech.com.vn',
+          password: 'admin123',
+          roleId: 'admin',
+          statusId: 'active',
+        },
+      };
       localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {

@@ -2,13 +2,17 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import {
   emailPattern,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
 import { checkEmailMessage, checkPasswordMessage } from '../Validation';
+import { useUserAuth } from '~/context/UserAuthContext';
 
 const LoginForm = () => {
+  const { loginEmailAndPassword } = useUserAuth();
+  let navigate = useNavigate();
   let [email, setEmail] = useState('');
   const [passwordType, setPasswordType] = useState('password');
   const [eye, setEye] = useState(true);
@@ -22,7 +26,23 @@ const LoginForm = () => {
     if (form.checkValidity() === false) {
       setValidated(true);
     } else if (emailPattern.test(email)) {
-      //
+      try {
+        const user = await loginEmailAndPassword(email, password);
+        if (
+          (user.roleId !== 'admin' || user.roleId !== 'staff') &&
+          user.statusId === 'active'
+        ) {
+          setTimeout(
+            () =>
+              navigate({
+                pathname: '/dashboard',
+              }),
+            500,
+          );
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   };
 
