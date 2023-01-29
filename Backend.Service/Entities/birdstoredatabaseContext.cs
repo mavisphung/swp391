@@ -5,17 +5,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Backend.Service.Entities
 {
-    public partial class BirdStoreContext : DbContext
+    public partial class birdstoredatabaseContext : DbContext
     {
-        public BirdStoreContext()
+        public birdstoredatabaseContext()
         {
         }
 
-        public BirdStoreContext(DbContextOptions<BirdStoreContext> options)
+        public birdstoredatabaseContext(DbContextOptions<birdstoredatabaseContext> options)
             : base(options)
         {
         }
 
+        public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
@@ -24,12 +25,34 @@ namespace Backend.Service.Entities
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=NAME-PC\\MSSQLSERVER2019;Database=BirdStore;Integrated Security=True;");
+                optionsBuilder.UseSqlServer("Server=tcp:birdstoredatabaseserver.database.windows.net,1433;Initial Catalog=birdstoredatabase;Persist Security Info=False;User ID=birdstoredatabase;Password=conchimcon@123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.ToTable("Category");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CategoryType)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("categoryType");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(512)
+                    .IsUnicode(false)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(256)
+                    .IsUnicode(false)
+                    .HasColumnName("name");
+            });
+
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("Role");
@@ -37,7 +60,7 @@ namespace Backend.Service.Entities
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(256)
                     .IsUnicode(false)
                     .HasColumnName("name");
             });

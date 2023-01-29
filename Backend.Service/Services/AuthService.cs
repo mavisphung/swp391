@@ -9,29 +9,35 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
-using Backend.Service.Repositories;
 using Backend.Service.Entities;
-using LOSMST.Models.Helper.Login;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
+using Backend.Service.Models.Login;
+using Backend.Service.Repositories.IRepositories;
+using Backend.Service.Consts;
+using Backend.Service.Exceptions;
+using System.Net;
 
-namespace LOSMST.Business.Service
+namespace Backend.Service.Services
 {
     public class AuthService
     {
         private readonly IUserRepository _accountRepository;
         private readonly IConfiguration _configuration;
         private readonly FirebaseApp _firebaseApp;
+        private const int keySize = 64;
+        private const int iterations = 350000;
+        private HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+        private BirdStoreConst _birdStoreConst;
 
-        public AuthService(IConfiguration configuration, IUserRepository accountRepository, FirebaseApp firebase)
+        public AuthService(IConfiguration configuration, IUserRepository accountRepository, FirebaseApp firebase, BirdStoreConst birdStoreConst)
         {
             _configuration = configuration;
             _accountRepository = accountRepository;
             _firebaseApp = firebase;
+            _birdStoreConst = birdStoreConst;
         }
 
-        public async Task<LoginResponseModel> VerifyFirebaseTokenIdRegister(string idToken)
+        private async Task<LoginResponseModel> VerifyFirebaseTokenIdRegister(string idToken)
         {
             FirebaseToken decodedToken;
             try
@@ -45,21 +51,13 @@ namespace LOSMST.Business.Service
             }
             string uid = decodedToken.Uid;
             var firebaseUser = await FirebaseAuth.GetAuth(_firebaseApp).GetUserAsync(uid);
-            //Hash default password for new user
-            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); // divide by 8 to convert bits to bytes
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: "123456"!,
-                    salt: salt,
-                    prf: KeyDerivationPrf.HMACSHA256,
-                    iterationCount: 100000,
-                    numBytesRequested: 256 / 8));
+            var password = this.HashPasword("123456");
             var account = _accountRepository.GetFirstOrDefault(x => x.Email == firebaseUser.Email);
             if (account == null)
             {
                 User userInfo = new User();
                 userInfo.Email = firebaseUser.Email;
-                userInfo.Password = hashed;
+                userInfo.Password = password;
                 userInfo.RoleId = 3;
                 userInfo.Status = true;
                 userInfo.Phone = String.Empty;
@@ -96,80 +94,101 @@ namespace LOSMST.Business.Service
             return null;
         }
 
-        //public async Task<ViewModelLogin?> VerifyUser(LoginEmailPassword loginRequest)
-        //{
-        //    // Query account table in DB
+        public async Task<LoginResponseModel> VerifyUser(LoginRequestModel loginRequest)
+        {
+            // Query account table in DB
 
-        //    var checkUser = _accountRepository.GetFirstOrDefault(filter: x => x.Email == loginRequest.Email && x.Password == loginRequest.Password, includeProperties: "Store");
-        //    if (checkUser != null)
-        //    {
-        //        if (checkUser.Store != null)
-        //        {
-        //            if (checkUser != null)
-        //            {
-        //                var viewLoginModel = new ViewModelLogin
-        //                {
-        //                    Id = checkUser.Id,
-        //                    Email = checkUser.Email,
-        //                    RoleId = checkUser.RoleId,
-        //                    StatusId = checkUser.StatusId,
-        //                    Fullname = checkUser.Fullname,
-        //                    StoreId = checkUser.StoreId,
-        //                    StoreName = checkUser.Store.Name,
-        //                    Avatar = checkUser.Avatar,
-        //                    JwtToken = null
-        //                };
-        //                return viewLoginModel;
-        //            }
-        //        }
-        //        else
-        //        {
+            var checkUser = _accountRepository.GetFirstOrDefault(filter: x => x.Email == loginRequest.Email);
+            if (checkUser == null)
+            {
+                throw new BaseException
+                {
+                    StatusCode = (int)BaseError.USER_NOT_FOUND,
+                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.USER_NOT_FOUND),
+                    HttpStatus = HttpStatusCode.InternalServerError
+                };
+            }
+            bool verify = this.VerifyPassword(loginRequest.Password, checkUser.Password);
+            if (!verify)
+            {
+                throw new BaseException
+                {
+                    StatusCode = (int)BaseError.INVALID_PASSWORD,
+                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.INVALID_PASSWORD),
+                    HttpStatus = HttpStatusCode.InternalServerError
+                };
+            }
+            if (verify)
+            {
+                var viewLoginModel = new LoginResponseModel
+                {
+                    Id = checkUser.Id,
+                    Email = checkUser.Email,
+                    RoleId = checkUser.RoleId,
+                    Status = checkUser.Status,
+                    Fullname = checkUser.Fullname,
+                    Avatar = checkUser.Avatar,
+                    JwtToken = null
+                };
+                return viewLoginModel;
+            }
+            return null;
+        }
 
-        //            var viewLoginModel = new ViewModelLogin
-        //            {
-        //                Id = checkUser.Id,
-        //                Email = checkUser.Email,
-        //                RoleId = checkUser.RoleId,
-        //                StatusId = checkUser.StatusId,
-        //                Fullname = checkUser.Fullname,
-        //                Avatar = checkUser.Avatar,
-        //                JwtToken = null
-        //            };
-        //            return viewLoginModel;
+        private string HashPasword(string password)
+        {
+            var salt = _birdStoreConst.GetSalt();
+            var hash = Rfc2898DeriveBytes.Pbkdf2(
+                Encoding.UTF8.GetBytes(password),
+                salt,
+                iterations,
+                hashAlgorithm,
+                keySize);
 
-        //        }
-        //    }
+            return Convert.ToHexString(hash);
+        }
 
-        //    return null;
-        //}
+        private bool VerifyPassword(string password, string hash)
+        {
+
+            var salt = _birdStoreConst.GetSalt();
+            var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(
+                    Encoding.UTF8.GetBytes(password),
+                    salt,
+                    iterations,
+                    hashAlgorithm,
+                    keySize);
+
+            return hashToCompare.SequenceEqual(Convert.FromHexString(hash));
+        }
 
         //create token
-        //private string CreateToken(ViewModelLogin user)
-        //{
-        //    List<Claim> claims = new List<Claim>
-        //    {
-        //        new Claim(ClaimTypes.Role, user.RoleId),
-        //        new Claim(ClaimTypes.Name, user.Fullname),
-        //        new Claim(ClaimTypes.Email, user.Email)
-        //    };
+        private string CreateToken(LoginResponseModel user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+                new Claim(ClaimTypes.Name, user.Fullname),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
 
-        //    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-        //        _configuration.GetSection("AppSettings:Token").Value));
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _birdStoreConst.GetTokenKey()));
 
-        //    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-        //    var token = new JwtSecurityToken(
-        //        claims: claims,
-        //        expires: DateTime.Now.AddDays(1),
-        //        signingCredentials: creds);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
 
-        //    var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-        //    return jwt;
-        //}
+            return jwt;
+        }
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_birdStoreConst.GetTokenKey()));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = new JwtSecurityToken(
@@ -182,27 +201,25 @@ namespace LOSMST.Business.Service
 
         }
 
-        //public async Task<ViewModelLogin> Login(LoginEmailPassword loginRequest)
-        //{
-        //    var valueBytes = Encoding.UTF8.GetBytes(loginRequest.Password);
-        //    loginRequest.Password = Convert.ToBase64String(valueBytes);
-        //    var userViewModel = await VerifyUser(loginRequest);
-        //    if (userViewModel != null)
-        //    {
-        //        var accessToken = CreateToken(userViewModel);
-        //        // var refreshToken = GenerateRefreshToken();
+        public async Task<LoginResponseModel> Login(LoginRequestModel loginRequest)
+        {
+            var userViewModel = await VerifyUser(loginRequest);
+            if (userViewModel != null)
+            {
+                var accessToken = CreateToken(userViewModel);
+                // var refreshToken = GenerateRefreshToken();
 
-        //        userViewModel.JwtToken = accessToken;
-        //        return userViewModel;
-        //    }
-        //    return null;
-        //}
+                userViewModel.JwtToken = accessToken;
+                return userViewModel;
+            }
+            return null;
+        }
 
 
 
         public async Task<LoginResponseModel> LoginGoogle(string tokenId)
         {
-            var userViewModel = await VerifyFirebaseTokenIdRegister(tokenId);
+            var userViewModel = await this.VerifyFirebaseTokenIdRegister(tokenId);
             if (userViewModel != null)
             {
                 var claims = new List<Claim>

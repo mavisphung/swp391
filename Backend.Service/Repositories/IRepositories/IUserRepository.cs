@@ -1,7 +1,6 @@
 ﻿using Backend.Service.Entities;
-using LOSMST.DataAccess.Repository.IRepository;
 
-namespace Backend.Service.Repositories
+namespace Backend.Service.Repositories.IRepositories
 {
     public interface IUserRepository : IGenericRepository<User>
     {

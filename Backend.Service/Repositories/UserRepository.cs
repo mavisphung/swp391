@@ -1,5 +1,6 @@
 ﻿using Backend.Service.Entities;
 using Backend.Service.Repositories;
+using Backend.Service.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LOSMST.DataAccess.Repository.DatabaseRepository
+namespace Backend.Service.Repositories
 {
     public class UserRepository : GeneralRepository<User>, IUserRepository
     {
-        private readonly BirdStoreContext _dbContext;
+        private readonly birdstoredatabaseContext _dbContext;
         internal DbSet<User> _dbSet;
-        public UserRepository(BirdStoreContext dbContext) : base(dbContext)
+        public UserRepository(birdstoredatabaseContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<User>();
