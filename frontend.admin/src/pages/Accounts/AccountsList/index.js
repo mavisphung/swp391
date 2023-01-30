@@ -1,16 +1,18 @@
-import { Space, Table } from 'antd';
-import { MSG07 } from '~/system/Messages/messages';
-
-import '../../../styles/Component/button.scss';
-import '../../../styles/Component/label.scss';
-import '../../../styles/Component/table.scss';
 import { useCallback, useEffect, useState } from 'react';
+import { Space, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
+import { MSG07, MSG08 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { useUserAuth } from '~/context/UserAuthContext';
+
+import '../../../styles/Component/button.scss';
+import '../../../styles/Component/label.scss';
+import '../../../styles/Component/table.scss';
+import CustomModal from '~/components/Modal';
 
 const accountRoles = [
   {
@@ -89,10 +91,12 @@ function ViewAccountsList() {
   const [accounts, setAccounts] = useState([]);
   const [searchAccountEmail, setSearchAccountEmail] = useState('');
   const [searchAccountRole, setSearchAccountRole] = useState('');
-  const [searchAccountStatus, setSearchAccountStatus] = useState('active');
+  const [searchAccountStatus, setSearchAccountStatus] = useState('');
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(1);
+  const [show, setShow] = useState(false);
+  const [accountId, setAccountId] = useState('');
 
   // Get all accounts
   const getAccountsList = useCallback((pageIndex) => {
@@ -135,7 +139,7 @@ function ViewAccountsList() {
             disabled={
               checkDisableButton(record.email, record.statusId) ? true : false
             }
-            // onClick={() => handleShow(record.id)}
+            onClick={() => handleShowModal(record.id)}
           >
             <FontAwesomeIcon icon={faTrashCan} size="lg" />
           </Button>
@@ -181,6 +185,7 @@ function ViewAccountsList() {
       title: 'Trạng thái',
       dataIndex: 'statusId',
       key: 'statusId',
+      width: 200,
       render: (text, record) => {
         if (record.statusId === 'active') {
           return <span className="c-label c-label-success"> Hoạt động</span>;
@@ -200,45 +205,110 @@ function ViewAccountsList() {
     },
   ];
 
+  // Manage deactivate-account modal
+  const handleCloseModal = () => setShow(false);
+
+  const handleShowModal = (selectedAccountId) => {
+    setShow(true);
+    setAccountId(selectedAccountId);
+  };
+
+  // Manage deactivate-account action
+  const deactivateAccountStatusById = async (accountById) => {
+    try {
+      // call api
+      accountById.statusId = 'inactive';
+
+      getAccountsList(pageIndex);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleDeactivateAccount = (accountId) => {
+    const accountById = accounts.find((account) => account.id === accountId);
+    deactivateAccountStatusById(accountById);
+    setShow(false);
+  };
+
+  // Filter accounts list
+  const handleChangeAccountStatus = (e) => {
+    setPageIndex(1);
+    setSearchAccountStatus(e.target.value);
+    if (e.target.value === '') {
+      getAccountsList();
+    }
+  };
+
+  const handleChangeAccountEmail = (e) => {
+    setPageIndex(1);
+    setSearchAccountEmail(e.target.value);
+    if (e.target.value === '') {
+      getAccountsList();
+    }
+  };
+
+  const handleChangeAccountRole = (e) => {
+    setPageIndex(1);
+    setSearchAccountRole(e.target.value);
+    if (e.target.value === '') {
+      getAccountsList();
+    }
+  };
+
   return (
     <>
-      <div className="justify-content-center">
+      <div style={{ textAlign: 'center' }}>
         <h2>Danh sách tài khoản</h2>
       </div>
 
-      <Space>
-        <Form.Control
-          placeholder="Tìm email"
-          //onChange={handleChangeAccountEmail}
-          value={searchAccountEmail}
-          type="text"
-        />
-        <Form.Select
-          value={searchAccountRole}
-          //onChange={handleChangeAccountRole}
-          aria-label="Chọn vai trò"
-          required
-        >
-          <option value="">Chọn vai trò</option>
-          {accountRoles.map((role, index) => (
-            <option key={index} value={role.id}>
-              {role.name}
-            </option>
-          ))}
-        </Form.Select>
-        <Form.Select
-          value={searchAccountStatus}
-          //onChange={handleChangeAccountStatus}
-          aria-label="Chọn trạng thái"
-          required
-        >
-          {accountStatus.map((status, index) => (
-            <option key={index} value={status.id}>
-              {status.name}
-            </option>
-          ))}
-        </Form.Select>
-      </Space>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          paddingBottom: 15,
+        }}
+      >
+        <Space>
+          <Form.Control
+            placeholder="Tìm email"
+            onChange={handleChangeAccountEmail}
+            value={searchAccountEmail}
+            type="text"
+          />
+          <Form.Control
+            placeholder="Tìm tên"
+            onChange={handleChangeAccountEmail}
+            value={searchAccountEmail}
+            type="text"
+          />
+          <Form.Select
+            value={searchAccountRole}
+            onChange={handleChangeAccountRole}
+            aria-label="Chọn vai trò"
+            required
+          >
+            <option value="">Chọn vai trò</option>
+            {accountRoles.map((role, index) => (
+              <option key={index} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </Form.Select>
+          <Form.Select
+            value={searchAccountStatus}
+            onChange={handleChangeAccountStatus}
+            aria-label="Chọn trạng thái"
+            required
+          >
+            {accountStatus.map((status, index) => (
+              <option key={index} value={status.id}>
+                {status.name}
+              </option>
+            ))}
+          </Form.Select>
+        </Space>
+      </div>
 
       <Table
         locale={{ emptyText: MSG07 }}
@@ -254,6 +324,14 @@ function ViewAccountsList() {
           },
         }}
         bordered
+      />
+
+      <CustomModal
+        show={show}
+        title="Vô hiệu hóa tài khoản"
+        body={MSG08}
+        handleClose={handleCloseModal}
+        handleSubmit={() => handleDeactivateAccount(accountId)}
       />
     </>
   );

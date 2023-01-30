@@ -5,3 +5,4 @@ export const MSG04 = 'Email phải có đuôi là @chytech.com.vn';
 export const MSG05 = 'Mật khẩu chỉ được chứa từ 6 đến 20 kí tự';
 export const MSG06 = 'Mật khẩu không trùng với mật khẩu hiện tại';
 export const MSG07 = 'Không có dữ liệu';
+export const MSG08 = 'Xác nhận muốn vô hiệu hóa tài khoản?';

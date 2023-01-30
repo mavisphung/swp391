@@ -65,43 +65,43 @@ function Sidebar() {
           selectable={true}
         >
           <Menu.Item key="1" icon={<FontAwesomeIcon icon={faStore} />}>
-            <Link to={`${pathname}`}>Store</Link>
+            <Link to={`${pathname}`}>Cửa hàng</Link>
           </Menu.Item>
           <SubMenu
             key="sub1"
-            title="Accounts"
+            title="Tài khoản"
             icon={<FontAwesomeIcon icon={faUserGroup} />}
           >
             <MenuItemGroup>
               <Menu.Item key="2">
                 <Link to={`${pathname}/${viewAccountsList}`}>
-                  Accounts List
+                  Danh sách tài khoản
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Link to={``}>Create Account</Link>
+                <Link to={``}>Tạo tài khoản</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
           <SubMenu
             key="sub2"
-            title="Products"
+            title="Sản phẩm"
             icon={<FontAwesomeIcon icon={faFeatherPointed} />}
           >
             <MenuItemGroup>
               <Menu.Item key="4">
-                <Link to={``}>Products List</Link>
+                <Link to={``}>Danh sách sản phẩm</Link>
               </Menu.Item>
               <Menu.Item key="5">
-                <Link to={``}>Create Product</Link>
+                <Link to={``}>Tạo sản phẩm</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
           <Menu.Item key="6" icon={<FontAwesomeIcon icon={faClipboardList} />}>
-            <Link to={`${pathname}/${viewOrdersList}`}>Orders List</Link>
+            <Link to={`${pathname}/${viewOrdersList}`}>Đơn hàng</Link>
           </Menu.Item>
           <Menu.Item key="7" icon={<FontAwesomeIcon icon={faBarChart} />}>
-            <Link to={`${pathname}/${viewStatistics}`}>Statistics</Link>
+            <Link to={`${pathname}/${viewStatistics}`}>Thống kê</Link>
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item
