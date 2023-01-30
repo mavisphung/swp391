@@ -13,6 +13,7 @@ import { useState } from 'react';
 
 import {
   home,
+  viewAccountsList,
   viewOrdersList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
@@ -29,9 +30,9 @@ function Sidebar() {
   const pathname = '/dashboard';
   let navigate = useNavigate();
   const { getCurrentUser, logOut } = useUserAuth();
-  //const user = getCurrentUser();
+  const user = getCurrentUser();
 
-  const user = { name: 'Admin', roleId: 'admin' };
+  //const user = { name: 'Admin', roleId: 'admin' };
 
   const [key, setKey] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -73,7 +74,9 @@ function Sidebar() {
           >
             <MenuItemGroup>
               <Menu.Item key="2">
-                <Link to={``}>Accounts List</Link>
+                <Link to={`${pathname}/${viewAccountsList}`}>
+                  Accounts List
+                </Link>
               </Menu.Item>
               <Menu.Item key="3">
                 <Link to={``}>Create Account</Link>
