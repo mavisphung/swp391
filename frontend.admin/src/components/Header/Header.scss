@@ -1,19 +1,28 @@
+.c-header-wrapper {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  background-color: black;
+}
+
 .c-header-homepage {
-  //   position: fixed;
   z-index: 1;
   width: 100%;
   display: flex;
 }
 
 .c-logo-homepage {
+  padding-top: 6px;
+  padding-left: 18px;
   text-align: start;
 }
 
 .c-image-homepage {
-  width: 30% !important;
+  width: 70% !important;
 }
 
 .c-menu-homepage {
-  width: 50%;
+  width: 100%;
+  z-index: 10;
   justify-content: end;
 }
