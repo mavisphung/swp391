@@ -1,0 +1,34 @@
+@import '../../system/Constants/color.scss';
+
+// Danger
+.btn-outline-danger:disabled {
+  color: $disable-color !important;
+  border-color: $disable-color !important;
+}
+
+// Secondary
+.btn-outline-secondary:disabled {
+  color: $disable-color !important;
+  border-color: $disable-color !important;
+}
+
+// Primary
+.btn-outline-primary:disabled {
+  color: $disable-color !important;
+  border-color: $disable-color !important;
+}
+
+// Info
+.btn-outline-info {
+  color: $button-color !important;
+  border-color: $button-color !important;
+}
+
+.btn-outline-info:hover {
+  background-color: $hover-info-color !important;
+}
+
+//icon
+.c-logout-icon {
+  color: #ff4d4f;
+}
