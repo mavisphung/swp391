@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Space, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
@@ -17,26 +17,26 @@ import CustomModal from '~/components/Modal';
 const accountRoles = [
   {
     id: 'admin',
-    name: 'Admin',
+    name: 'Quản trị viên',
   },
   {
     id: 'staff',
-    name: 'Staff',
+    name: 'Nhân viên',
   },
   {
     id: 'customer',
-    name: 'Customer',
+    name: 'Khách hàng',
   },
 ];
 
 const accountStatus = [
   {
     id: 'active',
-    name: 'Active',
+    name: 'Hoạt động',
   },
   {
     id: 'inactive',
-    name: 'Inactive',
+    name: 'Không hoạt động',
   },
 ];
 
@@ -76,7 +76,7 @@ const accountList = {
       email: 'kieuph@gmail.com.vn',
       password: 'kieuph123',
       roleId: 'customer',
-      statusId: 'active',
+      statusId: 'inactive',
       phone: '0901789789',
     },
   ],
@@ -88,7 +88,8 @@ function ViewAccountsList() {
   const { getCurrentUser } = useUserAuth();
   const user = getCurrentUser();
 
-  const [accounts, setAccounts] = useState([]);
+  //const [accounts, setAccounts] = useState([]);
+  const accounts = useRef([]);
   const [searchAccountEmail, setSearchAccountEmail] = useState('');
   const [searchAccountRole, setSearchAccountRole] = useState('');
   const [searchAccountStatus, setSearchAccountStatus] = useState('');
@@ -101,10 +102,21 @@ function ViewAccountsList() {
   // Get all accounts
   const getAccountsList = useCallback((pageIndex) => {
     const data = accountList;
-    setAccounts(data.data.map((account) => account));
+    //setAccounts(data.data.map((account) => account));
+    accounts.current = data.data.map((account) => account);
+    console.log('useCallback: ', accounts.current);
     setPageSize(data.pageSize);
     setTotalCount(data.totalCount);
   }, []);
+
+  useEffect(() => {
+    if (searchAccountStatus !== undefined) {
+      accounts.current = accounts.current.filter(
+        (account) => account.statusId === searchAccountStatus,
+      );
+      console.log('useEffect: ', accounts.current);
+    }
+  }, [searchAccountStatus]);
 
   useEffect(() => {
     getAccountsList(pageIndex);
@@ -226,7 +238,9 @@ function ViewAccountsList() {
   };
 
   const handleDeactivateAccount = (accountId) => {
-    const accountById = accounts.find((account) => account.id === accountId);
+    const accountById = accounts.current.find(
+      (account) => account.id === accountId,
+    );
     deactivateAccountStatusById(accountById);
     setShow(false);
   };
@@ -276,12 +290,12 @@ function ViewAccountsList() {
             value={searchAccountEmail}
             type="text"
           />
-          <Form.Control
+          {/* <Form.Control
             placeholder="Tìm tên"
             onChange={handleChangeAccountEmail}
             value={searchAccountEmail}
             type="text"
-          />
+          /> */}
           <Form.Select
             value={searchAccountRole}
             onChange={handleChangeAccountRole}
@@ -301,6 +315,7 @@ function ViewAccountsList() {
             aria-label="Chọn trạng thái"
             required
           >
+            <option value="">Chọn trạng thái</option>
             {accountStatus.map((status, index) => (
               <option key={index} value={status.id}>
                 {status.name}
@@ -314,7 +329,7 @@ function ViewAccountsList() {
         locale={{ emptyText: MSG07 }}
         rowKey="id"
         columns={columns}
-        dataSource={accounts}
+        dataSource={accounts.current}
         pagination={{
           pageSize: pageSize,
           total: totalCount,

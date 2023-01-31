@@ -9,3 +9,4 @@ export const viewStatistics = 'statistics';
 
 // Admin
 export const viewAccountsList = 'accounts-list';
+export const addAccount = 'add-account';

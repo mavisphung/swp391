@@ -5,10 +5,12 @@ import Store from '~/pages/Store/Store';
 import Orders from '~/pages/Orders';
 import Statistics from '../Statistics';
 import ViewAccountsList from '../Accounts/AccountsList';
+import AddAccount from '../Accounts/AddAccount';
 import Sidebar from '~/components/Sidebar';
 import FooterContent from '~/components/Footer';
 import HeaderContent from '~/components/Header';
 import {
+  addAccount,
   viewAccountsList,
   viewOrdersList,
   viewStatistics,
@@ -38,6 +40,7 @@ function Dashboard() {
               path={`${viewAccountsList}`}
               element={<ViewAccountsList />}
             />
+            <Route path={`${addAccount}`} element={<AddAccount />} />
             <Route path={`${viewOrdersList}`} element={<Orders />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path="/*" element={<div>Page Not Found</div>} />

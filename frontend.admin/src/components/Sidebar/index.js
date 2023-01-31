@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import {
+  addAccount,
   home,
   viewAccountsList,
   viewOrdersList,
@@ -79,7 +80,7 @@ function Sidebar() {
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Link to={``}>Tạo tài khoản</Link>
+                <Link to={`${pathname}/${addAccount}`}>Tạo tài khoản</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
@@ -112,7 +113,6 @@ function Sidebar() {
                 icon={faArrowRightFromBracket}
               />
             }
-            onClick={() => handleLogOut()}
           >
             <Button type="link" onClick={() => handleLogOut()} danger>
               Log Out
