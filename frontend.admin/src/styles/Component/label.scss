@@ -1,0 +1,42 @@
+@import "../../system/Constants/color.scss";
+
+.c-label {
+  display: inline-block;
+  padding: 0.4rem 0;
+  width: 90%;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: pre-line;
+  vertical-align: baseline;
+  border-radius: 0.25em;
+}
+
+label {
+  float: left;
+}
+
+.c-label-success {
+  background-color: $active-color;
+  color: white;
+}
+
+.c-label-danger {
+  background-color: #d9534f;
+}
+
+.c-label-waiting {
+  background-color: yellow;
+  color: black;
+}
+
+.c-label-inprogress {
+  background-color: $button-color;
+  color: white;
+}
+
+.filter-label {
+  float: none;
+}
