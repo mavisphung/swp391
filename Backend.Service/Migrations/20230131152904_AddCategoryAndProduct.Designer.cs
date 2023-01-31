@@ -3,6 +3,7 @@ using System;
 using Backend.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230131152904_AddCategoryAndProduct")]
+    partial class AddCategoryAndProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,9 +102,6 @@ namespace Backend.Service.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid>("ProductCode")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -119,9 +118,6 @@ namespace Backend.Service.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProductCode")
-                        .IsUnique();
 
                     b.ToTable("Products");
                 });
@@ -164,102 +160,42 @@ namespace Backend.Service.Migrations
                         {
                             Id = 1,
                             AddedBy = "",
-                            CreatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9716),
+                            CreatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3588),
                             IsDeleted = false,
                             Name = "Admin",
                             UpdatedBy = "",
-                            UpdatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9715)
+                            UpdatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3587)
                         },
                         new
                         {
                             Id = 2,
                             AddedBy = "",
-                            CreatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9718),
+                            CreatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3591),
                             IsDeleted = false,
                             Name = "Staff",
                             UpdatedBy = "",
-                            UpdatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9717)
+                            UpdatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3590)
                         },
                         new
                         {
                             Id = 3,
                             AddedBy = "",
-                            CreatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9718),
+                            CreatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3592),
                             IsDeleted = false,
                             Name = "Customer",
                             UpdatedBy = "",
-                            UpdatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9718)
+                            UpdatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3592)
                         },
                         new
                         {
                             Id = 4,
                             AddedBy = "",
-                            CreatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9719),
+                            CreatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3593),
                             IsDeleted = false,
                             Name = "Guest",
                             UpdatedBy = "",
-                            UpdatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9719)
+                            UpdatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3592)
                         });
-                });
-
-            modelBuilder.Entity("Backend.Service.Entities.ShippingAddress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AddedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ReceivedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("ReceiverId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ShippingDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("ReceiverId");
-
-                    b.ToTable("ShippingAddresses");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.User", b =>
@@ -317,9 +253,6 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
@@ -329,7 +262,7 @@ namespace Backend.Service.Migrations
                         {
                             Id = 1,
                             AddedBy = "",
-                            CreatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9799),
+                            CreatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3681),
                             Email = "admin@chystore.vn",
                             Fullname = "Admin Chystore",
                             Gender = false,
@@ -339,7 +272,7 @@ namespace Backend.Service.Migrations
                             RoleId = 1,
                             Status = true,
                             UpdatedBy = "",
-                            UpdatedDate = new DateTime(2023, 1, 31, 16, 4, 8, 173, DateTimeKind.Utc).AddTicks(9799)
+                            UpdatedDate = new DateTime(2023, 1, 31, 15, 29, 4, 201, DateTimeKind.Utc).AddTicks(3680)
                         });
                 });
 
@@ -352,15 +285,6 @@ namespace Backend.Service.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Backend.Service.Entities.ShippingAddress", b =>
-                {
-                    b.HasOne("Backend.Service.Entities.User", "Receiver")
-                        .WithMany("ShippingAddresses")
-                        .HasForeignKey("ReceiverId");
-
-                    b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.User", b =>
@@ -382,11 +306,6 @@ namespace Backend.Service.Migrations
             modelBuilder.Entity("Backend.Service.Entities.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Backend.Service.Entities.User", b =>
-                {
-                    b.Navigation("ShippingAddresses");
                 });
 #pragma warning restore 612, 618
         }
