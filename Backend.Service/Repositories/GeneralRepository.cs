@@ -7,10 +7,10 @@ namespace Backend.Service.Repositories
 {
     public class GeneralRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly birdstoredatabaseContext _db;
+        private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
 
-        public GeneralRepository(birdstoredatabaseContext db)
+        public GeneralRepository(ApplicationDbContext db)
         {
             _db = db;
             this.dbSet = _db.Set<T>();
