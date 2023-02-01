@@ -3,7 +3,7 @@
 namespace Backend.Service.Entities
 {
     // Unique constraint
-    [Index(nameof(Email), IsUnique = true)]
+    [Index(nameof(Email), nameof(PhoneNumber), IsUnique = true)]
     public class ShippingAddress : BaseEntity
     {
         public string FullName { get; set; } = null!;

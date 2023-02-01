@@ -23,6 +23,10 @@ namespace Backend.Service.Entities
 
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
-        
+
+        #region One to many relationships
+
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+        #endregion
     }
 }
