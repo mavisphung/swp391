@@ -12,6 +12,7 @@ namespace Backend.Service.Entities
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
 
         // Needed for Add-Migration command
         public ApplicationDbContext() { }
