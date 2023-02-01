@@ -1,6 +1,7 @@
 .login-page {
   width: 20em;
   margin: 20px auto;
+  font-family: "DesignerVN-Poppins";
 }
 
 .arrow {
@@ -18,12 +19,25 @@
 .loginForm {
   position: relative;
   margin: 10px 0;
-  background-color: #fafafa;
+  background-color: white;
   padding: 20px;
   border-radius: 7px;
   border: 1px solid #eaeaea;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.xinchao {
+  font-size: 25px;
+  font-family: inherit;
+}
+
+.dangnhap {
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 0;
+}
+
+.vao {
+  font-size: 12px;
 }
 
 .loginForm label {
@@ -48,24 +62,10 @@
   border: 2px solid #007bff;
 }
 
-input[type="submit"] {
-  background-color: #6ece6e;
-  border: none;
-  margin-top: 20px;
-  color: white;
-  font-weight: 600;
-  font-size: 14.7px;
-  padding: 0 10px;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover {
-  background-color: #62b762;
-}
-
 .login-flex-container {
   display: flex;
   justify-content: space-between;
+  margin: 8px 0 18px 0;
 }
 
 a {
@@ -78,14 +78,7 @@ a:hover {
   text-decoration: underline !important;
 }
 
-.registerForm {
-  margin-top: 20px;
-  padding-top: 15px;
-  padding-bottom: 18px;
-  text-align: center;
-}
-
-span {
+.login-center span {
   font-family: inherit;
   font-size: 13.5px;
   margin-right: 5px;
@@ -93,4 +86,15 @@ span {
 
 #register-link {
   font-size: 13.5px;
+  font-weight: 700;
+  color: #f2635f;
+}
+
+.login-center {
+  text-align: center;
+}
+
+#login-left-arrow {
+  color: black;
+  font-size: 12px;
 }

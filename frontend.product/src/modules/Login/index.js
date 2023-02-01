@@ -2,11 +2,18 @@ import "./LoginLayout.scss";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import config from "../../config";
+import config from "~/config";
+import { Checkbox } from "antd";
+import {
+  EyeFilled,
+  EyeInvisibleFilled,
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
 
 function LoginPage() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [checked, setChecked] = useState(false);
   const users = [
     { email: "admin@gmail.com", password: "admin" },
     { email: "user1@gmail.com", password: "user1" },
@@ -28,34 +35,40 @@ function LoginPage() {
   return (
     <div className="login-page">
       <Link to={config.dashboardRoutes.home}>
-        <i class="arrow left"></i> Quay lại trang chủ
+        <ArrowLeftOutlined id="login-left-arrow" />
+        Quay lại trang chủ
       </Link>
       <div className="loginForm">
+        <p className="xinchao">Xin chào quý khách !</p>
+        <p className="dangnhap">Đăng nhập</p>
+        <p className="vao">vào cửa hàng chim cảnh ChyStore</p>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="fname">Địa chỉ email</label>
+          <label htmlFor="fname">Email</label>
           <input
             id="fname"
-            type="text"
+            type="email"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <div className="login-flex-container">
-            <label htmlFor="fpassword">Mật khẩu</label>
-            <a href="#home">Quên mật khẩu?</a>
-          </div>
+          <label htmlFor="fpassword">Mật khẩu</label>
           <input
             id="fpassword"
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
-
-          <input type="submit" value="Sign in" />
+          <div className="login-flex-container">
+            <Checkbox checked={checked} onChange={(e) => setChecked(!checked)}>
+              Lưu đăng nhập
+            </Checkbox>
+            <Link to="/">Quên mật khẩu?</Link>
+          </div>
+          <input type="submit" value="Đăng nhập" />
         </form>
-      </div>
-      <div className="loginForm registerForm">
-        <span>Bạn mới biết Birdo?</span>
-        <a id="register-link" href="#home">
-          Đăng ký tài khoản
-        </a>
+        <div className="login-center">
+          <span>Bạn chưa có tài khoản?</span>
+          <Link id="register-link" to="/">
+            Đăng ký
+          </Link>
+        </div>
       </div>
     </div>
   );

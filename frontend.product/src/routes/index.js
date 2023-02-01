@@ -7,11 +7,17 @@ import Dashboard from "../components/Dashboard";
 import HomePage from "../modules/Home";
 import ProfilePage from "../modules/Profile";
 import AboutUsPage from "../modules/AboutUs";
+import RegisterPage from "../modules/Register";
 
 const routes = [
   {
     path: config.routes.login,
     component: LoginPage,
+    layout: null,
+  },
+  {
+    path: config.routes.register,
+    component: RegisterPage,
     layout: null,
   },
   {
