@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Backend.Service.Consts;
 
 namespace Backend.Service.Entities
 {
-    public partial class Category
+    public partial class Category : BaseEntity
     {
-        public long Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
-        public string CategoryType { get; set; } = null!;
+
+        //[Required]
+        //[MaxLength(25)]
+        public CategoryType CategoryType { get; set; } = CategoryType.Other;
+
+        public ICollection<Product> Products { get; set; }
     }
 }
