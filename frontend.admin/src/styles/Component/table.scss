@@ -1,0 +1,9 @@
+@import '../../system/Constants/color.scss';
+
+.react-bootstrap-table {
+    background: $secondary-color;
+}
+
+.ant-table-summary .ant-table-cell {
+    font-weight: bold;
+}

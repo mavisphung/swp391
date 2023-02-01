@@ -1,14 +1,18 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Layout } from 'antd';
 
-import DefaultLayout from '~/layouts/DefaultLayout';
 import Store from '~/pages/Store/Store';
 import Orders from '~/pages/Orders';
 import Statistics from '../Statistics';
-import { viewOrdersList, viewStatistics } from '~/system/Constants/LinkURL';
+import ViewAccountsList from '../Accounts/AccountsList';
 import Sidebar from '~/components/Sidebar';
 import FooterContent from '~/components/Footer';
 import HeaderContent from '~/components/Header';
+import {
+  viewAccountsList,
+  viewOrdersList,
+  viewStatistics,
+} from '~/system/Constants/LinkURL';
 import './Dashboard.scss';
 
 const { Content } = Layout;
@@ -30,7 +34,11 @@ function Dashboard() {
         return (
           <Routes>
             <Route path="/" element={<Store />} />
-            <Route path={viewOrdersList} element={<Orders />} />
+            <Route
+              path={`${viewAccountsList}`}
+              element={<ViewAccountsList />}
+            />
+            <Route path={`${viewOrdersList}`} element={<Orders />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>
