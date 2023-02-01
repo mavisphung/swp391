@@ -3,6 +3,7 @@ using System;
 using Backend.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230201004704_AddOrderDetail")]
+    partial class AddOrderDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,41 +276,41 @@ namespace Backend.Service.Migrations
                         {
                             Id = 1,
                             AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6667),
+                            CreatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3468),
                             IsDeleted = false,
                             Name = "Admin",
                             UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6665)
+                            UpdatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3466)
                         },
                         new
                         {
                             Id = 2,
                             AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6669),
+                            CreatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3470),
                             IsDeleted = false,
                             Name = "Staff",
                             UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6669)
+                            UpdatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3470)
                         },
                         new
                         {
                             Id = 3,
                             AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6670),
+                            CreatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3471),
                             IsDeleted = false,
                             Name = "Customer",
                             UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6670)
+                            UpdatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3471)
                         },
                         new
                         {
                             Id = 4,
                             AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6671),
+                            CreatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3472),
                             IsDeleted = false,
                             Name = "Guest",
                             UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6671)
+                            UpdatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3472)
                         });
                 });
 
@@ -364,10 +366,10 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("Email", "PhoneNumber")
+                    b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("ReceiverId");
 
                     b.ToTable("ShippingAddresses");
                 });
@@ -439,7 +441,7 @@ namespace Backend.Service.Migrations
                         {
                             Id = 1,
                             AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6762),
+                            CreatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3600),
                             Email = "admin@chystore.vn",
                             Fullname = "Admin Chystore",
                             Gender = false,
@@ -449,7 +451,7 @@ namespace Backend.Service.Migrations
                             RoleId = 1,
                             Status = true,
                             UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6762)
+                            UpdatedDate = new DateTime(2023, 2, 1, 0, 47, 4, 417, DateTimeKind.Utc).AddTicks(3600)
                         });
                 });
 

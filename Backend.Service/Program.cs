@@ -32,6 +32,10 @@ builder.Services.AddTransient<AuthService, AuthService>();
 builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
 
+// Add Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
