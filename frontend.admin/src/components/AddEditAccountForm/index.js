@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import {
@@ -24,6 +24,22 @@ import {
   checkFullNameMessage,
   checkPhoneNumber,
 } from '../Validation';
+
+const userAccount = {
+  id: 3,
+  fullname: 'Thái Đăng Linh',
+  email: 'linhtd@gmail.com.vn',
+  gender: 'true',
+  password: 'linhtd123',
+  dob: '1995-04-15',
+  roleId: 'customer',
+  statusId: 'active',
+  phone: '0901565565',
+  address: '250 Nguyễn Thị Minh Khai',
+  ward: '27139',
+  district: '770',
+  province: '79',
+};
 
 const AddEditAccountForm = () => {
   const { accountId } = useParams();
@@ -52,6 +68,54 @@ const AddEditAccountForm = () => {
   const [emailIsExisted, setEmailIsExisted] = useState(false);
   const [checkEnableUpdateButton, setCheckEnableUpdateButton] = useState(false);
 
+  // Get account by id
+  const getAccountById = useCallback(async (accountId) => {
+    try {
+      const data = userAccount;
+      setAccount(data);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (accountId) {
+      getAccountById(accountId);
+    }
+  }, [accountId, getAccountById]);
+
+  useEffect(() => {
+    if (account && accountId) {
+      setCheckEnableUpdateButton(false);
+      //setEmailIsExisted(false);
+      setEmail(account.email);
+      setFullName(account.fullname);
+      if (account.gender === false) {
+        setGender('0'); //Nam
+      } else {
+        setGender('1'); // Nữ
+      }
+      setDob(account.dob);
+      setPhone(account.phone);
+      setAddress(account.address);
+      setWard(account.ward);
+      setDistrict(account.district);
+      setProvince(account.province);
+    } else if (!account || !accountId) {
+      //setEmailIsExisted(false);
+      setEmail('');
+      setFullName('');
+      setGender('');
+      setDob('');
+      setPhone('');
+      setAddress('');
+      setWard('');
+      setDistrict('');
+      setProvince('');
+    }
+  }, [accountId, account]);
+
+  // Get Address Data
   useEffect(() => {
     setListProvince(PROVINCEVN.province.map((item) => item));
   }, []);
@@ -86,9 +150,7 @@ const AddEditAccountForm = () => {
 
   const checkAccountIdHad = accountId ? true : false;
 
-  const changeTitle = accountId
-    ? 'Thay đổi thông tin tài khoản'
-    : 'Thêm tài khoản';
+  const changeTitle = accountId ? 'Thông tin tài khoản' : 'Thêm tài khoản';
 
   const changeContentModal = accountId ? MSG20 : MSG19;
 
@@ -113,7 +175,7 @@ const AddEditAccountForm = () => {
 
   return (
     <>
-      <h2>{changeTitle}</h2>
+      <h2 style={{ textAlign: 'center' }}>{changeTitle}</h2>
       <Col lg={12} className="mt-4">
         {/* <Prompt when={isEntered} message={MSG09} /> */}
         <Card className="border-0 p-4 rounded shadow">
@@ -129,7 +191,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Email {redStart}</Form.Label>
                   <Form.Control
                     type="email"
-                    value={email}
+                    value={email || ''}
                     placeholder={templateEmailPlaceholder}
                     onChange={(e) => setEmail(e.target.value)}
                     isInvalid={
@@ -153,7 +215,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Họ và tên {redStart}</Form.Label>
                   <Form.Control
                     type="text"
-                    value={fullName}
+                    value={fullName || ''}
                     maxLength={50}
                     onChange={(e) => setFullName(e.target.value)}
                     isInvalid={fullName && !fullNamePattern.test(fullName)}
@@ -171,7 +233,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Ngày sinh {redStart}</Form.Label>
                   <Form.Control
                     type="date"
-                    value={dob}
+                    value={dob || ''}
                     min="1960-01-01"
                     max="2000-12-31"
                     onChange={(e) => setDob(e.target.value)}
@@ -189,7 +251,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Giới tính {redStart}</Form.Label>
                   <Form.Select
                     aria-label="Chọn giới tính"
-                    value={gender}
+                    value={gender || ''}
                     onChange={(e) => setGender(e.target.value)}
                     disabled={checkAccountIdHad}
                     required
@@ -210,7 +272,7 @@ const AddEditAccountForm = () => {
                   <Form.Control
                     type="text"
                     maxLength={10}
-                    value={phone}
+                    value={phone || ''}
                     onChange={(e) => setPhone(e.target.value)}
                     isInvalid={phone && !phonePattern.test(phone)}
                     readOnly={checkAccountIdHad}
@@ -230,7 +292,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Số nhà, tên đường {redStart}</Form.Label>
                   <Form.Control
                     type="text"
-                    value={address}
+                    value={address || ''}
                     maxLength={100}
                     onChange={(e) => setAddress(e.target.value)}
                     readOnly={checkAccountIdHad}
@@ -249,7 +311,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Tỉnh, thành {redStart}</Form.Label>
                   <Form.Select
                     aria-label="Chọn tỉnh, thành"
-                    value={province}
+                    value={province || ''}
                     onChange={(e) => setProvince(e.target.value)}
                     disabled={checkAccountIdHad}
                     required
@@ -272,7 +334,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Quận, huyện {redStart}</Form.Label>
                   <Form.Select
                     aria-label="Chọn quận, huyện"
-                    value={district}
+                    value={district || ''}
                     onChange={(e) => setDistrict(e.target.value)}
                     disabled={checkAccountIdHad}
                     required
@@ -295,7 +357,7 @@ const AddEditAccountForm = () => {
                   <Form.Label>Phường, xã {redStart}</Form.Label>
                   <Form.Select
                     aria-label="Chọn phường, xã"
-                    value={ward}
+                    value={ward || ''}
                     onChange={(e) => setWard(e.target.value)}
                     disabled={checkAccountIdHad}
                     required

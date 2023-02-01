@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Space, Table } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
 import { MSG07, MSG08 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
@@ -13,6 +13,7 @@ import '../../../styles/Component/button.scss';
 import '../../../styles/Component/label.scss';
 import '../../../styles/Component/table.scss';
 import CustomModal from '~/components/Modal';
+import { updateAccount } from '~/system/Constants/LinkURL';
 
 const accountRoles = [
   {
@@ -88,8 +89,9 @@ function ViewAccountsList() {
   const { getCurrentUser } = useUserAuth();
   const user = getCurrentUser();
 
-  //const [accounts, setAccounts] = useState([]);
-  const accounts = useRef([]);
+  const { pathname } = useLocation();
+
+  const [accounts, setAccounts] = useState([]);
   const [searchAccountEmail, setSearchAccountEmail] = useState('');
   const [searchAccountRole, setSearchAccountRole] = useState('');
   const [searchAccountStatus, setSearchAccountStatus] = useState('');
@@ -102,21 +104,10 @@ function ViewAccountsList() {
   // Get all accounts
   const getAccountsList = useCallback((pageIndex) => {
     const data = accountList;
-    //setAccounts(data.data.map((account) => account));
-    accounts.current = data.data.map((account) => account);
-    console.log('useCallback: ', accounts.current);
+    setAccounts(data.data.map((account) => account));
     setPageSize(data.pageSize);
     setTotalCount(data.totalCount);
   }, []);
-
-  useEffect(() => {
-    if (searchAccountStatus !== undefined) {
-      accounts.current = accounts.current.filter(
-        (account) => account.statusId === searchAccountStatus,
-      );
-      console.log('useEffect: ', accounts.current);
-    }
-  }, [searchAccountStatus]);
 
   useEffect(() => {
     getAccountsList(pageIndex);
@@ -137,7 +128,7 @@ function ViewAccountsList() {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${updateAccount}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button className="mx-2" variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
@@ -153,7 +144,7 @@ function ViewAccountsList() {
             }
             onClick={() => handleShowModal(record.id)}
           >
-            <FontAwesomeIcon icon={faTrashCan} size="lg" />
+            <FontAwesomeIcon icon={faBan} size="lg" />
           </Button>
         </CustomTooltip>
       </Space>
@@ -238,9 +229,7 @@ function ViewAccountsList() {
   };
 
   const handleDeactivateAccount = (accountId) => {
-    const accountById = accounts.current.find(
-      (account) => account.id === accountId,
-    );
+    const accountById = accounts.find((account) => account.id === accountId);
     deactivateAccountStatusById(accountById);
     setShow(false);
   };
@@ -329,7 +318,7 @@ function ViewAccountsList() {
         locale={{ emptyText: MSG07 }}
         rowKey="id"
         columns={columns}
-        dataSource={accounts.current}
+        dataSource={accounts}
         pagination={{
           pageSize: pageSize,
           total: totalCount,
