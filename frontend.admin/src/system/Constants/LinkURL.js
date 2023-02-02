@@ -6,6 +6,8 @@ export const dashboard = 'dashboard/*';
 // Staff
 export const viewOrdersList = 'orders-list';
 export const viewStatistics = 'statistics';
+export const accountProfile = 'account-profile';
+export const changePassword = 'change-password';
 
 // Admin
 export const viewAccountsList = 'accounts-list';

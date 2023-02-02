@@ -6,12 +6,14 @@ import {
   faClipboardList,
   faFeatherPointed,
   faStore,
+  faUser,
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import {
+  accountProfile,
   addAccount,
   home,
   viewAccountsList,
@@ -105,6 +107,20 @@ function Sidebar() {
             <Link to={`${pathname}/${viewStatistics}`}>Thống kê</Link>
           </Menu.Item>
           <Menu.Divider />
+          <SubMenu
+            key="sub4"
+            title="Thông tin"
+            icon={<FontAwesomeIcon icon={faUser} />}
+          >
+            <MenuItemGroup>
+              <Menu.Item key="8">
+                <Link to={`${pathname}/${accountProfile}`}>Hồ sơ</Link>
+              </Menu.Item>
+              <Menu.Item key="10">
+                <Link to={``}>Thay đổi mật khẩu</Link>
+              </Menu.Item>
+            </MenuItemGroup>
+          </SubMenu>
           <Menu.Item
             key="9"
             icon={

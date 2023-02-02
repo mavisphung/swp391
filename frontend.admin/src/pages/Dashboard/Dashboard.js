@@ -6,11 +6,13 @@ import Orders from '~/pages/Orders';
 import Statistics from '../Statistics';
 import ViewAccountsList from '../Accounts/AccountsList';
 import AddEditAccount from '../Accounts/AddEditAccount';
+import AccountProfile from '../Accounts/AccountProfile';
 import Sidebar from '~/components/Sidebar';
 import FooterContent from '~/components/Footer';
 import HeaderContent from '~/components/Header';
 import {
   accountId,
+  accountProfile,
   addAccount,
   updateAccount,
   viewAccountsList,
@@ -31,6 +33,7 @@ function Dashboard() {
           <Routes>
             <Route path="/" element={<Store />} />
             <Route path={`/${viewOrdersList}`} element={<Orders />} />
+            <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>
         );
@@ -49,6 +52,7 @@ function Dashboard() {
             <Route path={`${addAccount}`} element={<AddEditAccount />} />
             <Route path={`${viewOrdersList}`} element={<Orders />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
+            <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>
         );

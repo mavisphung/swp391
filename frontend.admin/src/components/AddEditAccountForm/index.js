@@ -29,7 +29,7 @@ const userAccount = {
   id: 3,
   fullname: 'Thái Đăng Linh',
   email: 'linhtd@gmail.com.vn',
-  gender: 'true',
+  gender: true,
   password: 'linhtd123',
   dob: '1995-04-15',
   roleId: 'customer',
