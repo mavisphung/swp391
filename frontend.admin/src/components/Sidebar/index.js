@@ -15,6 +15,7 @@ import { useState } from 'react';
 import {
   accountProfile,
   addAccount,
+  changePassword,
   home,
   viewAccountsList,
   viewOrdersList,
@@ -117,7 +118,9 @@ function Sidebar() {
                 <Link to={`${pathname}/${accountProfile}`}>Hồ sơ</Link>
               </Menu.Item>
               <Menu.Item key="10">
-                <Link to={``}>Thay đổi mật khẩu</Link>
+                <Link to={`${pathname}/${changePassword}`}>
+                  Thay đổi mật khẩu
+                </Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>

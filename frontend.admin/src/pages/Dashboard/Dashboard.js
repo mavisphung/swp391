@@ -14,12 +14,14 @@ import {
   accountId,
   accountProfile,
   addAccount,
+  changePassword,
   updateAccount,
   viewAccountsList,
   viewOrdersList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
 import './Dashboard.scss';
+import ChangePassword from '../Accounts/ChangePassword';
 
 const { Content } = Layout;
 
@@ -34,6 +36,7 @@ function Dashboard() {
             <Route path="/" element={<Store />} />
             <Route path={`/${viewOrdersList}`} element={<Orders />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
+            <Route path={`${changePassword}`} element={<ChangePassword />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>
         );
@@ -53,6 +56,7 @@ function Dashboard() {
             <Route path={`${viewOrdersList}`} element={<Orders />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
+            <Route path={`${changePassword}`} element={<ChangePassword />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>
         );

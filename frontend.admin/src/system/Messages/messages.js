@@ -19,3 +19,7 @@ export const MSG17 = 'Phường, xã chưa được chọn';
 export const MSG18 = 'Quận, huyện chưa được chọn';
 export const MSG19 = 'Xác nhận thêm mới tài khoản?';
 export const MSG20 = 'Xác nhận cập nhật thông tin tài khoản?';
+export const MSG21 = 'Mật khẩu mới phải khác với mật khẩu hiện tại';
+export const MSG22 = 'Nhập lại mật khẩu không được để trống';
+export const MSG23 = 'Nhập lại mật khẩu mới phải trùng khớp với mật khẩu mới';
+export const MSG24 = 'Xác nhận thay đổi mật khẩu?';
