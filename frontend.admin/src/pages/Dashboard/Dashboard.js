@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Layout } from 'antd';
 
 import Store from '~/pages/Store/Store';
-import Orders from '~/pages/Orders';
+import OrdersList from '~/pages/Orders/OrdersList';
 import Statistics from '../Statistics';
 import ViewAccountsList from '../Accounts/AccountsList';
 import AddEditAccount from '../Accounts/AddEditAccount';
@@ -34,7 +34,7 @@ function Dashboard() {
         return (
           <Routes>
             <Route path="/" element={<Store />} />
-            <Route path={`/${viewOrdersList}`} element={<Orders />} />
+            <Route path={`/${viewOrdersList}`} element={<OrdersList />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
@@ -53,7 +53,7 @@ function Dashboard() {
               element={<AddEditAccount />}
             />
             <Route path={`${addAccount}`} element={<AddEditAccount />} />
-            <Route path={`${viewOrdersList}`} element={<Orders />} />
+            <Route path={`${viewOrdersList}`} element={<OrdersList />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />
