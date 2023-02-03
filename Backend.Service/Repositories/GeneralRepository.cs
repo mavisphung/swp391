@@ -110,5 +110,34 @@ namespace Backend.Service.Repositories
             var count = dbSet.Count();
             return count;
         }
+
+        public async Task<bool> SaveDbChangeAsync()
+        {
+            return (await _db.SaveChangesAsync() >= 0);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query);
+            }
+            return query;
+        }
     }
 }

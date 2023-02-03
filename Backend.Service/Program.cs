@@ -12,25 +12,42 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    //Add more serialization config
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.IncludeFields = true;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // Add datasource sqlserver
 //builder.Services.AddDbContext<birdstoredatabaseContext>(options => options.UseSqlServer(
 //    builder.Configuration.GetConnectionString("DataSource")
 // ));
-builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(opt =>
+
+// Postgres Configuration
+builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DataSource"));
 });
+
+//--------------------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(FirebaseApp.Create());
 
+// Add repositories
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+
+// Add services
 builder.Services.AddTransient<UserService, UserService>();
 builder.Services.AddTransient<AuthService, AuthService>();
+builder.Services.AddTransient<CategoryService, CategoryService>();
 builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
+
+// Add Exception handler
+builder.Services.AddTransient<ExceptionHandler, ExceptionHandler>();
 
 // Add Logging
 builder.Logging.ClearProviders();

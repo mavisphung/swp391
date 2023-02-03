@@ -24,6 +24,8 @@ namespace Backend.Service.Consts
 
         [Description("Firebase token not found")]
         FIREBASE_TOKEN_NOT_FOUND = 6,
+
+        NOT_FOUND = 7,
     }
 
     public static class EnumStringMessage

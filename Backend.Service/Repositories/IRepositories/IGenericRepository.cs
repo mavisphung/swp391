@@ -20,6 +20,12 @@ namespace Backend.Service.Repositories.IRepositories
             string includeProperties = null
             );
 
+        Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = null
+            );
+
         //Get thằng đầu tiên thấy có filter, incldueProperties
         T GetFirstOrDefault(
             Expression<Func<T, bool>> filter = null,
@@ -38,5 +44,7 @@ namespace Backend.Service.Repositories.IRepositories
 
         int Count();
         bool SaveDbChange();
+
+        Task<bool> SaveDbChangeAsync();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Backend.Service.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Backend.Service.Entities
 {
@@ -20,7 +21,7 @@ namespace Backend.Service.Entities
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             Database.EnsureCreated();
-            Console.WriteLine("Created database successfully");
+            //Console.WriteLine("Created database successfully");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -58,6 +59,34 @@ namespace Backend.Service.Entities
             }
 
             return base.SaveChanges();
+        }
+
+        private async Task<EntityEntry> UpdateEntitiesAsync(EntityEntry entityEntry)
+        {
+            return await Task.Run(() => 
+            {
+                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                }
+                return entityEntry;
+            });
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            // Automatically add CreatedDate and UpdatedDate if changes happen
+            var entries = ChangeTracker
+                            .Entries()
+                            .Where(e => e.Entity is BaseEntity && (
+                                    e.State == EntityState.Added
+                                    || e.State == EntityState.Modified))
+                            .Select(et => UpdateEntitiesAsync(et));
+
+            await Task.WhenAll(entries);
+            return await base.SaveChangesAsync();
         }
     }
 }

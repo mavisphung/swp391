@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Backend.Service.Models.Response.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
@@ -24,5 +22,10 @@ namespace Backend.Service.Entities
 
         // One to Many
         public ICollection<ShippingAddress> ShippingAddresses { get; set; }
+
+        public UserModel ToData()
+        {
+            return new UserModel(this);
+        }
     }
 }
