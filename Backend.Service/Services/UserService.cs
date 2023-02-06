@@ -1,14 +1,25 @@
-﻿using Backend.Service.Repositories.IRepositories;
+﻿using Backend.Service.Entities;
+using Backend.Service.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Services
 {
     public class UserService
     {
         private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository)
+        //private readonly ApplicationDbContext _context;
+        public UserService(
+            IUserRepository userRepository
+            //ApplicationDbContext context
+        )
         {
             _userRepository = userRepository;
+            //_context = context;
+        }
+
+        public IEnumerable<User> GetAll()
+        {
+            return _userRepository.GetAll();
         }
 
         //public PagedList<User> GetAllUsers(UserParameter userParam, PagingParameter paging)
@@ -49,7 +60,7 @@ namespace Backend.Service.Services
         //    }
         //    if (!string.IsNullOrWhiteSpace(userParam.Email))
         //    {
-        //        values = values.Where(x => x.Email.Contains(userParam.Email,StringComparison.InvariantCultureIgnoreCase));
+        //        values = values.Where(x => x.Email.Contains(userParam.Email, StringComparison.InvariantCultureIgnoreCase));
         //    }
 
         //    if (!string.IsNullOrWhiteSpace(userParam.sort))
