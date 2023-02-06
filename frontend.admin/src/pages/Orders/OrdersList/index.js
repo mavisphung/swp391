@@ -11,6 +11,7 @@ import {
   canceled,
   denied,
   inProgress,
+  paidInAdvance,
   success,
   waiting,
 } from '~/system/Constants/constants';
@@ -27,23 +28,27 @@ const statusList = [
     tab: 'Tất cả',
   },
   {
-    key: '2.1',
+    key: '2',
     tab: 'Chờ xác nhận',
   },
   {
-    key: '2.2',
+    key: '3',
     tab: 'Đang xử lí',
   },
   {
-    key: '2.3',
+    key: '1',
+    tab: 'Đã cọc',
+  },
+  {
+    key: '0',
     tab: 'Thành công',
   },
   {
-    key: '2.4',
+    key: '4',
     tab: 'Đã từ chối',
   },
   {
-    key: '2.5',
+    key: '5',
     tab: 'Bị hủy',
   },
 ];
@@ -55,7 +60,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Thái Đăng Linh',
       },
-      statusId: '2.1',
+      statusId: '2',
       orderDate: '2023-01-09',
       estimatedReceiveDate: '2023-01-12',
       totalPrice: '3600000',
@@ -65,7 +70,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Phùng Hữu Kiều',
       },
-      statusId: '2.1',
+      statusId: '2',
       orderDate: '2023-01-15',
       estimatedReceiveDate: '2023-01-18',
       totalPrice: '1500000',
@@ -75,10 +80,20 @@ const ordersList = {
       customerAccount: {
         fullname: 'Lương Bá Thành',
       },
-      statusId: '2.2',
+      statusId: '3',
       orderDate: '2023-01-12',
       estimatedReceiveDate: '2023-01-14',
       totalPrice: '2300000',
+    },
+    {
+      id: 'OCH0123666',
+      customerAccount: {
+        fullname: 'Trần Công Minh',
+      },
+      statusId: '1',
+      orderDate: '2023-02-06',
+      estimatedReceiveDate: '2023-02-10',
+      totalPrice: '3000000',
     },
   ],
   pageSize: 10,
@@ -175,6 +190,8 @@ const OrdersList = () => {
           return <span className="c-label c-label-danger"> Đã từ chối</span>;
         } else if (record.statusId === canceled) {
           return <span className="c-label c-label-danger"> Bị hủy</span>;
+        } else if (record.statusId === paidInAdvance) {
+          return <span className="c-label c-label-inprogress"> Đã cọc</span>;
         }
       },
     },

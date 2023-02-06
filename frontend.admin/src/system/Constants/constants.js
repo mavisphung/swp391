@@ -11,8 +11,9 @@ export const active = '1.1';
 export const inactive = '1.2';
 
 //Status of order
-export const waiting = '2.1';
-export const inProgress = '2.2';
-export const success = '2.3';
-export const denied = '2.4';
-export const canceled = '2.5';
+export const success = '0';
+export const paidInAdvance = '1';
+export const waiting = '2';
+export const inProgress = '3';
+export const denied = '4';
+export const canceled = '5';
