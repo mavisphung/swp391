@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import config from "~/config";
-import storeIcon from "~/assets/images/chystore_icon.svg";
+import images from "~/assets/images";
 import {
   EyeFilled,
   EyeInvisibleFilled,
@@ -36,7 +36,7 @@ function RegisterPage() {
 
   return (
     <div>
-      <img id="register-icon" src={storeIcon} alt="ChyStore icon" />
+      <img id="register-icon" src={images.logo} alt="ChyStore icon" />
       <div className="register-center register-back-link">
         <Link to={config.dashboardRoutes.home}>
           <ArrowLeftOutlined id="register-left-arrow" />
@@ -117,7 +117,7 @@ function RegisterPage() {
         </form>
         <div className="text-center">
           <span>Bạn đã có tài khoản?</span>
-          <Link id="login-link" to="/">
+          <Link id="login-link" to={config.routes.login}>
             Đăng nhập
           </Link>
         </div>
