@@ -19,6 +19,7 @@ import { MSG07 } from '~/system/Messages/messages';
 
 import '../../../styles/Component/label.scss';
 import './OrdersList.scss';
+import { viewOrderDetail } from '~/system/Constants/LinkURL';
 
 const { Search } = Input;
 
@@ -206,7 +207,7 @@ const OrdersList = () => {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${viewOrderDetail}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />

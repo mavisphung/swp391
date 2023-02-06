@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 
 import Store from '~/pages/Store/Store';
 import OrdersList from '~/pages/Orders/OrdersList';
+import OrderDetail from '../Orders/OrderDetail';
 import Statistics from '../Statistics';
 import ViewAccountsList from '../Accounts/AccountsList';
 import AddEditAccount from '../Accounts/AddEditAccount';
@@ -15,8 +16,10 @@ import {
   accountProfile,
   addAccount,
   changePassword,
+  orderId,
   updateAccount,
   viewAccountsList,
+  viewOrderDetail,
   viewOrdersList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
@@ -35,6 +38,10 @@ function Dashboard() {
           <Routes>
             <Route path="/" element={<Store />} />
             <Route path={`/${viewOrdersList}`} element={<OrdersList />} />
+            <Route
+              path={`${viewOrdersList}/${viewOrderDetail}/${orderId}`}
+              element={<OrderDetail />}
+            />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />
             <Route path="/*" element={<div>Page Not Found</div>} />
@@ -54,6 +61,10 @@ function Dashboard() {
             />
             <Route path={`${addAccount}`} element={<AddEditAccount />} />
             <Route path={`${viewOrdersList}`} element={<OrdersList />} />
+            <Route
+              path={`${viewOrdersList}/${viewOrderDetail}/${orderId}`}
+              element={<OrderDetail />}
+            />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />
