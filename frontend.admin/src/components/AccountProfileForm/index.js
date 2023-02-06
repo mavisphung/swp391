@@ -29,7 +29,7 @@ const userAccount = {
     roleId: 'admin',
     name: 'Quản trị viên',
   },
-  statusId: 'active',
+  status: '1',
   phone: '0123123123',
   address: '250 Nguyễn Thị Minh Khai',
   ward: '27139',

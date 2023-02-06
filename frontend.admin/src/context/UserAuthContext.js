@@ -21,7 +21,7 @@ export function UserAuthContextProvider({ children }) {
           email: 'admin@chytech.com.vn',
           password: 'admin123',
           roleId: 'admin',
-          statusId: 'active',
+          status: '1',
         },
       };
       localStorage.setItem('user', JSON.stringify(response.data));

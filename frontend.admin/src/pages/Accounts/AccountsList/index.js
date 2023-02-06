@@ -14,6 +14,7 @@ import '../../../styles/Component/label.scss';
 import '../../../styles/Component/table.scss';
 import CustomModal from '~/components/Modal';
 import { updateAccount } from '~/system/Constants/LinkURL';
+import { active, inactive } from '~/system/Constants/constants';
 
 const accountRoles = [
   {
@@ -32,11 +33,11 @@ const accountRoles = [
 
 const accountStatus = [
   {
-    id: 'active',
+    id: '1',
     name: 'Hoạt động',
   },
   {
-    id: 'inactive',
+    id: '0',
     name: 'Không hoạt động',
   },
 ];
@@ -50,7 +51,7 @@ const accountList = {
       email: 'admin@chytech.com.vn',
       password: 'admin123',
       roleId: 'admin',
-      statusId: 'active',
+      status: '1',
       phone: '0123123123',
     },
     {
@@ -59,7 +60,7 @@ const accountList = {
       email: 'staff@chytech.com.vn',
       password: 'staff123',
       roleId: 'staff',
-      statusId: 'active',
+      status: '1',
       phone: '0123123555',
     },
     {
@@ -68,7 +69,7 @@ const accountList = {
       email: 'linhtd@gmail.com.vn',
       password: 'linhtd123',
       roleId: 'customer',
-      statusId: 'active',
+      status: '1',
       phone: '0901565565',
     },
     {
@@ -77,7 +78,7 @@ const accountList = {
       email: 'kieuph@gmail.com.vn',
       password: 'kieuph123',
       roleId: 'customer',
-      statusId: 'inactive',
+      status: '0',
       phone: '0901789789',
     },
   ],
@@ -114,10 +115,10 @@ function ViewAccountsList() {
   }, [getAccountsList, pageIndex]);
 
   //Enable the Deactivate Button
-  const checkDisableButton = (email, statusId) => {
+  const checkDisableButton = (email, status) => {
     if (user.email === email) {
       return true;
-    } else if (statusId !== 'active') {
+    } else if (status !== active) {
       return true;
     } else {
       return false;
@@ -140,7 +141,7 @@ function ViewAccountsList() {
             variant="outline-danger"
             size="xs"
             disabled={
-              checkDisableButton(record.email, record.statusId) ? true : false
+              checkDisableButton(record.email, record.status) ? true : false
             }
             onClick={() => handleShowModal(record.id)}
           >
@@ -186,13 +187,13 @@ function ViewAccountsList() {
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'statusId',
-      key: 'statusId',
+      dataIndex: 'status',
+      key: 'status',
       width: 200,
       render: (text, record) => {
-        if (record.statusId === 'active') {
+        if (record.status === active) {
           return <span className="c-label c-label-success"> Hoạt động</span>;
-        } else if (record.statusId === 'inactive') {
+        } else if (record.status === inactive) {
           return (
             <span className="c-label c-label-danger"> Không hoạt động</span>
           );
@@ -220,7 +221,7 @@ function ViewAccountsList() {
   const deactivateAccountStatusById = async (accountById) => {
     try {
       // call api
-      accountById.statusId = 'inactive';
+      accountById.status = inactive;
 
       getAccountsList(pageIndex);
     } catch (e) {

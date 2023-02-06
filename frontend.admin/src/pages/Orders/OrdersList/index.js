@@ -60,7 +60,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Thái Đăng Linh',
       },
-      statusId: '2',
+      status: '2',
       orderDate: '2023-01-09',
       estimatedReceiveDate: '2023-01-12',
       totalPrice: '3600000',
@@ -70,7 +70,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Phùng Hữu Kiều',
       },
-      statusId: '2',
+      status: '2',
       orderDate: '2023-01-15',
       estimatedReceiveDate: '2023-01-18',
       totalPrice: '1500000',
@@ -80,7 +80,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Lương Bá Thành',
       },
-      statusId: '3',
+      status: '3',
       orderDate: '2023-01-12',
       estimatedReceiveDate: '2023-01-14',
       totalPrice: '2300000',
@@ -90,7 +90,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Trần Công Minh',
       },
-      statusId: '1',
+      status: '1',
       orderDate: '2023-02-06',
       estimatedReceiveDate: '2023-02-10',
       totalPrice: '3000000',
@@ -175,22 +175,22 @@ const OrdersList = () => {
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'statusId',
-      key: 'statusId',
+      dataIndex: 'status',
+      key: 'status',
       render: (text, record) => {
-        if (record.statusId === waiting) {
+        if (record.status === waiting) {
           return <span className="c-label c-label-waiting"> Chờ xác nhận</span>;
-        } else if (record.statusId === inProgress) {
+        } else if (record.status === inProgress) {
           return (
             <span className="c-label c-label-inprogress"> Đang xử lí</span>
           );
-        } else if (record.statusId === success) {
+        } else if (record.status === success) {
           return <span className="c-label c-label-success"> Thành công</span>;
-        } else if (record.statusId === denied) {
+        } else if (record.status === denied) {
           return <span className="c-label c-label-danger"> Đã từ chối</span>;
-        } else if (record.statusId === canceled) {
+        } else if (record.status === canceled) {
           return <span className="c-label c-label-danger"> Bị hủy</span>;
-        } else if (record.statusId === paidInAdvance) {
+        } else if (record.status === paidInAdvance) {
           return <span className="c-label c-label-inprogress"> Đã cọc</span>;
         }
       },

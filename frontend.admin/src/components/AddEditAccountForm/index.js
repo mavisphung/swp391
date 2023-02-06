@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import {
   emailPattern,
   fullNamePattern,
+  inactive,
   phonePattern,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
@@ -33,7 +34,7 @@ const userAccount = {
   password: 'linhtd123',
   dob: '1995-04-15',
   roleId: 'customer',
-  statusId: 'active',
+  status: '1',
   phone: '0901565565',
   address: '250 Nguyễn Thị Minh Khai',
   ward: '27139',
@@ -377,7 +378,7 @@ const AddEditAccountForm = () => {
             </Row>
 
             <div className="text-end">
-              {account.statusId === 'inactive' ? (
+              {account.status === inactive ? (
                 <></>
               ) : accountId ? (
                 account.roleId === 'customer' ? (
