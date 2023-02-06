@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿
 namespace Backend.Service.Entities
 {
-    public partial class Role
+    public partial class Role : BaseEntity
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; } = null!;
+
+        public ICollection<User> Users { get; set; }
     }
 }

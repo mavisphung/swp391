@@ -12,9 +12,9 @@ namespace Backend.Service.Repositories
 {
     public class UserRepository : GeneralRepository<User>, IUserRepository
     {
-        private readonly birdstoredatabaseContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         internal DbSet<User> _dbSet;
-        public UserRepository(birdstoredatabaseContext dbContext) : base(dbContext)
+        public UserRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<User>();
