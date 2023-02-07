@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Backend.Service.Consts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
 {
+    [Table("Products")]
     [Index(nameof(ProductCode), IsUnique = true)]
     public class Product : BaseEntity
     {
@@ -19,7 +21,7 @@ namespace Backend.Service.Entities
         // Đã thử bỏ cái này vào, vô dụng
         //[Required]
         //[MaxLength(25)]
-        public ProductStatus Status { get; set; } = ProductStatus.OutOfStock;
+        public ProductStatus Status { get; set; } = ProductStatus.Available;
 
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;

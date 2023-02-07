@@ -1,9 +1,10 @@
-﻿using Backend.Service.Consts;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Service.Consts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
 {
-
+    [Table("Payments")]
     [Index(nameof(PaymentCode), IsUnique = true)]
     public class Payment : BaseEntity
     {
