@@ -23,3 +23,7 @@ export const MSG21 = 'Mật khẩu mới phải khác với mật khẩu hiện 
 export const MSG22 = 'Nhập lại mật khẩu không được để trống';
 export const MSG23 = 'Nhập lại mật khẩu mới phải trùng khớp với mật khẩu mới';
 export const MSG24 = 'Xác nhận thay đổi mật khẩu?';
+export const MSG25 = 'Xác nhận chấp nhận đơn hàng';
+export const MSG26 = 'Chấp nhận đơn hàng thành công';
+export const MSG27 = 'Xác nhận từ chối đơn hàng';
+export const MSG28 = 'Từ chối đơn hàng thành công';

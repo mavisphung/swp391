@@ -22,7 +22,7 @@ function HeaderContent() {
     if (user && user.roleId === 'admin') {
       return (
         <>
-          <Space mode="horizontal">
+          <Space>
             <Row style={{ color: 'white' }}>Xin chào {user.name}</Row>
           </Space>
         </>

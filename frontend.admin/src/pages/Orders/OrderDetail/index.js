@@ -27,6 +27,9 @@ import {
 import CustomModal from '~/components/Modal';
 
 import '../OrdersList/OrdersList.scss';
+import { PROVINCEVN } from '~/system/Constants/provinceVN';
+import { disabledDateTime, disablePastDate } from '~/components/DateTime';
+import { MSG25, MSG27 } from '~/system/Messages/messages';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -91,6 +94,7 @@ const OrderDetail = () => {
   const [loading, setLoading] = useState(true);
   const [communeObj, setCommuneObj] = useState({});
   const [districtObj, setDistrictObj] = useState({});
+  const [provinceObj, setProvinceObj] = useState({});
   const [show, setShow] = useState(false);
   const [errorApprove, setErrorApprove] = useState(false);
   const [dateReceive, setDateReceive] = useState('');
@@ -131,6 +135,45 @@ const OrderDetail = () => {
     getProductListByOrderId();
   }, [getOrderDataByOrderId, getProductListByOrderId]);
 
+  // Render customer address
+  useEffect(() => {
+    setProvinceObj(
+      PROVINCEVN.province.find(
+        (province) =>
+          province.idProvince === customerOrder.customerAccount?.province,
+      ),
+    );
+  }, [customerOrder.customerAccount?.province]);
+
+  useEffect(() => {
+    const listDistrict = PROVINCEVN.district.filter(
+      (item) => item.idProvince === customerOrder.customerAccount?.province,
+    );
+    setDistrictObj(
+      listDistrict.find(
+        (district) =>
+          district.idDistrict === customerOrder.customerAccount?.district,
+      ),
+    );
+  }, [
+    customerOrder.customerAccount?.district,
+    customerOrder.customerAccount?.province,
+  ]);
+
+  useEffect(() => {
+    const listCommune = PROVINCEVN.commune.filter(
+      (item) => item.idDistrict === customerOrder.customerAccount?.district,
+    );
+    setCommuneObj(
+      listCommune.find(
+        (commune) => commune.idCommune === customerOrder.customerAccount?.ward,
+      ),
+    );
+  }, [
+    customerOrder.customerAccount?.district,
+    customerOrder.customerAccount?.ward,
+  ]);
+
   // Render Order Status
   const renderOrderStatus = () => {
     if (customerOrder.status === waiting) {
@@ -167,6 +210,12 @@ const OrderDetail = () => {
           </p>
           <p>
             <strong>Địa chỉ:</strong> {customerOrder.customerAccount?.address}
+            {', '}
+            {communeObj?.name}
+            {', '}
+            {districtObj?.name}
+            {', '}
+            {provinceObj?.name}
           </p>
         </>
       ),
@@ -287,7 +336,7 @@ const OrderDetail = () => {
       };
       // call api deny
       handleCloseDeny();
-      // getCustomerOrderDataByOrderId();
+      getOrderDataByOrderId();
     } catch (error) {
       console.log(error);
     }
@@ -323,11 +372,11 @@ const OrderDetail = () => {
       const order = {
         id: orderId,
         estimatedReceiveDate: estimatedReceiveDate,
-        managerAccountId: user.id,
+        staffAccountId: user.id,
       };
       // call api approve
       handleClose();
-      // getCustomerOrderDataByOrderId();
+      getOrderDataByOrderId();
     } catch (error) {
       console.log(error);
     }
@@ -455,7 +504,7 @@ const OrderDetail = () => {
               </Button>
             </Col>
             <Col>
-              <Button type="danger" onClick={() => handleShowDeny()}>
+              <Button danger onClick={() => handleShowDeny()}>
                 Từ chối
               </Button>
             </Col>
@@ -480,7 +529,12 @@ const OrderDetail = () => {
         onCancel={handleClose}
         footer={
           <>
-            <Button type="danger" onClick={handleClose} className="mx-2">
+            <Button
+              type="primary"
+              danger
+              onClick={handleClose}
+              className="mx-2"
+            >
               Hủy
             </Button>
             <Button type="primary" onClick={() => handleApproveOrder()}>
@@ -489,14 +543,15 @@ const OrderDetail = () => {
           </>
         }
       >
-        {'MSG95' + ' ' + orderId}
-        <Form.Group>
+        <hr />
+        {MSG25 + ' ' + orderId}
+        <Form.Group style={{ fontSize: '1rem' }}>
           <Form.Label>Chọn ngày và giờ dự kiến giao:</Form.Label>
           <Space direction="horizontal">
             <Form.Control
               type="date"
               value={dateReceive}
-              // min={disablePastDate()}
+              min={disablePastDate()}
               // max={disableFutureDate()}
               onChange={handleDate}
               style={{ width: '250px' }}
@@ -506,7 +561,7 @@ const OrderDetail = () => {
               placeholder="HH:mm"
               format="HH:mm"
               allowClear
-              // disabledTime={disabledDateTime}
+              disabledTime={disabledDateTime}
               onChange={(time, timeString) => {
                 setTimeReceive(timeString);
                 setErrorApprove(false);
@@ -514,6 +569,8 @@ const OrderDetail = () => {
             />
           </Space>
         </Form.Group>
+        <br />
+        <hr />
         {errorApprove && (
           <Alert
             banner
@@ -529,7 +586,7 @@ const OrderDetail = () => {
         title="Từ chối đơn hàng"
         body={
           <>
-            {'MSG97' + ' ' + orderId}
+            {MSG27 + ' ' + orderId}
             <br />
             <br />
             <Form.Group className="mb-3">
