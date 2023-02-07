@@ -20,7 +20,7 @@ namespace Backend.Service.Services
             Id = Guid.NewGuid();
         }
 
-        public IEnumerable<User> GetAll(PagingParameter pagingParameter)
+        public IEnumerable<User> GetAll(FilterParameter pagingParameter)
         {
             IEnumerable<User> query = _userRepository.GetAll();
             return PagedList<User>.ToPagedList(
@@ -29,7 +29,7 @@ namespace Backend.Service.Services
                 pagingParameter.PageSize);
         }
 
-        public async Task<PagedList<User>> GetAllAsync(PagingParameter pagingParameter)
+        public async Task<PagedList<User>> GetAllAsync(FilterParameter pagingParameter)
         {
             IEnumerable<User> query = await _userRepository.GetAllAsync();
 

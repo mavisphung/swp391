@@ -1,8 +1,10 @@
-﻿using Backend.Service.Models.Response.Users;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Service.Models.Response.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
 {
+    [Table("Users")]
 
     [Index(nameof(Email), IsUnique = true)]
     public partial class User : BaseEntity

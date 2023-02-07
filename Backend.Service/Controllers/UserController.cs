@@ -22,7 +22,7 @@ namespace Backend.Service.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] PagingParameter pagingParam)
+        public async Task<IActionResult> GetAll([FromQuery] FilterParameter pagingParam)
         {
             Console.WriteLine($"Page: {pagingParam.PageNumber} \nPage Size: {pagingParam.PageSize}");
             var pagedList = await _userService.GetAllAsync(pagingParam);
@@ -48,6 +48,5 @@ namespace Backend.Service.Controllers
         //    var user = _userService.GetUserById(id);
         //    return Ok(user?.ToData());
         //}
-
     }
 }

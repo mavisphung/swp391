@@ -3,18 +3,19 @@ using System;
 using Backend.Service.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using NpgsqlTypes;
 
 #nullable disable
 
 namespace Backend.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230204090710_AddPayment")]
+    partial class AddPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +52,6 @@ namespace Backend.Service.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<NpgsqlTsVector>("SearchVector")
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("tsvector")
-                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
-                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name", "Description" });
-
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasColumnType("text");
@@ -67,11 +61,7 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SearchVector");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
-
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Order", b =>
@@ -130,7 +120,7 @@ namespace Backend.Service.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.OrderDetail", b =>
@@ -181,7 +171,7 @@ namespace Backend.Service.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetail", (string)null);
+                    b.ToTable("OrderDetail");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Payment", b =>
@@ -226,7 +216,7 @@ namespace Backend.Service.Migrations
                     b.HasIndex("PaymentCode")
                         .IsUnique();
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Product", b =>
@@ -290,7 +280,7 @@ namespace Backend.Service.Migrations
                     b.HasIndex("ProductCode")
                         .IsUnique();
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Role", b =>
@@ -324,7 +314,7 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.ShippingAddress", b =>
@@ -384,7 +374,7 @@ namespace Backend.Service.Migrations
                     b.HasIndex("Email", "PhoneNumber")
                         .IsUnique();
 
-                    b.ToTable("ShippingAddresses", (string)null);
+                    b.ToTable("ShippingAddresses");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.User", b =>
@@ -447,7 +437,7 @@ namespace Backend.Service.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Order", b =>

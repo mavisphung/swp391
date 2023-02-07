@@ -14,7 +14,7 @@ namespace Backend.Service.Entities
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
-
+        public virtual DbSet<Payment> Payments { get; set; }
         // Needed for Add-Migration command
         public ApplicationDbContext() { }
 
@@ -35,7 +35,17 @@ namespace Backend.Service.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.GenerateRoles();
+            //modelBuilder.GenerateRoles();
+
+            // FTS for category
+            modelBuilder.Entity<Category>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",  // Text search config
+                    p => new { p.Name })  // Included properties
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN"); // Index method on the search vector (GIN or GIST)
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -50,11 +60,11 @@ namespace Backend.Service.Entities
 
             foreach (var entityEntry in entries)
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.UtcNow;
                 }
             }
 
@@ -65,11 +75,11 @@ namespace Backend.Service.Entities
         {
             return await Task.Run(() => 
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.UtcNow;
                 }
                 return entityEntry;
             });

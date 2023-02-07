@@ -25,7 +25,6 @@ namespace Backend.Service.Helper.GlobalErrorHanding
 
         public ErrorResponse HandleNotFound(Exception exception)
         {
-
             _Logging(exception);
             var exc = (NotFoundException)exception;
             return new ErrorResponse 
@@ -36,7 +35,7 @@ namespace Backend.Service.Helper.GlobalErrorHanding
             };
         }
 
-        public ErrorResponse HandleInternalServer(Exception exception)
+        public ErrorResponse HandleBaseException(Exception exception)
         {
             _Logging(exception);
             var exc = (BaseException)exception;
@@ -45,6 +44,17 @@ namespace Backend.Service.Helper.GlobalErrorHanding
                 HttpStatus = exc.HttpStatus,
                 ErrorCode = (int)exc.HttpStatus,
                 Message = exc.ErrorMessage
+            };
+        }
+
+        public ErrorResponse HandleInternalServer(Exception exception)
+        {
+            _Logging(exception);
+            return new ErrorResponse
+            {
+                HttpStatus = HttpStatusCode.InternalServerError,
+                ErrorCode = (int)HttpStatusCode.InternalServerError,
+                Message = exception.Message
             };
         }
     }

@@ -1,5 +1,8 @@
-﻿namespace Backend.Service.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Backend.Service.Entities
 {
+    [Table("OrderDetail")]
     public class OrderDetail : BaseEntity
     {
         public int Quantity { get; set; }

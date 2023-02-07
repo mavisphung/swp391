@@ -26,6 +26,10 @@ namespace Backend.Service.Consts
         FIREBASE_TOKEN_NOT_FOUND = 6,
 
         NOT_FOUND = 7,
+
+        INVALID_INPUT = 8,
+        CATEGORY_NOT_FOUND,
+        PRODUCT_NOT_FOUND,
     }
 
     public static class EnumStringMessage

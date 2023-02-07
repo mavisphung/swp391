@@ -11,5 +11,11 @@ namespace Backend.Service.Exceptions
             StatusCode = (int)BaseError.NOT_FOUND;
             HttpStatus = HttpStatusCode.NotFound;
         }
+
+        public NotFoundException(string message) : base(message)
+        {
+            HttpStatus = HttpStatusCode.NotFound;
+            StatusCode = (int)HttpStatusCode.NotFound;
+        }
     }
 }

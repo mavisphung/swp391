@@ -31,14 +31,21 @@ namespace Backend.Service.Repositories.IRepositories
             Expression<Func<T, bool>> filter = null,
             string includeProperties = null
             );
+
+        // Add object
         void Add(T entity);
+        Task AddAsync(T entity);
+
         //Remove theo Id
         void Remove(String id);
         void Remove(int id);
+
         //Update theo entity
         void Update(T entity);
+
         //Remove theo entity
         void Remove(T entity);
+
         //Remove một chuỗi entity
         void RemoveRange(IEnumerable<T> entity);
 

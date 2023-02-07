@@ -8,6 +8,7 @@ namespace Backend.Service.Extensions
 
         public static void GenerateRoles(this ModelBuilder modelBuilder)
         {
+            // Add role if role does not exist in db
             modelBuilder.Entity<Role>().HasData(
                 new Role
                 {
@@ -31,6 +32,7 @@ namespace Backend.Service.Extensions
                 }
             );
 
+            // Add admin user
             modelBuilder.Entity<User>().HasData(
                 new User
                 {

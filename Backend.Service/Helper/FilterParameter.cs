@@ -1,6 +1,6 @@
 ﻿namespace Backend.Service.Helper
 {
-    public class PagingParameter
+    public class FilterParameter
     {
         const int maxPageSize = 100;
         public int PageNumber { get; set; } = 1;
@@ -16,5 +16,7 @@
                 _pageSize = (value > maxPageSize) ? maxPageSize : value;
             }
         }
+
+        public string? Search { get; set; } = String.Empty;
     }
 }
