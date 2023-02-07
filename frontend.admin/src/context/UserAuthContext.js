@@ -17,11 +17,12 @@ export function UserAuthContextProvider({ children }) {
       const response = {
         type: 'get',
         data: {
-          name: 'Bao Khang',
+          id: 'U0001',
+          name: 'Bảo Khang',
           email: 'admin@chytech.com.vn',
           password: 'admin123',
           roleId: 'admin',
-          statusId: 'active',
+          status: '1',
         },
       };
       localStorage.setItem('user', JSON.stringify(response.data));

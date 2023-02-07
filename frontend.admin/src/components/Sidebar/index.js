@@ -6,12 +6,16 @@ import {
   faClipboardList,
   faFeatherPointed,
   faStore,
+  faUser,
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import {
+  accountProfile,
+  addAccount,
+  changePassword,
   home,
   viewAccountsList,
   viewOrdersList,
@@ -79,7 +83,7 @@ function Sidebar() {
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Link to={``}>Tạo tài khoản</Link>
+                <Link to={`${pathname}/${addAccount}`}>Tạo tài khoản</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
@@ -104,6 +108,22 @@ function Sidebar() {
             <Link to={`${pathname}/${viewStatistics}`}>Thống kê</Link>
           </Menu.Item>
           <Menu.Divider />
+          <SubMenu
+            key="sub4"
+            title="Thông tin"
+            icon={<FontAwesomeIcon icon={faUser} />}
+          >
+            <MenuItemGroup>
+              <Menu.Item key="8">
+                <Link to={`${pathname}/${accountProfile}`}>Hồ sơ</Link>
+              </Menu.Item>
+              <Menu.Item key="10">
+                <Link to={`${pathname}/${changePassword}`}>
+                  Thay đổi mật khẩu
+                </Link>
+              </Menu.Item>
+            </MenuItemGroup>
+          </SubMenu>
           <Menu.Item
             key="9"
             icon={
@@ -112,7 +132,6 @@ function Sidebar() {
                 icon={faArrowRightFromBracket}
               />
             }
-            onClick={() => handleLogOut()}
           >
             <Button type="link" onClick={() => handleLogOut()} danger>
               Log Out

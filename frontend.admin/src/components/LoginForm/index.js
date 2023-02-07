@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
+  active,
   emailPattern,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
@@ -30,7 +31,7 @@ const LoginForm = () => {
         const user = await loginEmailAndPassword(email, password);
         if (
           (user.roleId !== 'admin' || user.roleId !== 'staff') &&
-          user.statusId === 'active'
+          user.status === active
         ) {
           setTimeout(
             () =>
