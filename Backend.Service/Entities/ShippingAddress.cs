@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
 {
+    [Table("ShippingAddresses")]
     // Unique constraint
     [Index(nameof(Email), nameof(PhoneNumber), IsUnique = true)]
     public class ShippingAddress : BaseEntity

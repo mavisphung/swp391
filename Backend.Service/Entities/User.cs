@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Service.Models.Response.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
 {
+    [Table("Users")]
 
     [Index(nameof(Email), IsUnique = true)]
     public partial class User : BaseEntity
@@ -24,5 +24,10 @@ namespace Backend.Service.Entities
 
         // One to Many
         public ICollection<ShippingAddress> ShippingAddresses { get; set; }
+
+        public UserModel ToData()
+        {
+            return new UserModel(this);
+        }
     }
 }

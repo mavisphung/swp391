@@ -1,7 +1,9 @@
-﻿using Backend.Service.Consts;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Service.Consts;
 
 namespace Backend.Service.Entities
 {
+    [Table("Orders")]
     public class Order : BaseEntity
     {
         public double TotalPrice { get; set; }

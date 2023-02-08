@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 
 #nullable disable
 
@@ -50,6 +51,13 @@ namespace Backend.Service.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name", "Description" });
+
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasColumnType("text");
@@ -59,7 +67,11 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
+
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Order", b =>
@@ -118,7 +130,7 @@ namespace Backend.Service.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.OrderDetail", b =>
@@ -169,7 +181,52 @@ namespace Backend.Service.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetail");
+                    b.ToTable("OrderDetail", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Service.Entities.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("PaidDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PaymentCode")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentCode")
+                        .IsUnique();
+
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Product", b =>
@@ -233,7 +290,7 @@ namespace Backend.Service.Migrations
                     b.HasIndex("ProductCode")
                         .IsUnique();
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Role", b =>
@@ -267,49 +324,7 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6667),
-                            IsDeleted = false,
-                            Name = "Admin",
-                            UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6665)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6669),
-                            IsDeleted = false,
-                            Name = "Staff",
-                            UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6669)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6670),
-                            IsDeleted = false,
-                            Name = "Customer",
-                            UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6670)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6671),
-                            IsDeleted = false,
-                            Name = "Guest",
-                            UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6671)
-                        });
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.ShippingAddress", b =>
@@ -369,7 +384,7 @@ namespace Backend.Service.Migrations
                     b.HasIndex("Email", "PhoneNumber")
                         .IsUnique();
 
-                    b.ToTable("ShippingAddresses");
+                    b.ToTable("ShippingAddresses", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.User", b =>
@@ -432,25 +447,7 @@ namespace Backend.Service.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AddedBy = "System",
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6762),
-                            Email = "admin@chystore.vn",
-                            Fullname = "Admin Chystore",
-                            Gender = false,
-                            IsDeleted = false,
-                            Password = "MTIzNDU2",
-                            Phone = "0123456789",
-                            RoleId = 1,
-                            Status = true,
-                            UpdatedBy = "System",
-                            UpdatedDate = new DateTime(2023, 2, 1, 1, 24, 59, 655, DateTimeKind.Utc).AddTicks(6762)
-                        });
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Order", b =>
