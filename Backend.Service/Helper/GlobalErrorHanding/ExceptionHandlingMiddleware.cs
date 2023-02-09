@@ -13,7 +13,7 @@ namespace Backend.Service.Helper.GlobalErrorHanding
     {
         private readonly RequestDelegate _next;
         private readonly ExceptionHandler _handler;
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private Dictionary<string, Func<Exception, ErrorResponse>> _cachedException;
 
         public ExceptionHandlingMiddleware(
@@ -23,7 +23,7 @@ namespace Backend.Service.Helper.GlobalErrorHanding
         {
             _next = next;
             _handler = handler;
-            _context = new ApplicationDbContext();
+            //_context = new ApplicationDbContext();
             // Add exception here
             _cachedException = new Dictionary<string, Func<Exception, ErrorResponse>>
             {
@@ -36,23 +36,23 @@ namespace Backend.Service.Helper.GlobalErrorHanding
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            //using var transaction = _context.Database.BeginTransaction();
             try
             {
                 await _next(httpContext);
-                await transaction.CommitAsync();
+                //await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
                 await Task.WhenAll(
-                    transaction.RollbackAsync(),
+                    //transaction.RollbackAsync(),
                     HandleExceptionAsync(httpContext, ex));
                 //await transaction.RollbackAsync();
                 //await HandleExceptionAsync(httpContext, ex);
             }
         }
 
-         
+        
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";

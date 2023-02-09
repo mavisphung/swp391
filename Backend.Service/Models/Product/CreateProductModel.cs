@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using Backend.Service.Annotations;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
 
@@ -12,6 +13,8 @@ namespace Backend.Service.Models.Product
         [MaxLength(256)]
         public string Name { get; set; } = null!;
 
+
+        [AllUriValidator(ErrorMessage = "This field is invalid")]
         public IEnumerable<string>? Images { get; set; } = null!;
         public string? Description { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
@@ -7,6 +8,8 @@ using Backend.Service.Helper;
 using Backend.Service.Models.Product;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Services
 {
@@ -22,16 +25,28 @@ namespace Backend.Service.Services
             _logger = logger;
         }
 
-        public async Task<PagedList<ProductResponseModel>> GetAllAsync(FilterParameter pagingParameter)
+        public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
         {
+            var predicate = PredicateBuilder.New<Product>().And(product => !product.IsDeleted);
+
+            if (filter.CategoryId.GetValueOrDefault() != 0)
+            {
+                predicate = predicate.And(product => product.CategoryId == filter.CategoryId);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Search))
+            {
+                predicate = predicate.And(product => product.SearchVector.Matches(filter.Search));
+            }
+
             IEnumerable<Product> query = await _productRepository.GetAllAsync(
-                filter: p => !p.IsDeleted,
+                filter: predicate,
                 includeProperties: "Category");
 
             return PagedList<ProductResponseModel>.ToPagedList(
                 query.AsQueryable().OrderBy(u => u.Id).Select(entity => new ProductResponseModel(entity)),
-                pagingParameter.PageNumber,
-                pagingParameter.PageSize);
+                filter.PageNumber,
+                filter.PageSize);
         }
 
         internal async Task<ProductResponseModel> AddAsync(CreateProductModel model)
@@ -72,6 +87,7 @@ namespace Backend.Service.Services
             await _productRepository.SaveDbChangeAsync();
         }
 
+        [Transactional]
         internal async Task<ProductResponseModel> UpdateProduct(int id, UpdateProductModel model)
         {
             var found = await _productRepository.GetAsync(id);
@@ -80,26 +96,24 @@ namespace Backend.Service.Services
 
             foreach (PropertyInfo prop in props)
             {
-                Console.WriteLine($"{prop.Name}: {prop.GetValue(model)}");
-                Console.WriteLine($"{prop.GetValue(model) is double}");
                 object? value = prop.GetValue(model);
                 bool isMatched = found.GetType().GetProperties().Where(pi => pi.Name == prop.Name).Any();
-                if (isMatched)
+                
+                if (!isMatched || value == null) continue;
+                
+                if (prop.Name.Equals("Images"))
                 {
-                    if (prop.Name.Equals("Images"))
-                    {
-                        found.GetType().GetProperty("Images")?.SetValue(found, StringExtension.ToImages((IEnumerable<string>)value));
-                    } else
-                    {
-                        found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
-                    }
+                    found.GetType().GetProperty("Images")?.SetValue(found, StringExtension.ToImages((IEnumerable<string>)value));
+                }
+                else
+                {
+                    found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
                 }
             }
             
-            _productRepository.Update(found);
-            await _productRepository.SaveDbChangeAsync();
+            //_productRepository.Update(found);
+            //await _productRepository.SaveDbChangeAsync();
             _logger.LogInformation($"Updated product {id} successfully");
-            _logger.LogInformation($"New Category: {found.Category.Id}");
             return new ProductResponseModel(found);
         }
     }

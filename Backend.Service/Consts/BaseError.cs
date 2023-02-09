@@ -30,6 +30,7 @@ namespace Backend.Service.Consts
         INVALID_INPUT = 8,
         CATEGORY_NOT_FOUND,
         PRODUCT_NOT_FOUND,
+        BANNER_NOT_FOUND,
     }
 
     public static class EnumStringMessage

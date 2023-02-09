@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Backend.Service.Consts;
 using Microsoft.EntityFrameworkCore;
+using NpgsqlTypes;
 
 namespace Backend.Service.Entities
 {
@@ -26,9 +27,12 @@ namespace Backend.Service.Entities
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
 
+        // FTS
+        public NpgsqlTsVector SearchVector { get; set; }
+
         #region One to many relationships
 
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         #endregion
     }
 }

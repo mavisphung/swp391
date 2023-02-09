@@ -32,17 +32,16 @@ namespace Backend.Service.Controllers
         // GET: api/<ProductController>
         [HttpGet]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Get([FromQuery] FilterParameter pagingParameter)
+        public async Task<IActionResult> Get([FromQuery] ProductFilterParameter pagingParameter)
         {
-            _logger.LogInformation("Get method invoked...");
+            _logger.LogInformation("Get all product invoked...");
             var data = await _productService.GetAllAsync(pagingParameter);
             return Ok(data);
 
         }
 
-
         /// <summary>
-        ///     Get the fuking product with its id
+        /// Đừng ai nhắc dến em một lời
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -95,6 +94,12 @@ namespace Backend.Service.Controllers
             return Accepted(responseModel);
         }
 
+
+        /// <summary>
+        /// Remove a product by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE api/<ProductController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

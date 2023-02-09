@@ -8,13 +8,18 @@ namespace Backend.Service.Entities
     public partial class ApplicationDbContext : DbContext
     {
 
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; }
-        public virtual DbSet<Order> Orders { get; set; }
-        public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<Role> Roles { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Category> Categories { get; set; } = null!;
+        public virtual DbSet<Product> Products { get; set; } = null!;
+        public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = null!;
+        public virtual DbSet<Payment> Payments { get; set; } = null!;
+        public virtual DbSet<Banner> Banners { get; set; } = null!;
+        public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
+        public virtual DbSet<Cart> Carts { get; set; } = null!;
+        public virtual DbSet<CartItem> CartItems { get; set; } = null!;
+
         // Needed for Add-Migration command
         public ApplicationDbContext() { }
 
@@ -45,6 +50,24 @@ namespace Backend.Service.Entities
                     p => new { p.Name })  // Included properties
                 .HasIndex(p => p.SearchVector)
                 .HasMethod("GIN"); // Index method on the search vector (GIN or GIST)
+
+            // FTS for product
+            modelBuilder.Entity<Product>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",
+                    p => new { p.Name })
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN");
+
+            // FTS for banner
+            modelBuilder.Entity<Banner>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",
+                    p => new { p.Name })
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN");
 
             base.OnModelCreating(modelBuilder);
         }
