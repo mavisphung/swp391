@@ -14,6 +14,8 @@ export const changePassword = 'change-password';
 export const viewAccountsList = 'accounts-list';
 export const addAccount = 'add-account';
 export const updateAccount = 'update-account';
+export const viewCategoriesList = 'categories-list';
+export const addCategory = 'add-category';
 
 // Params in URL
 export const accountId = ':accountId';

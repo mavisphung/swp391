@@ -2,10 +2,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 import {
   faArrowRightFromBracket,
-  faBarChart,
   faClipboardList,
   faFeatherPointed,
+  faSquarePollVertical,
   faStore,
+  faTableCellsLarge,
   faUser,
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +19,7 @@ import {
   changePassword,
   home,
   viewAccountsList,
+  viewCategoriesList,
   viewOrdersList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
@@ -71,6 +73,9 @@ function Sidebar() {
           <Menu.Item key="1" icon={<FontAwesomeIcon icon={faStore} />}>
             <Link to={`${pathname}`}>Cửa hàng</Link>
           </Menu.Item>
+          <Menu.Item key="6" icon={<FontAwesomeIcon icon={faClipboardList} />}>
+            <Link to={`${pathname}/${viewOrdersList}`}>Đơn hàng</Link>
+          </Menu.Item>
           <SubMenu
             key="sub1"
             title="Tài khoản"
@@ -101,10 +106,26 @@ function Sidebar() {
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
-          <Menu.Item key="6" icon={<FontAwesomeIcon icon={faClipboardList} />}>
-            <Link to={`${pathname}/${viewOrdersList}`}>Đơn hàng</Link>
-          </Menu.Item>
-          <Menu.Item key="7" icon={<FontAwesomeIcon icon={faBarChart} />}>
+          <SubMenu
+            key="sub3"
+            title="Loại sản phẩm"
+            icon={<FontAwesomeIcon icon={faTableCellsLarge} />}
+          >
+            <MenuItemGroup>
+              <Menu.Item key="11">
+                <Link to={`${pathname}/${viewCategoriesList}`}>
+                  Danh sách loại hàng
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="12">
+                <Link to={``}>Tạo loại hàng</Link>
+              </Menu.Item>
+            </MenuItemGroup>
+          </SubMenu>
+          <Menu.Item
+            key="7"
+            icon={<FontAwesomeIcon icon={faSquarePollVertical} />}
+          >
             <Link to={`${pathname}/${viewStatistics}`}>Thống kê</Link>
           </Menu.Item>
           <Menu.Divider />
@@ -130,6 +151,7 @@ function Sidebar() {
               <FontAwesomeIcon
                 className="c-logout-icon"
                 icon={faArrowRightFromBracket}
+                style={{ color: '#ff4d4f' }}
               />
             }
           >

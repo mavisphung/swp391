@@ -6,6 +6,7 @@ import OrdersList from '~/pages/Orders/OrdersList';
 import OrderDetail from '../Orders/OrderDetail';
 import Statistics from '../Statistics';
 import ViewAccountsList from '../Accounts/AccountsList';
+import CategoriesList from '../Categories/CategoriesList';
 import AddEditAccount from '../Accounts/AddEditAccount';
 import AccountProfile from '../Accounts/AccountProfile';
 import Sidebar from '~/components/Sidebar';
@@ -19,6 +20,7 @@ import {
   orderId,
   updateAccount,
   viewAccountsList,
+  viewCategoriesList,
   viewOrderDetail,
   viewOrdersList,
   viewStatistics,
@@ -64,6 +66,10 @@ function Dashboard() {
             <Route
               path={`${viewOrdersList}/${viewOrderDetail}/${orderId}`}
               element={<OrderDetail />}
+            />
+            <Route
+              path={`${viewCategoriesList}`}
+              element={<CategoriesList />}
             />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
