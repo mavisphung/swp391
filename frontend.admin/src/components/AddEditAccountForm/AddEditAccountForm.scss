@@ -1,0 +1,30 @@
+.account-image-file {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 25%;
+  height: 100%;
+}
+
+.account-image-file-content {
+  justify-content: center;
+  display: flex;
+  margin-top: 2rem !important;
+}
+
+.account-image-file-content button {
+  margin-right: 1.5rem;
+}
+
+.account-image-file-input {
+  width: 30% !important;
+  margin-right: 2rem;
+}
+
+.account-image-invalid {
+  width: 15% !important;
+}
+
+.align-items-center {
+  display: flex;
+  justify-content: center;
+}
