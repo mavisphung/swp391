@@ -170,6 +170,17 @@ const AddEditAccountForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      setValidated(true);
+    } else if (
+      fullNamePattern.test(fullName) &&
+      emailPattern.test(email) &&
+      phonePattern.test(phone) &&
+      emailIsExisted === false
+    ) {
+      handleShow();
+    }
   };
 
   const handleSubmitSuccess = () => {};

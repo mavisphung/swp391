@@ -16,6 +16,7 @@ import { useState } from 'react';
 import {
   accountProfile,
   addAccount,
+  addCategory,
   changePassword,
   home,
   viewAccountsList,
@@ -108,7 +109,7 @@ function Sidebar() {
           </SubMenu>
           <SubMenu
             key="sub3"
-            title="Loại sản phẩm"
+            title="Loại hàng"
             icon={<FontAwesomeIcon icon={faTableCellsLarge} />}
           >
             <MenuItemGroup>
@@ -118,7 +119,7 @@ function Sidebar() {
                 </Link>
               </Menu.Item>
               <Menu.Item key="12">
-                <Link to={``}>Tạo loại hàng</Link>
+                <Link to={`${pathname}/${addCategory}`}>Tạo loại hàng</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
