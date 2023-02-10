@@ -4,11 +4,14 @@ import { Card, Input, Row, Space, Table } from 'antd';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment/moment';
 
 import CustomTooltip from '~/ui/CustomTooltip';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
   canceled,
+  dateConvert,
+  defaultDatePickerRange,
   denied,
   inProgress,
   paidInAdvance,
@@ -156,11 +159,21 @@ const OrdersList = () => {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
       key: 'orderDate',
+      render: (text, record) => {
+        return moment(record.orderDate, dateConvert).format(
+          defaultDatePickerRange,
+        );
+      },
     },
     {
       title: 'Ngày dự kiến giao',
       dataIndex: 'estimatedReceiveDate',
       key: 'estimatedReceiveDate',
+      render: (text, record) => {
+        return moment(record.estimatedReceiveDate, dateConvert).format(
+          defaultDatePickerRange,
+        );
+      },
     },
     {
       title: 'Tổng tiền',

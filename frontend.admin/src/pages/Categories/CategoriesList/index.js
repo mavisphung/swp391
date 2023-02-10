@@ -8,6 +8,11 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import categoriesListData from './categoryData.json';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { MSG07 } from '~/system/Messages/messages';
+import moment from 'moment';
+import {
+  dateConvert,
+  defaultDatePickerRange,
+} from '~/system/Constants/constants';
 
 const CategoriesList = () => {
   const { pathname } = useLocation();
@@ -72,6 +77,11 @@ const CategoriesList = () => {
       title: 'Ngày cập nhật',
       dataIndex: 'UpdatedDate',
       key: 'UpdatedDate',
+      render: (text, record) => {
+        return moment(record.UpdatedDate, dateConvert).format(
+          defaultDatePickerRange,
+        );
+      },
     },
     {
       title: 'Người cập nhật',

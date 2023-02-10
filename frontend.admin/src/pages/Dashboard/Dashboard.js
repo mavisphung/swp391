@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Layout } from 'antd';
 
 import Store from '~/pages/Store/Store';
@@ -17,6 +17,7 @@ import {
   accountProfile,
   addAccount,
   changePassword,
+  login,
   orderId,
   updateAccount,
   viewAccountsList,
@@ -27,11 +28,24 @@ import {
 } from '~/system/Constants/LinkURL';
 import './Dashboard.scss';
 import ChangePassword from '../Accounts/ChangePassword';
+import { useUserAuth } from '~/context/UserAuthContext';
+import { useEffect } from 'react';
 
 const { Content } = Layout;
 
 function Dashboard() {
-  const user = { name: 'Admin', roleId: 'admin' };
+  //Get current user
+  const { getCurrentUser } = useUserAuth();
+  const user = getCurrentUser();
+
+  let navigate = useNavigate();
+
+  // Unauthen access prohibit
+  useEffect(() => {
+    if (!user) {
+      navigate(`/${login}`);
+    }
+  }, [user, navigate]);
 
   const renderRoutes = () => {
     if (user) {
@@ -82,10 +96,6 @@ function Dashboard() {
   };
 
   return (
-    // <DefaultLayout>
-    //   <Content>{renderRoutes()}</Content>
-    // </DefaultLayout>
-
     <>
       <Layout
         style={{

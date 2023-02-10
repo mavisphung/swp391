@@ -17,3 +17,8 @@ export const waiting = '2';
 export const inProgress = '3';
 export const denied = '4';
 export const canceled = '5';
+
+//Date format
+export const defaultDBDateFormatter = 'DD-MM-YYYY HH:mm';
+export const dateConvert = 'YYYY-MM-DD';
+export const defaultDatePickerRange = 'DD/MM/YYYY';
