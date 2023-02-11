@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Backend.Service.Models.Login
+namespace Backend.Service.Models.Request
 {
     public class LoginRequestModel
     {
