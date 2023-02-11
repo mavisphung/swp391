@@ -19,6 +19,7 @@ namespace Backend.Service.Entities
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Cart> Carts { get; set; } = null!;
         public virtual DbSet<CartItem> CartItems { get; set; } = null!;
+        public virtual DbSet<Feedback> FeedBacks { get; set; } = null!;
 
         // Needed for Add-Migration command
         public ApplicationDbContext() { }

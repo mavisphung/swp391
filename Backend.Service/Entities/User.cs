@@ -25,8 +25,11 @@ namespace Backend.Service.Entities
         // One to Many
         public virtual ICollection<ShippingAddress> ShippingAddresses { get; set; }
 
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
         // One to one or zero relationship
         public virtual Cart? Cart { get; set; }
+
+
 
         public UserModel ToData()
         {

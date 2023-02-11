@@ -2,6 +2,7 @@
 using System.Reflection;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
+using Backend.Service.Entities.Poco;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
@@ -58,7 +59,7 @@ namespace Backend.Service.Services
                 Price = model.Price,
                 Quantity = model.Quantity,
                 ImportQuantity = model.Quantity,
-                Images = StringExtension.ToImages(model.Images ?? new List<string>()),
+                Medias = model.Medias ?? new List<Media>(),
                 CategoryId = model.CategoryId,
             };
 

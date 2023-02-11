@@ -1,4 +1,5 @@
 ﻿using Backend.Service.Consts;
+using Backend.Service.Entities.Poco;
 
 namespace Backend.Service.Models.Product
 {
@@ -6,7 +7,7 @@ namespace Backend.Service.Models.Product
     {
         public string Name { get; set; } = null!;
         public Guid ProductCode { get; set; }
-        public IEnumerable<string> Images { get; set; } = null!;
+        public ICollection<Media> Medias { get; set; } = new List<Media>();
         public string? Description { get; set; }
 
         public double Price { get; set; } = 0.0;
@@ -25,7 +26,7 @@ namespace Backend.Service.Models.Product
         {
             Name = entity.Name;
             ProductCode = entity.ProductCode;
-            Images = entity.Images.Split(',');
+            Medias = entity.Medias;
             Description = entity.Description;
             Price = entity.Price;
             Quantity = entity.Quantity;
