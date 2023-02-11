@@ -20,23 +20,38 @@ namespace Backend.Service.Repositories.IRepositories
             string includeProperties = null
             );
 
+        Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = null
+            );
+
         //Get thằng đầu tiên thấy có filter, incldueProperties
         T GetFirstOrDefault(
             Expression<Func<T, bool>> filter = null,
             string includeProperties = null
             );
+
+        // Add object
         void Add(T entity);
+        Task AddAsync(T entity);
+
         //Remove theo Id
         void Remove(String id);
         void Remove(int id);
+
         //Update theo entity
         void Update(T entity);
+
         //Remove theo entity
         void Remove(T entity);
+
         //Remove một chuỗi entity
         void RemoveRange(IEnumerable<T> entity);
 
         int Count();
         bool SaveDbChange();
+
+        Task<bool> SaveDbChangeAsync();
     }
 }

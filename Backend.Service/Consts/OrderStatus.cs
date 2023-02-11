@@ -7,5 +7,7 @@ namespace Backend.Service.Consts
         PaidInAdvance,      // 1
         Pending,            // 2
         Unpaid,             // 3
+        Denied,             // 4
+        Cancelled,          // 5
     }
 }
