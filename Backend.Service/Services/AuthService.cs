@@ -11,11 +11,12 @@ using System.IdentityModel.Tokens.Jwt;
 using FirebaseAdmin;
 using Backend.Service.Entities;
 using System.Security.Cryptography;
-using Backend.Service.Models.Login;
+using Backend.Service.Models.Response;
 using Backend.Service.Repositories.IRepositories;
 using Backend.Service.Consts;
 using Backend.Service.Exceptions;
 using System.Net;
+using Backend.Service.Models.Request;
 
 namespace Backend.Service.Services
 {
@@ -45,9 +46,14 @@ namespace Backend.Service.Services
                 decodedToken = await FirebaseAuth.GetAuth(_firebaseApp)
                        .VerifyIdTokenAsync(idToken);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception();
+                throw new BaseException
+                {
+                    StatusCode = (int)BaseError.FIREBASE_TOKEN_NOT_FOUND,
+                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.FIREBASE_TOKEN_NOT_FOUND),
+                    HttpStatus = HttpStatusCode.BadRequest
+                };
             }
             string uid = decodedToken.Uid;
             var firebaseUser = await FirebaseAuth.GetAuth(_firebaseApp).GetUserAsync(uid);
@@ -61,7 +67,7 @@ namespace Backend.Service.Services
                 userInfo.RoleId = 3;
                 userInfo.Status = true;
                 userInfo.Phone = String.Empty;
-                userInfo.Fullname = String.Empty;
+                userInfo.Fullname = String.IsNullOrEmpty(firebaseUser.DisplayName) ? "Chưa đặt tên" : firebaseUser.DisplayName;
 
                 try
                 {
@@ -82,7 +88,6 @@ namespace Backend.Service.Services
                     Id = account.Id,
                     Email = account.Email,
                     RoleId = account.RoleId,
-                    Phone = account.Phone,
                     Avatar = account.Avatar,
                     Fullname = account.Fullname,
                     Status = account.Status,
