@@ -1,6 +1,10 @@
 .header {
   width: 100%;
-  background-color: black;
+  background-color: #fff;
+  color: #000;
+  display: list-item;
+  // justify-content: left;
+  margin-left: 160px;
 }
 
 .topping input {
@@ -18,7 +22,7 @@
 
 .authen-link {
   float: right;
-  color: white;
+  color: #000;
   font-family: inherit;
   font-weight: 500;
   font-size: 16px;
