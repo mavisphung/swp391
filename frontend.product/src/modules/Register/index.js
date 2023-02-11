@@ -13,7 +13,6 @@ import {
 function RegisterPage() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [checked, setChecked] = useState(false);
   const [passwordShowed, setPasswordShowed] = useState(false);
   const [confirmShowed, setConfirmShowed] = useState(false);
   const users = [
@@ -38,7 +37,7 @@ function RegisterPage() {
     <div>
       <img id="register-icon" src={images.logo} alt="ChyStore icon" />
       <div className="register-center register-back-link">
-        <Link to={config.dashboardRoutes.home}>
+        <Link to={config.routes.home}>
           <ArrowLeftOutlined id="register-left-arrow" />
           <span>Trở về</span>
         </Link>

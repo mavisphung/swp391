@@ -1,6 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Checkbox } from "antd";
 import {
   EyeFilled,
@@ -8,30 +7,31 @@ import {
   ArrowLeftOutlined,
 } from "@ant-design/icons";
 
-import styles from "./LoginLayout.scss";
+import "./LoginLayout.scss";
 import config from "~/config";
 import images from "~/assets/images";
+import { useUserAuth } from "~/context/UserAuthContext";
 
 function LoginPage() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [checked, setChecked] = useState(false);
   const [passwordShowed, setPasswordShowed] = useState(false);
-  const users = [
-    { email: "admin@gmail.com", password: "admin" },
-    { email: "user1@gmail.com", password: "user1" },
-  ];
 
   const navigate = useNavigate();
+
+  const { loginWithEmail } = useUserAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email && password) {
-      const account = users.find((u) => u.email === email);
-      if (account && account.password === password) {
-        localStorage.setItem("authenticated", true);
-        navigate("/");
-      }
+      // const account = users.find((u) => u.email === email);
+      // if (account && account.password === password) {
+      //   localStorage.setItem("authenticated", true);
+      //   navigate("/");
+      // }
+      loginWithEmail(email, password);
+      navigate(config.routes.dashboard);
     }
   };
 
@@ -39,7 +39,7 @@ function LoginPage() {
     <div>
       <img id="login-icon" src={images.logo} alt="ChyStore icon" />
       <div className="login-center login-back-link">
-        <Link to={config.dashboardRoutes.home}>
+        <Link to={config.routes.home}>
           <ArrowLeftOutlined id="login-left-arrow" />
           <span>Trở về</span>
         </Link>
@@ -49,9 +49,9 @@ function LoginPage() {
         <p id="dangnhap">Đăng nhập</p>
         <p id="vao">vào cửa hàng chim cảnh ChyStore</p>
         <form onSubmit={handleSubmit} className="form-input">
-          <label htmlFor="fname">Email</label>
+          <label htmlFor="femail">Email</label>
           <input
-            id="fname"
+            id="femail"
             type="email"
             placeholder="Vui lòng nhập email"
             onChange={(e) => setEmail(e.target.value)}
