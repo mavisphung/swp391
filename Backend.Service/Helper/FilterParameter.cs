@@ -1,4 +1,6 @@
-﻿namespace Backend.Service.Helper
+﻿using System.Text.Json;
+
+namespace Backend.Service.Helper
 {
     public class FilterParameter
     {
@@ -18,5 +20,10 @@
         }
 
         public string? Search { get; set; } = String.Empty;
+
+        public override string? ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

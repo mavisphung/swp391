@@ -6,6 +6,7 @@ using Backend.Service.Models.Category;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
 using Diacritics.Extensions;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Services
@@ -22,12 +23,14 @@ namespace Backend.Service.Services
         {
             //var removeDiacritics = filter.Search.RemoveDiacritics();
             //Console.WriteLine($"Sau khi bỏ dấu: {removeDiacritics}");
-            Expression<Func<Category, bool>> filterExpression = 
-                cate => !string.IsNullOrEmpty(filter.Search) 
-                            ? !cate.IsDeleted && cate.SearchVector.Matches(filter.Search) 
-                            : !cate.IsDeleted;
+            var predicate = PredicateBuilder.New<Category>().And(cat => !cat.IsDeleted);
 
-            IEnumerable<Category> categories = _cateRepository.GetAll(filterExpression);
+            if (!string.IsNullOrEmpty(filter.Search))
+            {
+                predicate = predicate.And(cat => cat.SearchVector.Matches(filter.Search));
+            }
+
+            IEnumerable<Category> categories = _cateRepository.GetAll(predicate);
             var pagedList = PagedList<CategoryResponseModel>.ToPagedList(
                 categories.AsQueryable().OrderBy(u => u.Id).Select(cate => new CategoryResponseModel(cate)),
                 filter.PageNumber,
