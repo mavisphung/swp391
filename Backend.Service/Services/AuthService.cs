@@ -202,7 +202,7 @@ namespace Backend.Service.Services
                  signingCredentials: creds);
             token.Header.Add("kid", "cf334832f096d3ed8b7b4a654447c2816ffe3273");
             token.Payload.Remove("iss");
-            token.Payload.Add("iss", "your issuer");
+            token.Payload.Add("iss", "JSON Web Token For Google Auth");
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
