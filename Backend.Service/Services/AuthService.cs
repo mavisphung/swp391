@@ -194,7 +194,7 @@ namespace Backend.Service.Services
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_birdStoreConst.GetTokenKey()));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = new JwtSecurityToken(
                  claims: claims,
