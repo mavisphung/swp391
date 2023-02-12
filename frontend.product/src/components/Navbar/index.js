@@ -9,18 +9,31 @@ function Navbar() {
         <Link className="render-link" to={config.routes.home}>
           Trang chủ
         </Link>
-        <Link className="render-link">Thương hiệu</Link>
+        <Link className="render-link">Tin tức</Link>
         <div className="dropdown">
-          <button>Các loại phụ kiện</button>
+          <button className="render-link">Giống chim</button>
           <div className="dropdown-content">
             <Link className="render-link">Loại 1</Link>
             <Link className="render-link">Loại 2</Link>
             <Link className="render-link">Loại 3</Link>
           </div>
         </div>
-        <Link className="render-link" to={config.routes.aboutUs}>
-          Liên hệ
-        </Link>
+        <div className="dropdown">
+          <button className="render-link">Lồng chim</button>
+          <div className="dropdown-content">
+            <Link className="render-link">Loại 1</Link>
+            <Link className="render-link">Loại 2</Link>
+            <Link className="render-link">Loại 3</Link>
+          </div>
+        </div>
+        <div className="dropdown">
+          <button className="render-link">Phụ kiện</button>
+          <div className="dropdown-content">
+            <Link className="render-link">Loại 1</Link>
+            <Link className="render-link">Loại 2</Link>
+            <Link className="render-link">Loại 3</Link>
+          </div>
+        </div>
       </div>
     </div>
   );

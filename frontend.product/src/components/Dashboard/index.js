@@ -5,8 +5,8 @@ import HomePage from "~/modules/Home";
 import Navbar from "~/components/Navbar";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
-// import Protected from "~/components/ProtectedComponent";
 import ProductDetails from "~/modules/Product";
+import config from "~/config";
 
 const Dashboard = () => {
   const { Content } = Layout;
@@ -16,7 +16,7 @@ const Dashboard = () => {
       <Route
         element={
           <div>
-            <Layout>
+            <Layout style={{ backgroundColor: "white" }}>
               <Header />
               <Navbar />
               <Content>
@@ -27,10 +27,13 @@ const Dashboard = () => {
           </div>
         }
       >
-        <Route path="/" element={<HomePage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/aboutUs" element={<ProductDetails />} />
-        <Route path="/*" element={<div>Page Not Found</div>} />
+        <Route path={config.routes.default} element={<HomePage />} />
+        <Route path={config.dashboardRoutes.home} element={<HomePage />} />
+        <Route
+          path={config.dashboardRoutes.aboutUs}
+          element={<ProductDetails />}
+        />
+        <Route path={config.routes.other} element={<div>Page Not Found</div>} />
       </Route>
     </Routes>
   );

@@ -1,5 +1,5 @@
 .myNavbar {
-  background-color: black;
+  background-color: #f2635f;
   position: sticky;
   position: -webkit-sticky;
   top: 0;
@@ -11,8 +11,8 @@
 .render-link {
   color: white;
   font-family: inherit;
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: normal !important;
+  font-size: 20px !important;
   text-decoration: none !important;
   padding: 8px 16px;
   display: inline-block;
@@ -21,7 +21,7 @@
 .render-link:hover {
   text-decoration: none !important;
   background-color: #f9f9f9;
-  color: black;
+  color: #f2635f !important;
 }
 
 .dropdown button {
@@ -32,7 +32,7 @@
   padding: 8px 16px;
   outline: 0;
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 300;
   font-size: 16px;
   border: none;
 }
@@ -54,6 +54,7 @@
   display: none;
   position: absolute;
   z-index: 1;
+  font-weight: 100;
 }
 
 .dropdown-content a {

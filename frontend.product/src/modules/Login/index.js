@@ -9,7 +9,7 @@ import {
 
 import "./LoginLayout.scss";
 import config from "~/config";
-import images from "~/assets/images";
+import AppIcons from "~/assets/icons";
 import { useUserAuth } from "~/context/UserAuthContext";
 
 function LoginPage() {
@@ -22,24 +22,21 @@ function LoginPage() {
 
   const { loginWithEmail } = useUserAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (email && password) {
-      // const account = users.find((u) => u.email === email);
-      // if (account && account.password === password) {
-      //   localStorage.setItem("authenticated", true);
-      //   navigate("/");
-      // }
-      loginWithEmail(email, password);
-      navigate(config.routes.dashboard);
+      const user = await loginWithEmail(email, password);
+      if (user) {
+        navigate(config.routes.dashboard);
+      }
     }
   };
 
   return (
     <div>
-      <img id="login-icon" src={images.logo} alt="ChyStore icon" />
+      <img id="login-icon" src={AppIcons.logo} alt="ChyStore icon" />
       <div className="login-center login-back-link">
-        <Link to={config.routes.home}>
+        <Link to={config.routes.dashboard}>
           <ArrowLeftOutlined id="login-left-arrow" />
           <span>Trở về</span>
         </Link>

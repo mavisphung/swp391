@@ -1,35 +1,49 @@
 import React from "react";
 import ImageGallery from "react-image-gallery";
 
-import "./ImageSliderLayout.scss";
+import "../ProductLayout.scss";
 import "../../../../node_modules/react-image-gallery/styles/css/image-gallery.css";
 
 const images = [
   {
-    original: "https://picsum.photos/id/1018/1000/400/",
-    thumbnail: "https://picsum.photos/id/1018/250/150/",
-    originalWidth: "90px",
-    originalHeight: "170px",
-    thumbnailWidth: "40px",
+    original:
+      "https://www.chimcanhvietnam.vn/images/sanpham/2007250038n%E1%BB%81n.JPG",
+    thumbnail:
+      "https://www.chimcanhvietnam.vn/images/sanpham/2007250038n%E1%BB%81n.JPG",
+    originalHeight: "320px",
     thumbnailHeight: "60px",
   },
   {
-    original: "https://picsum.photos/id/1015/1000/400/",
-    thumbnail: "https://picsum.photos/id/1015/250/150/",
-    originalWidth: "90px",
-    originalHeight: "170px",
-    thumbnailWidth: "40px",
+    original:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2129246649DSCN1762.JPG",
+    thumbnail:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2129246649DSCN1762.JPG",
+    originalHeight: "320px",
     thumbnailHeight: "60px",
   },
   {
-    original: "https://picsum.photos/id/1026/1000/400/",
-    thumbnail: "https://picsum.photos/id/1026/250/150/",
-    // thumbnailClass: "hello",
-    originalWidth: "90px",
-    originalHeight: "170px",
-    thumbnailWidth: "40px",
+    original:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2092253991DSCN1763.JPG",
+    thumbnail:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2092253991DSCN1763.JPG",
+    originalHeight: "320px",
     thumbnailHeight: "60px",
-    //#337ab7
+  },
+  {
+    original:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2108179206DSCN1768.JPG",
+    thumbnail:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2108179206DSCN1768.JPG",
+    originalHeight: "320px",
+    thumbnailHeight: "60px",
+  },
+  {
+    original:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2026366129n%E1%BB%81n.JPG",
+    thumbnail:
+      "https://www.chimcanhvietnam.vn/images/sanpham/slider/2026366129n%E1%BB%81n.JPG",
+    originalHeight: "320px",
+    thumbnailHeight: "60px",
   },
 ];
 

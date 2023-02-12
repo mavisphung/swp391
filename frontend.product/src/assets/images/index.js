@@ -1,5 +1,5 @@
-const images = {
-  logo: require("./chystore_icon.svg").default,
+const AppImages = {
+  // logo: require("./chystore_icon.svg").default,
 };
 
-export default images;
+export default AppImages;
