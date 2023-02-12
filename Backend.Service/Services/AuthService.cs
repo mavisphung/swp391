@@ -194,12 +194,15 @@ namespace Backend.Service.Services
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_birdStoreConst.GetTokenKey()));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = new JwtSecurityToken(
                  claims: claims,
                  expires: DateTime.Now.AddDays(1),
                  signingCredentials: creds);
+            token.Header.Add("kid", "cf334832f096d3ed8b7b4a654447c2816ffe3273");
+            token.Payload.Remove("iss");
+            token.Payload.Add("iss", "your issuer");
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
@@ -229,9 +232,9 @@ namespace Backend.Service.Services
             {
                 var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, userViewModel.RoleId.ToString()),
+                new Claim("Role", userViewModel.RoleId.ToString()),
                 //new Claim(ClaimTypes.Name, userViewModel.Fullname),
-                new Claim(ClaimTypes.Email, userViewModel.Email)
+                new Claim("Email", userViewModel.Email)
             };
 
                 var accessToken = GenerateAccessToken(claims);
