@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using Backend.Service.Annotations;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
+using Backend.Service.Entities.Poco;
 
 namespace Backend.Service.Models.Product
 {
@@ -12,7 +14,9 @@ namespace Backend.Service.Models.Product
         [MaxLength(256)]
         public string Name { get; set; } = null!;
 
-        public IEnumerable<string>? Images { get; set; } = null!;
+
+        [AllUriValidator(ErrorMessage = "This field is invalid")]
+        public ICollection<Media>? Medias { get; set; }
         public string? Description { get; set; }
 
         [Range(0.0, double.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]

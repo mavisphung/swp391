@@ -19,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add swagger example filter
 builder.Services.AddSwaggerExamplesFromAssemblyOf<ProductExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateProductExample>();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateBannerExample>();
 // Add services to the container.
 // Must enable XML comment to generate exactly what we want
 // Right click to the project (Not solution) -> Project Properties
@@ -93,12 +94,14 @@ builder.Services.AddSingleton(FirebaseApp.Create());
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<IBannerRepository, BannerRepository>();
 
 // Add services
 builder.Services.AddTransient<UserService, UserService>();
 builder.Services.AddTransient<AuthService, AuthService>();
 builder.Services.AddTransient<CategoryService, CategoryService>();
 builder.Services.AddTransient<ProductService, ProductService>();
+builder.Services.AddTransient<BannerService, BannerService>();
 builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
 
