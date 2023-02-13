@@ -38,7 +38,7 @@ function HeaderContent() {
             />
           </Link>
 
-          <Menu mode="horizontal" theme="dark" className="c-menu-homepage">
+          {/* <Menu mode="horizontal" theme="dark" className="c-menu-homepage">
             <SubMenu
               key="sub1"
               icon={
@@ -54,7 +54,7 @@ function HeaderContent() {
                 </Menu.Item>
               </MenuItemGroup>
             </SubMenu>
-          </Menu>
+          </Menu> */}
         </div>
       );
     }
