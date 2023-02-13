@@ -69,7 +69,7 @@ const LoginForm = () => {
               <Form.Label>
                 <strong>Email</strong> <span className="text-danger">*</span>
               </Form.Label>
-              <InputGroup style={{ paddingRight: 44 }}>
+              <InputGroup>
                 <Form.Control
                   type="email"
                   value={email}
