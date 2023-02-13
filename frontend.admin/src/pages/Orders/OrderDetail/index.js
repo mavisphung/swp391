@@ -17,12 +17,10 @@ import { Form } from 'react-bootstrap';
 
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
-  canceled,
-  denied,
-  inProgress,
-  paidInAdvance,
-  success,
-  waiting,
+  accepted,
+  cancelled,
+  finished,
+  pending,
 } from '~/system/Constants/constants';
 import CustomModal from '~/components/Modal';
 
@@ -48,7 +46,7 @@ const orderDetailsData = {
     district: '770',
     province: '79',
   },
-  status: '2',
+  status: '0',
   orderDate: '2023-01-09',
   estimatedReceiveDate: '2023-01-12',
   closeDate: '',
@@ -176,18 +174,14 @@ const OrderDetail = () => {
 
   // Render Order Status
   const renderOrderStatus = () => {
-    if (customerOrder.status === waiting) {
+    if (customerOrder.status === pending) {
       return 'Chờ xác nhận';
-    } else if (customerOrder.status === inProgress) {
+    } else if (customerOrder.status === accepted) {
       return 'Đang xử lí';
-    } else if (customerOrder.status === paidInAdvance) {
-      return 'Đã cọc';
-    } else if (customerOrder.status === success) {
+    } else if (customerOrder.status === finished) {
       return 'Đã nhận hàng';
-    } else if (customerOrder.status === denied) {
-      return 'Đã từ chối';
-    } else if (customerOrder.status === canceled) {
-      return 'Bị hủy';
+    } else if (customerOrder.status === cancelled) {
+      return 'Đã hủy';
     }
   };
 
@@ -227,8 +221,7 @@ const OrderDetail = () => {
           <p>
             <strong>Ngày đặt hàng:</strong> {customerOrder.orderDate}
           </p>
-          {customerOrder.statusId === denied ||
-          customerOrder.statusId === canceled ? (
+          {customerOrder.statusId === cancelled ? (
             <p>
               <strong>Ngày hủy:</strong> {customerOrder.receiveDate}
             </p>
@@ -243,6 +236,20 @@ const OrderDetail = () => {
               </p>
             </>
           )}
+        </>
+      ),
+    },
+    {
+      title: 'Thanh toán',
+      content: (
+        <>
+          <p>
+            <strong>Hình thức thanh toán:</strong>
+          </p>
+
+          <p>
+            <strong>Số tiền đã cọc:</strong>
+          </p>
         </>
       ),
     },
@@ -294,7 +301,7 @@ const OrderDetail = () => {
       title: 'Số lượng tồn',
       dataIndex: 'currentQuantity',
       key: 'currentQuantity',
-      hide: customerOrder.status !== waiting ? true : false,
+      hide: customerOrder.status !== pending ? true : false,
       render: (text, record) => {
         if (record.quantity > text) {
           setEnoughQuantity(false);
@@ -423,8 +430,7 @@ const OrderDetail = () => {
             <p style={{ fontSize: '20px' }}>
               Chi tiết đơn hàng #{orderId} -{' '}
               <strong>{renderOrderStatus()}</strong>{' '}
-              {customerOrder.statusId === denied ||
-              customerOrder.statusId === canceled ? (
+              {customerOrder.statusId === cancelled ? (
                 <>
                   {' '}
                   -{' '}
@@ -443,7 +449,7 @@ const OrderDetail = () => {
         <List
           grid={{
             gutter: 16,
-            column: 2,
+            column: 3,
           }}
           dataSource={dataList}
           renderItem={(item) => (
@@ -485,12 +491,12 @@ const OrderDetail = () => {
       </>
 
       <Row justify="end" className="mt-2">
-        {!enoughQuantity && customerOrder.status === waiting ? (
+        {!enoughQuantity && customerOrder.status === pending ? (
           <>{renderAlert()}</>
         ) : (
           <></>
         )}
-        {customerOrder.status !== waiting ? (
+        {customerOrder.status !== pending ? (
           <></>
         ) : (
           <>

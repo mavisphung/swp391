@@ -11,12 +11,10 @@ export const active = '1';
 export const inactive = '0';
 
 //Status of order
-export const success = '0';
-export const paidInAdvance = '1';
-export const waiting = '2';
-export const inProgress = '3';
-export const denied = '4';
-export const canceled = '5';
+export const pending = '0';
+export const accepted = '1';
+export const finished = '2';
+export const cancelled = '3';
 
 //Date format
 export const defaultDBDateFormatter = 'DD-MM-YYYY HH:mm';

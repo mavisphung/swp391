@@ -9,14 +9,12 @@ import moment from 'moment/moment';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
-  canceled,
+  accepted,
+  cancelled,
   dateConvert,
   defaultDatePickerRange,
-  denied,
-  inProgress,
-  paidInAdvance,
-  success,
-  waiting,
+  finished,
+  pending,
 } from '~/system/Constants/constants';
 import { MSG07 } from '~/system/Messages/messages';
 
@@ -32,28 +30,20 @@ const statusList = [
     tab: 'Tất cả',
   },
   {
-    key: '2',
+    key: '0',
     tab: 'Chờ xác nhận',
   },
   {
-    key: '3',
+    key: '1',
     tab: 'Đang xử lí',
   },
   {
-    key: '1',
-    tab: 'Đã cọc',
-  },
-  {
-    key: '0',
+    key: '2',
     tab: 'Thành công',
   },
   {
-    key: '4',
-    tab: 'Đã từ chối',
-  },
-  {
-    key: '5',
-    tab: 'Bị hủy',
+    key: '3',
+    tab: 'Đã hủy',
   },
 ];
 
@@ -64,7 +54,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Thái Đăng Linh',
       },
-      status: '2',
+      status: '0',
       orderDate: '2023-01-09',
       estimatedReceiveDate: '2023-01-12',
       totalPrice: '3600000',
@@ -74,7 +64,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Phùng Hữu Kiều',
       },
-      status: '2',
+      status: '0',
       orderDate: '2023-01-15',
       estimatedReceiveDate: '2023-01-18',
       totalPrice: '1500000',
@@ -84,7 +74,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Lương Bá Thành',
       },
-      status: '3',
+      status: '1',
       orderDate: '2023-01-12',
       estimatedReceiveDate: '2023-01-14',
       totalPrice: '2300000',
@@ -94,7 +84,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Trần Công Minh',
       },
-      status: '1',
+      status: '3',
       orderDate: '2023-02-06',
       estimatedReceiveDate: '2023-02-10',
       totalPrice: '3000000',
@@ -192,20 +182,16 @@ const OrdersList = () => {
       dataIndex: 'status',
       key: 'status',
       render: (text, record) => {
-        if (record.status === waiting) {
+        if (record.status === pending) {
           return <span className="c-label c-label-waiting"> Chờ xác nhận</span>;
-        } else if (record.status === inProgress) {
+        } else if (record.status === accepted) {
           return (
             <span className="c-label c-label-inprogress"> Đang xử lí</span>
           );
-        } else if (record.status === success) {
+        } else if (record.status === finished) {
           return <span className="c-label c-label-success"> Thành công</span>;
-        } else if (record.status === denied) {
-          return <span className="c-label c-label-danger"> Đã từ chối</span>;
-        } else if (record.status === canceled) {
-          return <span className="c-label c-label-danger"> Bị hủy</span>;
-        } else if (record.status === paidInAdvance) {
-          return <span className="c-label c-label-inprogress"> Đã cọc</span>;
+        } else if (record.status === cancelled) {
+          return <span className="c-label c-label-danger"> Đã hủy</span>;
         }
       },
     },
