@@ -51,7 +51,7 @@ namespace Backend.Service.Services
                 throw new BaseException
                 {
                     StatusCode = (int)BaseError.FIREBASE_TOKEN_NOT_FOUND,
-                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.FIREBASE_TOKEN_NOT_FOUND),
+                    ErrorMessage = EnumStringMessage.ToDescriptionString(BaseError.FIREBASE_TOKEN_NOT_VALID),
                     HttpStatus = HttpStatusCode.BadRequest
                 };
             }
