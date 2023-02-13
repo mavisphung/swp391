@@ -231,9 +231,9 @@ namespace Backend.Service.Services
             {
                 var claims = new List<Claim>
             {
-                new Claim("Role", userViewModel.RoleId.ToString()),
+                new Claim("role", userViewModel.RoleId.ToString()),
                 //new Claim(ClaimTypes.Name, userViewModel.Fullname),
-                new Claim("Email", userViewModel.Email)
+                new Claim("email", userViewModel.Email)
             };
 
                 var accessToken = GenerateAccessToken(claims);

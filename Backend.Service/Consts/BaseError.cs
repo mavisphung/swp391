@@ -22,8 +22,10 @@ namespace Backend.Service.Consts
         [Description("User is not exist in database")]
         USER_NOT_FOUND = 5,
 
-        [Description("Firebase token not found")]
+        [Description("Firebase token is not found")]
         FIREBASE_TOKEN_NOT_FOUND = 6,
+
+        
 
         NOT_FOUND = 7,
 
@@ -31,6 +33,8 @@ namespace Backend.Service.Consts
         CATEGORY_NOT_FOUND,
         PRODUCT_NOT_FOUND,
         BANNER_NOT_FOUND,
+        [Description("Firebase token is not valid")]
+        FIREBASE_TOKEN_NOT_VALID,
     }
 
     public static class EnumStringMessage
