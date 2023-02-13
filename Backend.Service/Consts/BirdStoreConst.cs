@@ -17,6 +17,21 @@
         {
             return _configuration.GetSection("AppSettings:Token").Value;
         }
+
+        public string getVNPayUrl()
+        {
+            return _configuration.GetSection("AppSettings:VNPay:Url").Value;
+        }
+
+        public string getVNPayTmnCode()
+        {
+            return _configuration.GetSection("AppSettings:VNPay:TmnCode").Value;
+        }
+
+        public string getHashSecret()
+        {
+            return _configuration.GetSection("AppSettings:VNPay:HashSecret").Value;
+        }
     }
 }
 

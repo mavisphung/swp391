@@ -22,5 +22,12 @@ namespace Backend.Service.Controllers
         {
             _paymentService = paymentService;
         }
+
+
+        public async Task<IActionResult> CreatePayment(PaymentRequestModel paymentRequestModel)
+        {
+            _paymentService.CreatePayment(paymentRequestModel);
+            return Ok();
+        }
     }
 }
