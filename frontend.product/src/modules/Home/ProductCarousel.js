@@ -17,8 +17,8 @@ function ProductCarousel({ list }) {
           slider.current = ref;
         }}
       >
-        {list.map((b, index) => (
-          <BirdCard key={index} bird={b} />
+        {list.map((b) => (
+          <BirdCard key={b.id} bird={b} />
         ))}
       </Carousel>
       <div className="d-flex justify-content-center">

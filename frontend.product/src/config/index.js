@@ -1,8 +1,9 @@
-import { routes, dashboardRoutes, personalRoutes } from "./routes";
+import { routes, dashboardRoutes, cartRoutes, personalRoutes } from "./routes";
 
 const config = {
   routes,
   dashboardRoutes,
+  cartRoutes,
   personalRoutes,
 };
 

@@ -1,106 +1,45 @@
-import { HomeFilled, RightOutlined } from "@ant-design/icons";
-import { Breadcrumb } from "antd";
+import { useSearchParams } from "react-router-dom";
 
-import Bird from "~/models/Bird";
+import "./ProductLayout.scss";
+import { birdList, proList } from "~/data/Products";
 import ProductCarousel from "../Home/ProductCarousel";
 import ImageSlider from "./widgets/ImageSlider";
 import ListComment from "./widgets/ListComment";
 import ProductInfo from "./widgets/ProductInfo";
 import ProductOrderPane from "./widgets/ProductOrderPane";
+import AppTrace from "../../components/AppTrace";
 
-function ProductDetails({ relateList, relateList2 }) {
-  relateList = relateList
-    ? relateList
-    : [
-        new Bird(
-          "Ba lô đeo lồng chim ChyStore",
-          "https://www.chimcanhvietnam.vn/images/sanpham/210765393421390586_341776619584210_635816962_o.jpg",
-          250000
-        ),
-        new Bird(
-          "Áo lồng dành cho lồng tròn",
-          "https://cf.shopee.vn/file/c87eea1ced997c0ff3cb2d50a682c2f4",
-          20000
-        ),
-        new Bird(
-          "Áo lồng dành cho lồng tròn",
-          "https://cf.shopee.vn/file/c87eea1ced997c0ff3cb2d50a682c2f4",
-          20000
-        ),
-      ];
-
-  relateList2 = relateList2
-    ? relateList2
-    : [
-        new Bird(
-          "Ba lô đeo lồng chim ChyStore",
-          "https://www.chimcanhvietnam.vn/images/sanpham/210765393421390586_341776619584210_635816962_o.jpg",
-          250000
-        ),
-        new Bird(
-          "Áo lồng dành cho lồng tròn",
-          "https://cf.shopee.vn/file/c87eea1ced997c0ff3cb2d50a682c2f4",
-          20000
-        ),
-        new Bird(
-          "Áo lồng dành cho lồng tròn",
-          "https://cf.shopee.vn/file/c87eea1ced997c0ff3cb2d50a682c2f4",
-          20000
-        ),
-        new Bird(
-          "Ba lô đeo lồng chim ChyStore",
-          "https://www.chimcanhvietnam.vn/images/sanpham/210765393421390586_341776619584210_635816962_o.jpg",
-          250000
-        ),
-        new Bird(
-          "Áo lồng dành cho lồng tròn",
-          "https://cf.shopee.vn/file/c87eea1ced997c0ff3cb2d50a682c2f4",
-          20000
-        ),
-      ];
+function ProductDetails() {
+  const [searchParams] = useSearchParams();
+  const productId = searchParams.get("productId");
+  const pro = birdList.find((b) => b.id === productId);
 
   return (
     <div className="container">
-      <p>
-        Cửa hàng ChyStore chuyên phân phối các loại chim cảnh khu vực miền Nam
-      </p>
-      <div>
-        <Breadcrumb separator={<RightOutlined />}>
-          <Breadcrumb.Item href="">
-            <HomeFilled />
-            <span>Trang chủ</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="">
-            <span>Lồng chim</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="">
-            <span>Lồng kỹ chào mào</span>
-          </Breadcrumb.Item>
-        </Breadcrumb>
-      </div>
+      <AppTrace />
       <div className="row">
         <div className="col-6">
-          <ImageSlider />
+          <ImageSlider img={pro.img} />
         </div>
         <div className="col-6">
-          <ProductOrderPane />
+          <ProductOrderPane name={pro.name} price={pro.price} />
         </div>
       </div>
       <ProductInfo />
       <div className="product-block">
         <h5>Mọi người thường mua kèm với</h5>
-        <ProductCarousel list={relateList} />
+        <ProductCarousel list={birdList} />
       </div>
       <div className="product-block">
         <div className="d-flex justify-content-between">
           <h5>Đánh giá từ người dùng</h5>
-          <a href="#">Xem thêm</a>
+          <a href="/">Xem thêm</a>
         </div>
         <ListComment />
       </div>
       <div className="product-block">
         <h5>Sản phẩm tương tự</h5>
-        <ProductCarousel list={relateList2} />
+        <ProductCarousel list={proList} />
       </div>
       <div style={{ marginBottom: "60px" }}></div>
     </div>

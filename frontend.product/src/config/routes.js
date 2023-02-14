@@ -5,15 +5,20 @@ const routes = {
   register: "/registration",
   dashboard: "/dashboard",
   home: "/dashboard/home",
-  aboutUs: "/dashboard/aboutUs",
-  productDetails: "/dashboard/:category?/:productId",
+  category: "/dashboard/category",
+  productDetails: "/product",
+  cart: "/cart",
 };
 
 const dashboardRoutes = {
   dashbard: "/dashboard/*",
   home: "/home",
-  aboutUs: "/aboutUs",
-  productDetails: "/:category?/:productId",
+  category: "/category",
+};
+
+const cartRoutes = {
+  cart: "/cart/*",
+  payment: "/payment",
 };
 
 const personalRoutes = {
@@ -21,4 +26,4 @@ const personalRoutes = {
   passwordManagement: "/passwordManagement",
 };
 
-export { routes, dashboardRoutes, personalRoutes };
+export { routes, dashboardRoutes, cartRoutes, personalRoutes };
