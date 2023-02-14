@@ -4,11 +4,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Repositories.IRepositories
 {
     public interface IGenericRepository<T> where T : class
     {
+        DbSet<T> GetDbSet();
+
         //Get theo Id
         T Get(string id);
 

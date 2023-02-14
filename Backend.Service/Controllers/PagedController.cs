@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Authentication;
+using System.Security.Claims;
+using Backend.Service.Entities;
+using Backend.Service.Exceptions;
+using Backend.Service.Services;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Backend.Service.Controllers
@@ -8,11 +13,6 @@ namespace Backend.Service.Controllers
     {
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        /// <summary>
-        /// Adds two numbers and returns the result
-        /// </summary>
-        /// <param name="pagedList">The list that is paginated</param>
-        /// <returns>void</returns>
         public void AddPaginationToHeader(dynamic pagedList)
         {
             var metadata = new
@@ -26,6 +26,23 @@ namespace Backend.Service.Controllers
             };
 
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<User> GetCurrentUser(UserService userService)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var claim = claimsIdentity?.FindFirst("id");
+            User? user = null;
+            try
+            {
+                user = await userService.GetUserByIdAsync(int.Parse(claim?.Value));
+            } catch
+            {
+                throw new UnauthenticatedException();
+            }
+            return user;
         }
     }
 }

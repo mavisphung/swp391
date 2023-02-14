@@ -1,4 +1,6 @@
-﻿namespace Backend.Service.Entities
+﻿using System.Text.Json;
+
+namespace Backend.Service.Entities
 {
     public class CartItem : BaseEntity
     {
@@ -16,5 +18,10 @@
 
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }
+
+        public override string? ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

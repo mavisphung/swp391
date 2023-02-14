@@ -18,7 +18,7 @@ namespace Backend.Service.Helper.GlobalErrorHanding
 
         private void _Logging(Exception exception)
         {
-            _logger.LogError($"Exception: {exception.GetType().Name}");
+            _logger.LogError($"Exception: {exception.GetType().FullName}");
             _logger.LogError($"Message: {exception.Message}");
             _logger.LogError($"Stack trace: {exception.StackTrace}");
         }
@@ -55,6 +55,30 @@ namespace Backend.Service.Helper.GlobalErrorHanding
                 HttpStatus = HttpStatusCode.InternalServerError,
                 ErrorCode = (int)HttpStatusCode.InternalServerError,
                 Message = exception.Message
+            };
+        }
+
+        internal ErrorResponse HandleUserExisted(Exception exception)
+        {
+            _Logging(exception);
+            var exc = (BaseException)exception;
+            return new ErrorResponse
+            {
+                HttpStatus = exc.HttpStatus,
+                ErrorCode = exc.StatusCode,
+                Message = exc.ErrorMessage
+            };
+        }
+
+        internal ErrorResponse HandleAuthenticationException(Exception exception)
+        {
+            _Logging(exception);
+            var exc = (UnauthenticatedException)exception;
+            return new ErrorResponse
+            {
+                HttpStatus = exc.HttpStatus,
+                ErrorCode = exc.StatusCode,
+                Message = exc.ErrorMessage
             };
         }
     }

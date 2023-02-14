@@ -11,6 +11,7 @@ namespace Backend.Service.Models.Product
 
         public IEnumerable<string>? Images { get; set; }
         public string? Description { get; set; }
+        public string? ShortDescription { get; set; }
 
         [Range(0.0, double.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]
         public double Price { get; set; }

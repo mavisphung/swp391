@@ -5,6 +5,7 @@ using Backend.Service.Entities;
 using Backend.Service.Entities.Poco;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -14,9 +15,10 @@ using NpgsqlTypes;
 namespace Backend.Service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230211153303_AddShortDescriptionToProduct")]
+    partial class AddShortDescriptionToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -534,6 +536,48 @@ namespace Backend.Service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedBy = "System",
+                            CreatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9291),
+                            IsDeleted = false,
+                            Name = "Admin",
+                            UpdatedBy = "System",
+                            UpdatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9288)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddedBy = "System",
+                            CreatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9293),
+                            IsDeleted = false,
+                            Name = "Staff",
+                            UpdatedBy = "System",
+                            UpdatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9293)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AddedBy = "System",
+                            CreatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9294),
+                            IsDeleted = false,
+                            Name = "Customer",
+                            UpdatedBy = "System",
+                            UpdatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9293)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddedBy = "System",
+                            CreatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9295),
+                            IsDeleted = false,
+                            Name = "Guest",
+                            UpdatedBy = "System",
+                            UpdatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9294)
+                        });
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.ShippingAddress", b =>
@@ -651,12 +695,30 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("Email", "Phone")
+                    b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedBy = "System",
+                            CreatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9428),
+                            Email = "admin@chystore.vn",
+                            Fullname = "Admin Chystore",
+                            Gender = false,
+                            IsDeleted = false,
+                            Password = "62F5202C4416A0B47046B40F21085558010FE0A1BAF35950DAEBE7E7037247CD154361DA9212C3524FB6E855C6E9D8F289E6CA3FC239A39982073C308E515357",
+                            Phone = "0349797318",
+                            RoleId = 1,
+                            Status = true,
+                            UpdatedBy = "System",
+                            UpdatedDate = new DateTime(2023, 2, 11, 15, 33, 2, 619, DateTimeKind.Utc).AddTicks(9427)
+                        });
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Cart", b =>
