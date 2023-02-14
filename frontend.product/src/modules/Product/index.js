@@ -7,11 +7,12 @@ import ImageSlider from "./widgets/ImageSlider";
 import ListComment from "./widgets/ListComment";
 import ProductInfo from "./widgets/ProductInfo";
 import ProductOrderPane from "./widgets/ProductOrderPane";
-import AppTrace from "../../components/AppTrace";
+import AppTrace from "~/components/AppTrace";
+import config from "~/config";
 
 function ProductDetails() {
   const [searchParams] = useSearchParams();
-  const productId = searchParams.get("productId");
+  const productId = parseInt(searchParams.get("productId"));
   const pro = birdList.find((b) => b.id === productId);
 
   return (
@@ -33,7 +34,7 @@ function ProductDetails() {
       <div className="product-block">
         <div className="d-flex justify-content-between">
           <h5>Đánh giá từ người dùng</h5>
-          <a href="/">Xem thêm</a>
+          <a href={config.routes.dashboard}>Xem thêm</a>
         </div>
         <ListComment />
       </div>

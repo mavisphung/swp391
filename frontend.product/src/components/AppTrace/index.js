@@ -22,7 +22,13 @@ function AppTrace() {
       className="app-breadcrumb"
       separator={<GoChevronRight color="black" />}
     >
-      <Breadcrumb.Item href={config.routes.home}>
+      <Breadcrumb.Item
+        href=""
+        onClick={(e) => {
+          e.preventDefault();
+          navigate(config.routes.dashboard);
+        }}
+      >
         <img src={AppIcons.homeIcon} alt="Home icon" />
         <span>Trang chủ</span>
       </Breadcrumb.Item>

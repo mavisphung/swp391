@@ -16,26 +16,29 @@
   border-right: 11px solid transparent;
 }
 
-.price {
-  color: #f2635f;
-  font-size: 26px;
-  font-weight: 700;
-  margin-top: 12px;
-  margin-bottom: 5px;
-}
-
 .btn-buy {
   width: 145px;
   border: none;
-  background-color: #f2635f;
+  background-color: #c266d3;
   font-weight: 700;
-  box-shadow: 1px 4px 4px #939292a9;
+  box-shadow: 1px 4px 4px #b9b9b9a9;
+  color: white;
+  background-image: -webkit-linear-gradient(
+    30deg,
+    #f2635f 50%,
+    transparent 50%
+  );
+  background-image: linear-gradient(30deg, #f2635f 50%, transparent 50%);
+  background-size: 600px;
+  background-repeat: no-repeat;
+  background-position: 0%;
+  -webkit-transition: background 600ms ease-in-out;
+  transition: background 600ms ease-in-out;
 }
 
 .btn-buy:hover {
-  background-color: #f2635f;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  background-color: #c266d3;
+  background-position: 100%;
 }
 
 .btn-add-cart {
@@ -44,7 +47,20 @@
   color: black !important;
   border-color: black;
   font-weight: 800;
-  box-shadow: 1px 4px 4px #939292a9;
+  box-shadow: 1px 4px 4px #b9b9b9a9;
+  background-image: -webkit-linear-gradient(30deg, white 50%, transparent 50%);
+  background-image: linear-gradient(30deg, white 50%, transparent 50%);
+  background-size: 600px;
+  background-repeat: no-repeat;
+  background-position: 0%;
+  -webkit-transition: background 300ms ease-in-out;
+  transition: background 300ms ease-in-out;
+}
+
+.btn-add-cart:hover {
+  background-color: #c266d3 !important;
+  color: white !important;
+  background-position: 100%;
 }
 
 .pro-order-ctr {

@@ -1,5 +1,5 @@
 import { Component } from "react";
-// import axios from "axios";
+import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 
 import config from "~/config";
@@ -7,24 +7,24 @@ import DefaultLayout from "~/components/DefaultLayout";
 import HomePage from "~/modules/Home";
 import CategoryPage from "~/modules/Category";
 class Dashboard extends Component {
-  // componentDidMount() {
-  //   axios
-  //     .get(`http://localhost:7179/api/category`, {
-  //       params: {
-  //         PageNumber: 1,
-  //         PageSize: 10,
-  //       },
-  //       withCredentials: false,
-  //       headers: {
-  //         "Access-Control-Allow-Origin": "*",
-  //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((error) => console.log(error));
-  // }
+  componentDidMount() {
+    axios
+      .get(`https://localhost:7179/api/category`, {
+        params: {
+          PageNumber: 1,
+          PageSize: 10,
+        },
+        // withCredentials: false,
+        // headers: {
+        //   "Access-Control-Allow-Origin": "*",
+        //   "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+        // },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => console.log(error));
+  }
 
   render() {
     return (
