@@ -1,8 +1,9 @@
 ﻿using Backend.Service.Entities;
+using Backend.Service.Models.Cart;
 
-namespace Backend.Service.Models.Response.Users
+namespace Backend.Service.Models.User
 {
-    public class UserModel : BaseModel<Entities.User>
+    public class UserResponseModel : BaseModel<Entities.User>
     {
         public string Fullname { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
@@ -12,7 +13,7 @@ namespace Backend.Service.Models.Response.Users
 
         //public UserModel() { }
 
-        public UserModel(Entities.User user) : base(user)
+        public UserResponseModel(Entities.User user) : base(user)
         {
             Fullname = user.Fullname;
             Email = user.Email;
