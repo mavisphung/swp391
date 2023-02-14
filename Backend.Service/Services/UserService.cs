@@ -8,7 +8,7 @@ namespace Backend.Service.Services
     public class UserService
     {
         private readonly IUserRepository _userRepository;
-        public Guid Id { get; set; }
+
         //private readonly ApplicationDbContext _context;
         public UserService(
             IUserRepository userRepository
@@ -17,7 +17,6 @@ namespace Backend.Service.Services
         {
             _userRepository = userRepository;
             //_context = context;
-            Id = Guid.NewGuid();
         }
 
         public IEnumerable<User> GetAll(FilterParameter pagingParameter)

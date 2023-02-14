@@ -18,6 +18,7 @@ namespace Backend.Service.Models.Product
         [AllUriValidator(ErrorMessage = "This field is invalid")]
         public ICollection<Media>? Medias { get; set; }
         public string? Description { get; set; }
+        public string? ShortDescription { get; set; }
 
         [Range(0.0, double.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]
         public double Price { get; set; } = 0.0;

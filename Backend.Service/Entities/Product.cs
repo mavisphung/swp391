@@ -16,7 +16,12 @@ namespace Backend.Service.Entities
 
         [Column(TypeName = "jsonb")]
         public ICollection<Media> Medias { get; set; } = new List<Media>();
-        public string? Description { get; set; }
+
+        [Column(TypeName = "text")]
+        public string? Description { get; set; } = string.Empty;
+
+        [Column(TypeName = "text")]
+        public string? ShortDescription { get; set; } = string.Empty;
 
         public double Price { get; set; } = 0.0;
         public int Quantity { get; set; } = 0;

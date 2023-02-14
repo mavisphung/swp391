@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Authentication;
 using System.Text.Json;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
@@ -29,6 +30,9 @@ namespace Backend.Service.Helper.GlobalErrorHanding
             {
                 { typeof(NotFoundException).Name, _handler.HandleNotFound },
                 { typeof(BaseException).Name, _handler.HandleBaseException },
+                { typeof(UserExistException).Name, _handler.HandleUserExisted },
+                { typeof(InvalidPasswordException).Name, _handler.HandleBaseException },
+                { typeof(UnauthenticatedException).Name, _handler.HandleAuthenticationException },
                 { typeof(Exception).Name,         _handler.HandleInternalServer }
 
             };
@@ -65,6 +69,10 @@ namespace Backend.Service.Helper.GlobalErrorHanding
             }
              
             context.Response.StatusCode = (int)errorResponse.HttpStatus;
+            if (errorResponse.HttpStatus == HttpStatusCode.Unauthorized)
+            {
+                return;
+            }
             var result = JsonSerializer.Serialize(errorResponse);
             await context.Response.WriteAsync(result);
         }

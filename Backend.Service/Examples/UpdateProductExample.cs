@@ -11,6 +11,7 @@ namespace Backend.Service.Examples
             {
                 Name = "Tên chào mào mới",
                 Description = "Mô tả về loài chim",
+                ShortDescription = "Chim loại gì (Trung Nam, Lạng Sơn,...), chim non (bổi, thuần, mộc)",
                 Images = new string[]
                 {
                     "link ảnh 1",
