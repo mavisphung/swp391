@@ -32,3 +32,4 @@ export const MSG30 = 'Phân loại chưa được chọn';
 export const MSG31 = 'Mô tả không được để trống';
 export const MSG32 = 'Xác nhận thêm mới loại hàng?';
 export const MSG33 = 'Xác nhận cập nhật thông tin loại hàng?';
+export const MSG34 = 'Xác nhận muốn vô hiệu hóa sản phẩm?';

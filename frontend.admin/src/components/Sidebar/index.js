@@ -22,6 +22,7 @@ import {
   viewAccountsList,
   viewCategoriesList,
   viewOrdersList,
+  viewProductsList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
 import './SideBar.scss';
@@ -100,7 +101,9 @@ function Sidebar() {
           >
             <MenuItemGroup>
               <Menu.Item key="4">
-                <Link to={``}>Danh sách sản phẩm</Link>
+                <Link to={`${pathname}/${viewProductsList}`}>
+                  Danh sách sản phẩm
+                </Link>
               </Menu.Item>
               <Menu.Item key="5">
                 <Link to={``}>Tạo sản phẩm</Link>

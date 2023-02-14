@@ -25,7 +25,7 @@ const CategoriesList = () => {
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(1);
 
-  // Get all accounts
+  // Get all categories
   const getCategoriesList = useCallback((pageIndex) => {
     const data = categoriesListData;
     setCategories(data.map((category) => category));

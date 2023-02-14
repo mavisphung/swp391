@@ -1,10 +1,25 @@
+import { useEffect } from 'react';
 import { Col, Row, Button, Container, Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 import images from '~/assets/img';
+import { useUserAuth } from '~/context/UserAuthContext';
 
 import './Home.scss';
 
 function Home() {
+  // Get current user
+  const { getCurrentUser } = useUserAuth();
+  const user = getCurrentUser();
+
+  // Go to dashboard if not logout
+  let navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      navigate(`/dashboard`);
+    }
+  }, [user, navigate]);
+
   return (
     <div className="home-container">
       <div className="home-header">

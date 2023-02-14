@@ -6,9 +6,10 @@ import OrdersList from '~/pages/Orders/OrdersList';
 import OrderDetail from '../Orders/OrderDetail';
 import Statistics from '../Statistics';
 import ViewAccountsList from '../Accounts/AccountsList';
+import AddEditAccount from '../Accounts/AddEditAccount';
 import CategoriesList from '../Categories/CategoriesList';
 import AddEditCategory from '../Categories/AddEditCategory';
-import AddEditAccount from '../Accounts/AddEditAccount';
+import ProductsList from '../Products/ProductsList';
 import AccountProfile from '../Accounts/AccountProfile';
 import Sidebar from '~/components/Sidebar';
 import FooterContent from '~/components/Footer';
@@ -26,6 +27,7 @@ import {
   viewCategoriesList,
   viewOrderDetail,
   viewOrdersList,
+  viewProductsList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
 import './Dashboard.scss';
@@ -88,6 +90,7 @@ function Dashboard() {
               element={<CategoriesList />}
             />
             <Route path={`${addCategory}`} element={<AddEditCategory />} />
+            <Route path={`${viewProductsList}`} element={<ProductsList />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />
