@@ -17,6 +17,7 @@ import {
   accountProfile,
   addAccount,
   addCategory,
+  addProduct,
   changePassword,
   home,
   viewAccountsList,
@@ -106,7 +107,7 @@ function Sidebar() {
                 </Link>
               </Menu.Item>
               <Menu.Item key="5">
-                <Link to={``}>Tạo sản phẩm</Link>
+                <Link to={`${pathname}/${addProduct}`}>Tạo sản phẩm</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>

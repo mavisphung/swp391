@@ -11,6 +11,7 @@ import CategoriesList from '../Categories/CategoriesList';
 import AddEditCategory from '../Categories/AddEditCategory';
 import ProductsList from '../Products/ProductsList';
 import ProductDetail from '../Products/ProductDetail';
+import AddEditProduct from '../Products/AddEditProduct';
 import AccountProfile from '../Accounts/AccountProfile';
 import Sidebar from '~/components/Sidebar';
 import FooterContent from '~/components/Footer';
@@ -20,6 +21,7 @@ import {
   accountProfile,
   addAccount,
   addCategory,
+  addProduct,
   changePassword,
   login,
   orderId,
@@ -98,6 +100,7 @@ function Dashboard() {
               path={`${viewProductsList}/${viewProductDetail}/${productId}`}
               element={<ProductDetail />}
             />
+            <Route path={`${addProduct}`} element={<AddEditProduct />} />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />
