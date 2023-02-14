@@ -77,7 +77,7 @@ namespace Backend.Service.Repositories
             try
             {
                 //return await _dbSet.SingleAsync(u => u.Id == id && !u.IsDeleted);
-                return await _dbSet.Where(u => u.Id == id && !u.IsDeleted).FirstAsync();
+                return await _dbSet.Where(u => u.Id == id && !u.IsDeleted).Include("Cart").FirstAsync();
             }
             catch (Exception ex)
             {
@@ -97,6 +97,5 @@ namespace Backend.Service.Repositories
                 throw new NotFoundException();
             }
         }
-
     }
 }

@@ -154,5 +154,10 @@ namespace Backend.Service.Repositories
         {
             await dbSet.AddAsync(entity);
         }
+
+        public DbSet<T> GetDbSet()
+        {
+            return dbSet;
+        }
     }
 }

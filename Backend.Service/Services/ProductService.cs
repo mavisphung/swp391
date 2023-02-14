@@ -56,6 +56,7 @@ namespace Backend.Service.Services
             {
                 Name = model.Name,
                 Description = model.Description ?? string.Empty,
+                ShortDescription = model.ShortDescription ?? string.Empty,
                 Price = model.Price,
                 Quantity = model.Quantity,
                 ImportQuantity = model.Quantity,

@@ -22,13 +22,14 @@ namespace Backend.Service.Repositories
             _logger = logger;
         }
 
-        public async Task<Product> GetAsync(int id)
+        public Task<Product> GetAsync(int id)
         {
             try
             {
-                return await _dbSet.Where(p => !p.IsDeleted && p.Id == id).Include("Category").FirstAsync();
+                return _dbSet.Where(p => !p.IsDeleted && p.Id == id).Include("Category").FirstAsync();
             } catch (Exception ex)
             {
+                Console.WriteLine($"ProductRepository.GetAsync : {ex.Message}");
                 throw new NotFoundException(BaseError.PRODUCT_NOT_FOUND.ToString());
             }
 
