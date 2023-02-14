@@ -10,6 +10,7 @@ import AddEditAccount from '../Accounts/AddEditAccount';
 import CategoriesList from '../Categories/CategoriesList';
 import AddEditCategory from '../Categories/AddEditCategory';
 import ProductsList from '../Products/ProductsList';
+import ProductDetail from '../Products/ProductDetail';
 import AccountProfile from '../Accounts/AccountProfile';
 import Sidebar from '~/components/Sidebar';
 import FooterContent from '~/components/Footer';
@@ -22,11 +23,13 @@ import {
   changePassword,
   login,
   orderId,
+  productId,
   updateAccount,
   viewAccountsList,
   viewCategoriesList,
   viewOrderDetail,
   viewOrdersList,
+  viewProductDetail,
   viewProductsList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
@@ -91,6 +94,10 @@ function Dashboard() {
             />
             <Route path={`${addCategory}`} element={<AddEditCategory />} />
             <Route path={`${viewProductsList}`} element={<ProductsList />} />
+            <Route
+              path={`${viewProductsList}/${viewProductDetail}/${productId}`}
+              element={<ProductDetail />}
+            />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />

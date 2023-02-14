@@ -18,6 +18,7 @@ export const viewCategoriesList = 'categories-list';
 export const addCategory = 'add-category';
 export const updateCategory = 'update-category';
 export const viewProductsList = 'products-list';
+export const viewProductDetail = 'product-detail';
 export const addProduct = 'add-product';
 export const updateProduct = 'update-product';
 

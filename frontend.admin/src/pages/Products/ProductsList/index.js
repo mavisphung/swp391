@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Space, Table } from 'antd';
 import { Button, Image, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,6 +9,7 @@ import productsData from './productsData.json';
 import { MSG07, MSG34 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import CustomModal from '~/components/Modal';
+import { viewProductDetail } from '~/system/Constants/LinkURL';
 
 const productStatus = [
   {
@@ -24,6 +25,7 @@ const productStatus = [
 ];
 
 const ProductsList = () => {
+  const { pathname } = useLocation();
   const [products, setProducts] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const [searchProductName, setSearchProductName] = useState('');
@@ -66,7 +68,9 @@ const ProductsList = () => {
       key: 'Url',
       width: 100,
       render: (text, record) => {
-        return <Image src={record.Url} alt={text} style={{ maxHeight: 40 }} />;
+        return (
+          <Image src={record.Url[0]} alt={text} style={{ maxHeight: 40 }} />
+        );
       },
     },
     {
@@ -105,7 +109,7 @@ const ProductsList = () => {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${viewProductDetail}/${record.ProductCode}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
