@@ -27,7 +27,7 @@ function Navbar() {
           </div>
         </div>
         <div className="dropdown">
-          <button>Phụ kiện</button>
+          <button>Thức ăn</button>
           <div className="dropdown-content">
             <Link className="render-link">Loại 1</Link>
             <Link className="render-link">Loại 2</Link>
