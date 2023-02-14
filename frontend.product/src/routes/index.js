@@ -1,42 +1,23 @@
-import config from "../config";
-import Protected from "../components/ProtectedComponent";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 
-// Pages
-import LoginPage from "../modules/Login";
-import Dashboard from "../components/Dashboard";
-import HomePage from "../modules/Home";
-import ProfilePage from "../modules/Profile";
-import AboutUsPage from "../modules/AboutUs";
-import RegisterPage from "../modules/Register";
+import config from "~/config";
+import LoginPage from "~/modules/Login";
+import RegisterPage from "~/modules/Register";
+import Dashboard from "~/components/Dashboard";
+import PaymentPage from "~/modules/Payment";
 
-const routes = [
-  {
-    path: config.routes.login,
-    component: LoginPage,
-    layout: null,
-  },
-  {
-    path: config.routes.register,
-    component: RegisterPage,
-    layout: null,
-  },
-  {
-    path: config.routes.default,
-    component: () => Dashboard(HomePage),
-  },
-  {
-    path: config.dashboardRoutes.home,
-    component: () => Dashboard(HomePage),
-  },
-  {
-    path: config.dashboardRoutes.aboutUs,
-    component: () => Dashboard(AboutUsPage),
-  },
-  {
-    path: config.personalRoutes.profile,
-    component: () => Protected(ProfilePage),
-    layout: null,
-  },
-];
+const CustomRoutes = () => {
+  return (
+    <Routes>
+      <Route path={config.routes.default} element={<Dashboard />} />
+      <Route path={config.dashboardRoutes.dashbard} element={<Dashboard />} />
+      <Route path={config.routes.login} element={<LoginPage />} />
+      <Route path={config.routes.register} element={<RegisterPage />} />
+      <Route path={"/payments"} element={<PaymentPage />} />
+      <Route path={config.routes.other} element={<div>Page Not Found</div>} />
+    </Routes>
+  );
+};
 
-export default routes;
+export default CustomRoutes;

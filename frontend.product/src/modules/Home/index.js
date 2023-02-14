@@ -1,18 +1,19 @@
-import BirdCard from "./BirdCard";
-import "./HomeLayout.scss";
-import Bird from "../../models/Bird";
-import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
 import {
-  Button,
-  Card,
+  // Button,
+  // Card,
   Col,
   Container,
-  Figure,
-  Image,
+  // Figure,
+  // Image,
   Row,
 } from "react-bootstrap";
-import Category from "~/models/Category";
+
+import "./HomeLayout.scss";
+import ProductCarousel from "./ProductCarousel";
 import CategoryCard from "./CategoryCard";
+import Bird from "~/models/Bird";
+import Category from "~/models/Category";
+import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
 
 function HomePage() {
   const listBirds2 = [
@@ -104,57 +105,53 @@ function HomePage() {
     ),
     new Category(
       "Xem thêm",
-      "https://dennisagle.files.wordpress.com/2013/08/threedot.jpg"
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlQ18XoCeH7nThpXbP5HApe3AA1LhldLbK9g&usqp=CAU"
     ),
   ];
 
   return (
-    <div>
-      <Container className="d-flex justify-content-center">
+    <div className="container">
+      <Container className="d-flex justify-content-center" id="home-text">
         Cửa hàng ChyStore chuyên phân phối các loại chim cảnh khu vực miền Nam{" "}
       </Container>
       <BirdCarousel />
       {/* <div className="container home-flex-container">
-        {listBirds2.map((b) => BirdCard(b))}
+        {listBirds2.map((b, index) => <BirdCard key={index} bird={b} />)}
       </div> */}
-      <Container>
-        <div className="d-flex justify-content-center h4 py-3">
+      <div>
+        <div className="d-flex justify-content-center home-title">
           Danh mục sản phẩm
         </div>
         <Row>
-          <Col md>{listCategory.map((cate) => CategoryCard(cate))}</Col>
+          <Col md>
+            {listCategory.map((cate, index) => (
+              <CategoryCard key={index} cate={cate} />
+            ))}
+          </Col>
         </Row>
         <Row>
-          <div className="d-flex justify-content-center h4 py-3">
-            Sản phảm bán chạy
+          <div className="d-flex justify-content-center home-title">
+            Sản phẩm bán chạy
           </div>
-          <div className="overflow-auto d-flex">
-            {listBirds2.map((b) => BirdCard(b))}
-          </div>
+          <ProductCarousel list={listBirds2} />
         </Row>
         <Row>
-          <div className="d-flex justify-content-center h4 py-3">
+          <div className="d-flex justify-content-center home-title">
             Giống chim đang hot
           </div>
-          <div className="overflow-auto d-flex">
-            {listBirds2.map((b) => BirdCard(b))}
-          </div>
+          <ProductCarousel list={listBirds2} />
         </Row>
         <Row>
-          <div className="d-flex justify-content-center h4 py-3">
+          <div className="d-flex justify-content-center home-title">
             Phụ kiện dành cho chim
           </div>
-          <div className="overflow-auto d-flex">
-            {listBirds2.map((b) => BirdCard(b))}
-          </div>
+          <ProductCarousel list={listBirds2} />
         </Row>
         <Row>
-          <div className="d-flex justify-content-center h4 py-3">
+          <div className="d-flex justify-content-center home-title">
             Thức ăn dành cho chim
           </div>
-          <div className="overflow-auto d-flex">
-            {listBirds2.map((b) => BirdCard(b))}
-          </div>
+          <ProductCarousel list={listBirds2} />
         </Row>
 
         {/* <Row>
@@ -163,7 +160,7 @@ function HomePage() {
           </Card>
         </Row> */}
         <div style={{ paddingBottom: "150px" }}></div>
-      </Container>
+      </div>
     </div>
   );
 }

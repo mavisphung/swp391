@@ -1,14 +1,15 @@
-import { Col, Container, Image, Row } from "react-bootstrap";
-import "./FooterLayout.scss";
-import footerIcon from "~/assets/images/chystore_footer_icon.svg";
 import { BsFacebook } from "react-icons/bs";
+import { Col, Container, Image, Row } from "react-bootstrap";
 import { AiOutlineCopyrightCircle } from "react-icons/ai";
+
+import "./FooterLayout.scss";
+import AppIcons from "~/assets/icons";
 
 function Footer() {
   return (
     <Container style={{ backgroundColor: "#252525", color: "#fff" }} fluid>
       <Container className="mb-2 mt2">
-        <Image src={footerIcon} alt="ChyStore icon" className="pr-2" />
+        <Image src={AppIcons.footerIcon} alt="ChyStore icon" className="pr-2" />
         <Row>
           <Col xs={4}>
             <Row className="h5">Công ty Cổ Phần ChyTech</Row>

@@ -1,12 +1,17 @@
 import { Navigate } from "react-router-dom";
 
-const Protected = (Child) => {
-  const isLoggedIn = localStorage.getItem("authenticated");
-  console.log("ISLOGGEDIN: ", isLoggedIn);
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace={true} />;
+import config from "~/config";
+import { useUserAuth } from "~/context/UserAuthContext";
+
+const Protected = (props) => {
+  const { user } = useUserAuth();
+
+  console.log("Protected: " + user);
+
+  if (!user) {
+    return <Navigate to={config.routes.login} replace={true} />;
   }
-  return <Child />;
+  return <div>{props.children}</div>;
 };
 
 export default Protected;

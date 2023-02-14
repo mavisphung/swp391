@@ -1,16 +1,17 @@
-import "./HeaderLayout.scss";
-import config from "../../config";
-import storeIcon from "~/assets/images/chystore_icon.svg";
-import { Col, Container, Form, Image, Nav, Navbar } from "react-bootstrap";
-import { BsFillTelephoneFill, BsCartFill } from "react-icons/bs";
 import { MdAlternateEmail } from "react-icons/md";
+import { BsFillTelephoneFill, BsCartFill } from "react-icons/bs";
+import { Col, Container, Form, Image, Nav, Navbar } from "react-bootstrap";
+
+import "./HeaderLayout.scss";
+import config from "~/config";
+import AppIcons from "~/assets/icons";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 function Header() {
   return (
     <div>
       <Container>
-        <div>
+        <div className="home-contact">
           <Col md>
             <BsFillTelephoneFill /> 039.431.431 - 0985.651.651
           </Col>
@@ -19,11 +20,11 @@ function Header() {
           </Col>
         </div>
         <Navbar expand="lg" variant="light" className="">
-          <Container fluid>
+          <Container fluid style={{ padding: 0 }}>
             <Navbar.Brand href="#">
               <Image
                 // id="register-icon"
-                src={storeIcon}
+                src={AppIcons.logo}
                 alt="ChyStore icon"
                 // className="mb-4"
               />
@@ -47,7 +48,7 @@ function Header() {
                 </Form>
               </Nav>
               <div className="d-flex">
-                <Nav.Link href="#cartAction" className="pl-2">
+                <Nav.Link href="/dashboard/payments" className="pl-2">
                   <BsCartFill color="#ee3e6a" /> (0)
                 </Nav.Link>
                 <Nav.Link href={config.routes.login} className="px-2">

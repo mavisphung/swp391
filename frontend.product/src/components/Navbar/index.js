@@ -1,17 +1,17 @@
 import "./NavbarLayout.scss";
-import config from "../../config";
+import config from "~/config";
 import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
     <div className="myNavbar">
       <div className="container">
-        <Link className="render-link" to={config.dashboardRoutes.home}>
+        <Link className="render-link" to={config.routes.home}>
           Trang chủ
         </Link>
         <Link className="render-link">Tin tức</Link>
         <div className="dropdown">
-          <button>Giống chim</button>
+          <button className="render-link">Giống chim</button>
           <div className="dropdown-content">
             <Link className="render-link">Loại 1</Link>
             <Link className="render-link">Loại 2</Link>
@@ -19,7 +19,7 @@ function Navbar() {
           </div>
         </div>
         <div className="dropdown">
-          <button>Lồng chim</button>
+          <button className="render-link">Lồng chim</button>
           <div className="dropdown-content">
             <Link className="render-link">Loại 1</Link>
             <Link className="render-link">Loại 2</Link>
@@ -27,7 +27,8 @@ function Navbar() {
           </div>
         </div>
         <div className="dropdown">
-          <button>Thức ăn</button>
+          <button className="render-link">Thức ăn</button>
+
           <div className="dropdown-content">
             <Link className="render-link">Loại 1</Link>
             <Link className="render-link">Loại 2</Link>

@@ -1,18 +1,17 @@
-const { Figure, Image } = require("react-bootstrap");
+import { Figure, Image } from "react-bootstrap";
+import "./HomeLayout.scss";
 
-const CategoryCard = (category) => {
+const CategoryCard = ({ cate }) => {
   return (
     <Figure className="px-2">
       <Image
         width={220}
         height={170}
         alt="Chào mào"
-        src={category.imgUrl}
-        // className="object-fit-fill border rounded"
+        src={cate.imgUrl}
+        // style={{ objectFit: "contain" }}
       />
-      <Figure.Caption style={{ fontSize: "24px", color: "#000" }}>
-        {category.name}
-      </Figure.Caption>
+      <Figure.Caption>{cate.name}</Figure.Caption>
     </Figure>
   );
 };

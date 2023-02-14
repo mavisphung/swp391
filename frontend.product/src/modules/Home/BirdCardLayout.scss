@@ -1,30 +1,66 @@
+.card {
+  width: 100% !important;
+  height: 426px !important;
+  padding: 0 !important;
+}
+
 .card:hover {
-  margin: -5px;
+  cursor: pointer !important;
 }
 
 .card img {
+  height: 262px;
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
+  object-fit: cover;
   overflow: hidden !important;
-}
-
-.card p {
-  padding-left: 10px;
-}
-
-.bird-name {
-  padding-top: 10px;
-  font-weight: 500;
-}
-
-.bird-price {
-  color: tomato;
-  font-weight: 500;
 }
 
 .collapsing {
   -webkit-transition: none;
   transition: none;
+}
 
+.pro-card-title {
+  font-weight: normal !important;
+  font-size: 20px;
+  margin-bottom: 5px !important;
+}
 
+.card p {
+  font-size: 18px;
+  margin: 0;
+}
+
+.card > div {
+  padding-bottom: 0;
+}
+
+#pro-amount-status {
+  align-self: self-end;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.card .price {
+  margin: 0 0 6px 0;
+}
+
+.pro-card-ctr {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+@media only screen and (max-width: 1300px) {
+  .pro-card-ctr {
+    display: block;
+  }
+  .pro-card-ctr .btn-add-cart {
+    width: 100%;
+    margin-top: 15px;
+  }
+  .pro-card-ctr .btn-buy {
+    width: 100%;
+  }
 }

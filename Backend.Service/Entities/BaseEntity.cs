@@ -9,8 +9,8 @@ namespace Backend.Service.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
-        public string UpdatedBy { get; set; } = "";
-        public string AddedBy { get; set; } = "";
+        public string UpdatedBy { get; set; } = "System";
+        public string AddedBy { get; set; } = "System";
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public bool IsDeleted { get; set; } = false;
     }

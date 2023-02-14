@@ -1,8 +1,9 @@
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import { Layout, Menu, Row, Space } from 'antd';
 import { Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+
 import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
 import { home, login } from '~/system/Constants/LinkURL';
@@ -16,15 +17,13 @@ function HeaderContent() {
   const { getCurrentUser } = useUserAuth();
 
   const user = getCurrentUser();
-  //const user = { name: 'Admin', roleId: 'admin' };
-  //const user = null;
 
   const handleRenderHeader = () => {
     if (user && user.roleId === 'admin') {
       return (
         <>
-          <Space mode="horizontal">
-            <Row style={{ color: 'white' }}>Welcome, {user.name}</Row>
+          <Space>
+            <Row style={{ color: 'white' }}>Xin chào {user.name}</Row>
           </Space>
         </>
       );

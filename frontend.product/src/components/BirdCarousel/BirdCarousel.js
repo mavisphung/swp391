@@ -24,8 +24,9 @@ function BirdCarousel() {
 
         <Carousel.Caption>
           <h3>
-            Khuyến mãi <span style={{ color: "#ee3e6a" }}>giảm giá</span> lên
-            đến <span style={{ color: "red", fontSize: "50px" }}>50%</span>
+            Khuyến mãi{" "}
+            <span style={{ color: "#ee3e6a", fontSize: "30px" }}>giảm giá</span>
+            lên đến <span style={{ color: "red", fontSize: "50px" }}>50%</span>
           </h3>
           <p>
             Khi mua combo bao gồm <span style={{ color: "#ee3e6a" }}>chim</span>{" "}
@@ -42,12 +43,14 @@ function BirdCarousel() {
 
         <Carousel.Caption>
           <h3>
-            Khuyến mãi <span style={{ color: "#ee3e6a" }}>giảm giá</span> lên
-            đến <span style={{ color: "red", fontSize: "50px" }}>50%</span>
+            Khuyến mãi{" "}
+            <span style={{ color: "#ee3e6a", fontSize: "30px" }}>giảm giá</span>
+            lên đến <span style={{ color: "red", fontSize: "50px" }}>50%</span>
           </h3>
           <p>
             Khi mua combo bao gồm <span style={{ color: "#ee3e6a" }}>chim</span>{" "}
-            và <span style={{ color: "#ee3e6a" }}>phụ kiện</span> kèm theo
+            và
+            <span style={{ color: "#ee3e6a" }}>phụ kiện</span> kèm theo
           </p>
         </Carousel.Caption>
       </Carousel.Item>
@@ -60,8 +63,9 @@ function BirdCarousel() {
 
         <Carousel.Caption>
           <h3>
-            Khuyến mãi <span style={{ color: "#ee3e6a" }}>giảm giá</span> lên
-            đến <span style={{ color: "red", fontSize: "50px" }}>50%</span>
+            Khuyến mãi{" "}
+            <span style={{ color: "#ee3e6a", fontSize: "30px" }}>giảm giá</span>{" "}
+            lên đến <span style={{ color: "red", fontSize: "50px" }}>50%</span>
           </h3>
           <p>
             Khi mua combo bao gồm <span style={{ color: "#ee3e6a" }}>chim</span>{" "}

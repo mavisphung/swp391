@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Service.Models.Response.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Entities
 {
+    [Table("Users")]
+
+    [Index(nameof(Email), IsUnique = true)]
     public partial class User : BaseEntity
     {
+        
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string Fullname { get; set; } = null!;
@@ -17,5 +21,19 @@ namespace Backend.Service.Entities
         // Foreign key
         public int RoleId { get; set; }
         public Role Role { get; set; } = null!;
+
+        // One to Many
+        public virtual ICollection<ShippingAddress> ShippingAddresses { get; set; }
+
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
+        // One to one or zero relationship
+        public virtual Cart? Cart { get; set; }
+
+
+
+        public UserModel ToData()
+        {
+            return new UserModel(this);
+        }
     }
 }

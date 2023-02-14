@@ -4,6 +4,16 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+a {
+  text-decoration: none !important;
+  color: #007bff;
+  font-size: 12px;
+}
+
+a:hover {
+  text-decoration: underline !important;
+}
+
 .form-input input {
   width: 100%;
   height: 59px;

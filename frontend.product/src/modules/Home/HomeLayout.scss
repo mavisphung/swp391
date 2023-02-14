@@ -1,7 +1,15 @@
-@media (min-width: 1280px) {
-  .container {
-    max-width: 960px !important;
+@media (min-width: 1300px) {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm {
+    max-width: 1200px !important;
   }
+}
+
+#home-text {
+  font-size: 16px;
+  margin: 5px 0;
 }
 
 .home-flex-container {
@@ -11,7 +19,27 @@
   margin: 3em 0;
 }
 
-.figure-caption{
+.home-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 34px !important;
+  margin-bottom: 20px;
+}
+
+.figure-caption {
   text-align: center;
-  font-weight: 600;
+  color: black !important;
+  font-size: 21px !important;
+  font-weight: 800;
+}
+
+.my-carousel .pe-3 {
+  padding-right: 30px !important;
+}
+
+.btn-slide {
+  font-size: 20px;
+  background-color: white;
+  border: none;
+  width: 50px;
 }

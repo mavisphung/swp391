@@ -1,44 +1,35 @@
-import "./RegisterLayout.scss";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import config from "~/config";
-import storeIcon from "~/assets/images/chystore_icon.svg";
+import { useNavigate, Link } from "react-router-dom";
 import {
   EyeFilled,
   EyeInvisibleFilled,
   ArrowLeftOutlined,
 } from "@ant-design/icons";
 
+import "./RegisterLayout.scss";
+import config from "~/config";
+import AppIcons from "~/assets/icons";
+
 function RegisterPage() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [checked, setChecked] = useState(false);
   const [passwordShowed, setPasswordShowed] = useState(false);
   const [confirmShowed, setConfirmShowed] = useState(false);
-  const users = [
-    { email: "admin@gmail.com", password: "admin" },
-    { email: "user1@gmail.com", password: "user1" },
-  ];
 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email && password) {
-      const account = users.find((u) => u.email === email);
-      if (account && account.password === password) {
-        localStorage.setItem("authenticated", true);
-        navigate("/");
-      }
+      navigate(config.routes.login);
     }
   };
 
   return (
     <div>
-      <img id="register-icon" src={storeIcon} alt="ChyStore icon" />
+      <img id="register-icon" src={AppIcons.logo} alt="ChyStore icon" />
       <div className="register-center register-back-link">
-        <Link to={config.dashboardRoutes.home}>
+        <Link to={config.routes.dashboard}>
           <ArrowLeftOutlined id="register-left-arrow" />
           <span>Trở về</span>
         </Link>
@@ -117,7 +108,7 @@ function RegisterPage() {
         </form>
         <div className="text-center">
           <span>Bạn đã có tài khoản?</span>
-          <Link id="login-link" to="/">
+          <Link id="login-link" to={config.routes.login}>
             Đăng nhập
           </Link>
         </div>

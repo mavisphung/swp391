@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Space, Table } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
 import { MSG07, MSG08 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
@@ -13,30 +13,32 @@ import '../../../styles/Component/button.scss';
 import '../../../styles/Component/label.scss';
 import '../../../styles/Component/table.scss';
 import CustomModal from '~/components/Modal';
+import { updateAccount } from '~/system/Constants/LinkURL';
+import { active, inactive } from '~/system/Constants/constants';
 
 const accountRoles = [
   {
     id: 'admin',
-    name: 'Admin',
+    name: 'Quản trị viên',
   },
   {
     id: 'staff',
-    name: 'Staff',
+    name: 'Nhân viên',
   },
   {
     id: 'customer',
-    name: 'Customer',
+    name: 'Khách hàng',
   },
 ];
 
 const accountStatus = [
   {
-    id: 'active',
-    name: 'Active',
+    id: '1',
+    name: 'Hoạt động',
   },
   {
-    id: 'inactive',
-    name: 'Inactive',
+    id: '0',
+    name: 'Không hoạt động',
   },
 ];
 
@@ -49,7 +51,7 @@ const accountList = {
       email: 'admin@chytech.com.vn',
       password: 'admin123',
       roleId: 'admin',
-      statusId: 'active',
+      status: '1',
       phone: '0123123123',
     },
     {
@@ -58,7 +60,7 @@ const accountList = {
       email: 'staff@chytech.com.vn',
       password: 'staff123',
       roleId: 'staff',
-      statusId: 'active',
+      status: '1',
       phone: '0123123555',
     },
     {
@@ -67,7 +69,7 @@ const accountList = {
       email: 'linhtd@gmail.com.vn',
       password: 'linhtd123',
       roleId: 'customer',
-      statusId: 'active',
+      status: '1',
       phone: '0901565565',
     },
     {
@@ -76,7 +78,7 @@ const accountList = {
       email: 'kieuph@gmail.com.vn',
       password: 'kieuph123',
       roleId: 'customer',
-      statusId: 'active',
+      status: '0',
       phone: '0901789789',
     },
   ],
@@ -87,6 +89,8 @@ const accountList = {
 function ViewAccountsList() {
   const { getCurrentUser } = useUserAuth();
   const user = getCurrentUser();
+
+  const { pathname } = useLocation();
 
   const [accounts, setAccounts] = useState([]);
   const [searchAccountEmail, setSearchAccountEmail] = useState('');
@@ -111,10 +115,10 @@ function ViewAccountsList() {
   }, [getAccountsList, pageIndex]);
 
   //Enable the Deactivate Button
-  const checkDisableButton = (email, statusId) => {
+  const checkDisableButton = (email, status) => {
     if (user.email === email) {
       return true;
-    } else if (statusId !== 'active') {
+    } else if (status !== active) {
       return true;
     } else {
       return false;
@@ -125,7 +129,7 @@ function ViewAccountsList() {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${updateAccount}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button className="mx-2" variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
@@ -137,11 +141,11 @@ function ViewAccountsList() {
             variant="outline-danger"
             size="xs"
             disabled={
-              checkDisableButton(record.email, record.statusId) ? true : false
+              checkDisableButton(record.email, record.status) ? true : false
             }
             onClick={() => handleShowModal(record.id)}
           >
-            <FontAwesomeIcon icon={faTrashCan} size="lg" />
+            <FontAwesomeIcon icon={faBan} size="lg" />
           </Button>
         </CustomTooltip>
       </Space>
@@ -183,13 +187,13 @@ function ViewAccountsList() {
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'statusId',
-      key: 'statusId',
+      dataIndex: 'status',
+      key: 'status',
       width: 200,
       render: (text, record) => {
-        if (record.statusId === 'active') {
+        if (record.status === active) {
           return <span className="c-label c-label-success"> Hoạt động</span>;
-        } else if (record.statusId === 'inactive') {
+        } else if (record.status === inactive) {
           return (
             <span className="c-label c-label-danger"> Không hoạt động</span>
           );
@@ -217,7 +221,7 @@ function ViewAccountsList() {
   const deactivateAccountStatusById = async (accountById) => {
     try {
       // call api
-      accountById.statusId = 'inactive';
+      accountById.status = inactive;
 
       getAccountsList(pageIndex);
     } catch (e) {
@@ -276,12 +280,12 @@ function ViewAccountsList() {
             value={searchAccountEmail}
             type="text"
           />
-          <Form.Control
+          {/* <Form.Control
             placeholder="Tìm tên"
             onChange={handleChangeAccountEmail}
             value={searchAccountEmail}
             type="text"
-          />
+          /> */}
           <Form.Select
             value={searchAccountRole}
             onChange={handleChangeAccountRole}
@@ -301,6 +305,7 @@ function ViewAccountsList() {
             aria-label="Chọn trạng thái"
             required
           >
+            <option value="">Chọn trạng thái</option>
             {accountStatus.map((status, index) => (
               <option key={index} value={status.id}>
                 {status.name}
