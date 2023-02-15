@@ -1,0 +1,131 @@
+.image-gallery-slide .image-gallery-image {
+  object-fit: fill !important;
+}
+
+.ant-rate-star {
+  color: black !important;
+  margin-inline-end: 0px !important;
+}
+
+#cb-cate {
+  font-size: 18px;
+  margin-left: 15px;
+  padding: 8px 11px;
+  border: none;
+  outline: 1px solid;
+  border-right: 11px solid transparent;
+}
+
+.btn-buy {
+  width: 145px;
+  border: none;
+  background-color: #c266d3;
+  font-weight: 700;
+  box-shadow: 1px 4px 4px #b9b9b9a9;
+  color: white;
+  background-image: -webkit-linear-gradient(
+    30deg,
+    #f2635f 50%,
+    transparent 50%
+  );
+  background-image: linear-gradient(30deg, #f2635f 50%, transparent 50%);
+  background-size: 700px;
+  background-repeat: no-repeat;
+  background-position: 0%;
+  -webkit-transition: background 600ms ease-in-out;
+  transition: background 600ms ease-in-out;
+}
+
+.btn-buy:hover {
+  background-color: #c266d3;
+  background-position: 100%;
+}
+
+.btn-add-cart {
+  width: 145px;
+  background-color: white !important;
+  color: black !important;
+  border-color: black;
+  font-weight: 800;
+  box-shadow: 1px 4px 4px #b9b9b9a9;
+  background-image: -webkit-linear-gradient(30deg, white 50%, transparent 50%);
+  background-image: linear-gradient(30deg, white 50%, transparent 50%);
+  background-size: 700px;
+  background-repeat: no-repeat;
+  background-position: 0%;
+  -webkit-transition: background 300ms ease-in-out;
+  transition: background 300ms ease-in-out;
+}
+
+.btn-add-cart:hover {
+  background-color: #c266d3 !important;
+  color: white !important;
+  background-position: 100%;
+}
+
+.pro-order-ctr {
+  margin-top: 32px;
+}
+
+.pro-order-ctr > .btn-buy {
+  margin-right: 30px;
+}
+
+#order-pane {
+  margin-left: 30px;
+}
+
+.product-block {
+  margin-top: 39px;
+}
+
+.product-block h5 {
+  font-weight: 900;
+  font-size: 22px;
+  margin-bottom: 17px;
+}
+
+.product-block a {
+  font-weight: 900;
+  font-size: 16px;
+  color: black;
+}
+
+@media only screen and (max-width: 1000px) {
+  .btn-add-cart {
+    display: block;
+    margin-left: 0;
+    margin-top: 15px;
+  }
+  #order-pane {
+    margin-left: 5px;
+  }
+}
+
+.com-row {
+  margin-top: 10px;
+}
+
+.com-row h6 {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.com-row img {
+  width: 100%;
+  border-radius: 50%;
+  padding: 0 40px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .com-row img {
+    padding: 20px;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .com-row img {
+    padding: 10px;
+  }
+}
