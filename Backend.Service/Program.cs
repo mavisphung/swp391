@@ -28,7 +28,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       builder =>
                       {
-                          builder.WithOrigins("*").AllowAnyOrigin();
+                          builder.WithOrigins("*")
+                                .AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyOrigin();
                       });
 });
 
@@ -167,7 +170,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<AuthenticationSchemeOptions, AppAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme, (opt) => { });
 
 var app = builder.Build();
+// Add Cors
 app.UseCors(MyAllowSpecificOrigins);
+
+// Add Global exception handler
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
