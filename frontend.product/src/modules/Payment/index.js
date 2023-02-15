@@ -1,14 +1,33 @@
 import { HomeFilled, RightOutlined } from "@ant-design/icons";
-import React from "react";
-import { Breadcrumb, Col, Container, Form, Image, Row } from "react-bootstrap";
+import React, { useState } from "react";
+import {
+  Breadcrumb,
+  Button,
+  Col,
+  Container,
+  Form,
+  Image,
+  Row,
+} from "react-bootstrap";
 import CartItems from "./components/CartItems";
+import "./PaymentLayout.scss";
 
 function PaymentPage() {
+  const [payAdvanced, setPayAdvanced] = useState("VNPa");
+
+  const onPaymentChange = (p) => {
+    // if (p.target.value === "PayInAdvanced") {
+    //   setPayAdvanced(true);
+    //   console.log(payAdvanced);
+    // } else {
+    //   setPayAdvanced(false);
+    //   console.log(payAdvanced);
+    // }
+    setPayAdvanced(p.target.value);
+  };
+
   return (
     <Container>
-      <p className="d-flex justify-content-center">
-        Cửa hàng ChyStore chuyên phân phối các loại chim cảnh khu vực miền Nam
-      </p>
       <div>
         <Breadcrumb separator={<RightOutlined />}>
           <Breadcrumb.Item href="">
@@ -92,26 +111,37 @@ function PaymentPage() {
                 name="paymentGroup"
                 id="vnPayRadio"
                 label="Bằng VNPay"
+                onChange={onPaymentChange}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
+                onChange={onPaymentChange}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="payInAdvanceRadio"
                 label="Đặt cọc trước 50%"
+                onChange={onPaymentChange}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="shippingPayRadio"
                 label="Thanh toán trực tiếp cho nhân viên giao hàng"
+                onChange={onPaymentChange}
               />
             </Form>
+            <p>
+              Selected: <strong>{payAdvanced}</strong>
+            </p>
+          </Row>
+          <Row>
+            {" "}
+            <Button className="btn-pay mt-3">Thanh toán</Button>
           </Row>
         </Col>
       </Container>
