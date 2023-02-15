@@ -46,6 +46,22 @@ const orderDetailsData = {
     district: '770',
     province: '79',
   },
+  payment: [
+    {
+      id: 1232,
+      paymentCode: '12145',
+      amount: 1600000,
+      paymentMethod: 2,
+      paidDate: '2023-01-09T08:15:00',
+    },
+    {
+      id: 1235,
+      paymentCode: '12155',
+      amount: 2000000,
+      paymentMethod: 1,
+      paidDate: '',
+    },
+  ],
   status: '0',
   orderDate: '2023-01-09',
   estimatedReceiveDate: '2023-01-12',
