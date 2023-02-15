@@ -7,13 +7,35 @@ import DefaultLayout from "~/components/DefaultLayout";
 import HomePage from "~/modules/Home";
 import CategoryPage from "~/modules/Category";
 class Dashboard extends Component {
+  // test = async () => {
+  //   axios.defaults.timeout = 8000;
+  //   // const source = CancelToken.source();
+  //   const timeout = setTimeout(() => {
+  //     // source.cancel();
+  //     // Timeout Logic
+  //   }, 10000);
+  //   try {
+  //     const res = await axios.get("https://localhost:7179/api/category", {
+  //       params: {
+  //         PageNumber: 1,
+  //         PageSize: 10,
+  //       },
+  //     });
+  //     clearTimeout(timeout);
+  //     console.log("RES", res.data);
+  //   } catch (error) {
+  //     console.log("Error", error);
+  //   }
+  // };
+
   componentDidMount() {
     axios
-      .get(`https://localhost:7179/api/category`, {
+      .get("https://localhost:7179/api/category", {
         params: {
           PageNumber: 1,
           PageSize: 10,
         },
+        signal: AbortSignal.timeout(8000),
         // withCredentials: false,
         // headers: {
         //   "Access-Control-Allow-Origin": "*",
@@ -21,9 +43,10 @@ class Dashboard extends Component {
         // },
       })
       .then((res) => {
-        console.log(res);
+        console.log("Res", res);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log("Error", error));
+    // this.test();
   }
 
   render() {

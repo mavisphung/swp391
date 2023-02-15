@@ -19,9 +19,13 @@ function CategoryPage() {
   return (
     <div className="container">
       <AppTrace />
-      <div>
+      <div className="row">
         {birdList.map((b) => {
-          return <BirdCard bird={b} key={b.id} historyUrl={breadcrumb} />;
+          return (
+            <div className="cate-bird-card col-4">
+              <BirdCard bird={b} key={b.id} historyUrl={breadcrumb} />
+            </div>
+          );
         })}
       </div>
     </div>
