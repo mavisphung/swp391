@@ -11,6 +11,7 @@ import {
   checkNewPasswordMessage,
   checkPasswordMessage,
 } from '../Validation';
+import '../../styles/Component/input-field.scss';
 
 const ChangePasswordForm = () => {
   const { getCurrentUser } = useUserAuth();
