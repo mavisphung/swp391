@@ -16,10 +16,10 @@ import { useUserAuth } from '~/context/UserAuthContext';
 const LoginForm = () => {
   const { loginEmailAndPassword } = useUserAuth();
   let navigate = useNavigate();
-  let [email, setEmail] = useState('');
+  let [email, setEmail] = useState('admin@chytech.vn');
   const [passwordType, setPasswordType] = useState('password');
   const [eye, setEye] = useState(true);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('123456');
   const [validated, setValidated] = useState(true);
 
   const handleSubmit = async (e) => {
@@ -31,9 +31,10 @@ const LoginForm = () => {
     } else if (emailPattern.test(email)) {
       try {
         const user = await loginEmailAndPassword(email, password);
+        console.log('User', user);
         if (
           (user.roleId !== Admin || user.roleId !== Staff) &&
-          user.status === active
+          user.status === true
         ) {
           setTimeout(
             () =>

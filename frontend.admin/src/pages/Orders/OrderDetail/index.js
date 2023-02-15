@@ -38,7 +38,7 @@ const orderDetailsData = {
     gender: true,
     password: 'linhtd123',
     dob: '1995-04-15',
-    roleId: '3',
+    roleId: 3,
     status: '1',
     phone: '0901565565',
     address: '250 Nguyễn Thị Minh Khai',

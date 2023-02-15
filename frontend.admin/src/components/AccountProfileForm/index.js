@@ -28,7 +28,7 @@ const userAccount = {
   password: 'admin123',
   dob: '1998-07-07',
   role: {
-    roleId: '1',
+    roleId: 1,
     name: 'Quản trị viên',
   },
   status: '1',
