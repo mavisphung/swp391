@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import {
+  Customer,
   emailPattern,
   fullNamePattern,
   inactive,
@@ -33,7 +34,7 @@ const userAccount = {
   gender: true,
   password: 'linhtd123',
   dob: '1995-04-15',
-  roleId: 'customer',
+  roleId: 3,
   status: '1',
   phone: '0901565565',
   address: '250 Nguyễn Thị Minh Khai',
@@ -170,6 +171,17 @@ const AddEditAccountForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      setValidated(true);
+    } else if (
+      fullNamePattern.test(fullName) &&
+      emailPattern.test(email) &&
+      phonePattern.test(phone) &&
+      emailIsExisted === false
+    ) {
+      handleShow();
+    }
   };
 
   const handleSubmitSuccess = () => {};
@@ -381,7 +393,7 @@ const AddEditAccountForm = () => {
               {account.status === inactive ? (
                 <></>
               ) : accountId ? (
-                account.roleId === 'customer' ? (
+                account.roleId === Customer ? (
                   <></>
                 ) : (
                   <Button
