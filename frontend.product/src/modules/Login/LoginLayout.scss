@@ -1,0 +1,92 @@
+#login-icon {
+  height: 65px;
+  object-fit: contain;
+  display: block;
+  margin: 21px 28px 0;
+}
+
+.login-back-link {
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.login-back-link span {
+  color: black;
+  font-size: 12px;
+}
+
+#login-left-arrow {
+  margin-right: 5px;
+  color: black;
+}
+
+.login-center {
+  width: 505px;
+  margin: 0 auto;
+}
+
+.login-form {
+  position: relative;
+  margin-top: 12px;
+  margin-bottom: 69px;
+  padding: 38px 40px;
+  border: 1px solid #878787;
+  border-radius: 10px;
+}
+
+.login-form form {
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  margin-top: 30px;
+  font-size: 16px;
+}
+
+.password-group {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  top: 22px;
+  right: 20px;
+}
+
+#xinchao {
+  font-size: 25px;
+  font-family: inherit;
+}
+
+#dangnhap {
+  font-weight: 500;
+  font-size: 31px;
+  margin-bottom: 0;
+}
+
+#vao {
+  font-size: 16px;
+}
+
+.login-flex-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0 36px;
+}
+
+.text-center span {
+  font-size: 16px;
+  margin-right: 5px;
+  color: #7d7d7d;
+}
+
+#register-link {
+  margin-left: 5px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f2635f;
+}
+
+.login-form .text-center {
+  margin-top: 69px;
+}
