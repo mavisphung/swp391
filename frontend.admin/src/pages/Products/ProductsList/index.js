@@ -5,22 +5,28 @@ import { Button, Image, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
-import productsData from './productsData.json';
+import birdData from './birdData.json';
 import { MSG07, MSG34 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import CustomModal from '~/components/Modal';
 import { viewProductDetail } from '~/system/Constants/LinkURL';
+import {
+  active,
+  available,
+  jpeg,
+  jpg,
+  outOfStock,
+  png,
+} from '~/system/Constants/constants';
 
 const productStatus = [
   {
-    id: '1',
-    status: true,
-    name: 'Hoạt động',
+    id: 1,
+    name: 'Có sẵn',
   },
   {
-    id: '0',
-    status: false,
-    name: 'Không hoạt động',
+    id: 0,
+    name: 'Hết hàng',
   },
 ];
 
@@ -40,7 +46,7 @@ const ProductsList = () => {
 
   // Get all products
   const getProductsList = useCallback((pageIndex) => {
-    const data = productsData;
+    const data = birdData;
     setProducts(data.map((product) => product));
 
     let allTypesList = data.map((product) => product.CategoryId);
@@ -59,42 +65,47 @@ const ProductsList = () => {
   const columns = [
     {
       title: 'Mã sản phẩm',
-      dataIndex: 'ProductCode',
-      key: 'ProductCode',
+      dataIndex: 'productCode',
+      key: 'productCode',
     },
     {
       title: 'Hình ảnh',
-      dataIndex: 'Url',
-      key: 'Url',
+      dataIndex: 'medias',
+      key: 'medias',
       width: 100,
       render: (text, record) => {
-        return (
-          <Image src={record.Url[0]} alt={text} style={{ maxHeight: 40 }} />
-        );
+        let imageLink = record.medias.filter(
+          (media) =>
+            media.type === png || media.type === jpeg || media.type === jpg,
+        )[0]?.url;
+        return <Image src={imageLink} alt={text} style={{ maxHeight: 40 }} />;
       },
     },
     {
       title: 'Tên sản phẩm',
-      dataIndex: 'Name',
-      key: 'Name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: 'Phân loại',
-      dataIndex: 'CategoryId',
-      key: 'CategoryId',
+      dataIndex: 'categoryId',
+      key: 'categoryId',
+    },
+    {
+      title: 'Tồn kho',
+      dataIndex: 'quantity',
+      key: 'quantity',
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'Status',
-      key: 'Status',
-      width: 200,
+      dataIndex: 'status',
+      key: 'status',
+      width: 150,
       render: (text, record) => {
-        if (record.Status === true) {
-          return <span className="c-label c-label-success"> Hoạt động</span>;
-        } else if (record.Status === false) {
-          return (
-            <span className="c-label c-label-danger"> Không hoạt động</span>
-          );
+        if (record.status === available) {
+          return <span className="c-label c-label-success"> Có sẵn</span>;
+        } else if (record.status === outOfStock) {
+          return <span className="c-label c-label-danger"> Hết hàng</span>;
         }
       },
     },
@@ -120,7 +131,7 @@ const ProductsList = () => {
           <Button
             variant="outline-danger"
             size="xs"
-            disabled={checkDisableButton(record.Status) ? true : false}
+            disabled={checkDisableButton(record.isDeleted) ? false : true}
             onClick={() => handleShowModal(record.id)}
           >
             <FontAwesomeIcon icon={faBan} size="lg" />
@@ -151,7 +162,7 @@ const ProductsList = () => {
   const deactivateProductStatusById = async (productById) => {
     try {
       // call api
-      productById.Status = false;
+      productById.isDeleted = active;
 
       getProductsList(pageIndex);
     } catch (e) {
@@ -250,7 +261,7 @@ const ProductsList = () => {
 
       <div className="my-3">
         <Table
-          rowKey="ProductCode"
+          rowKey="productCode"
           locale={{ emptyText: MSG07 }}
           columns={columns}
           dataSource={products}
