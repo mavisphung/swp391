@@ -1,11 +1,7 @@
-﻿using System.Security.Claims;
-using Backend.Service.Entities;
+﻿using Backend.Service.Entities;
 using Backend.Service.Models.Cart;
-using Backend.Service.Models.User;
 using Backend.Service.Services;
-using LinqKit;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Service.Controllers
