@@ -8,6 +8,7 @@ import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
 import { home, login } from '~/system/Constants/LinkURL';
 import './Header.scss';
+import { Admin } from '~/system/Constants/constants';
 
 const { Header } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -19,7 +20,7 @@ function HeaderContent() {
   const user = getCurrentUser();
 
   const handleRenderHeader = () => {
-    if (user && user.roleId === 'admin') {
+    if (user && user.roleId === Admin) {
       return (
         <>
           <Space>

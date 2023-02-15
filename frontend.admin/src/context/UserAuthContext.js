@@ -10,7 +10,7 @@ export function UserAuthContextProvider({ children }) {
 
   async function loginEmailAndPassword(email, password) {
     try {
-      // const response = await api.post('/auth/sign-in', {
+      // const response = await api.post('/auth/sign-en', {
       //   email,
       //   password,
       // });
@@ -21,7 +21,7 @@ export function UserAuthContextProvider({ children }) {
           name: 'Bảo Khang',
           email: 'admin@chytech.com.vn',
           password: 'admin123',
-          roleId: 'admin',
+          roleId: '1',
           status: '1',
         },
       };

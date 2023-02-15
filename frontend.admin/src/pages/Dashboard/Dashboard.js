@@ -39,6 +39,7 @@ import './Dashboard.scss';
 import ChangePassword from '../Accounts/ChangePassword';
 import { useUserAuth } from '~/context/UserAuthContext';
 import { useEffect } from 'react';
+import { Admin, Staff } from '~/system/Constants/constants';
 
 const { Content } = Layout;
 
@@ -58,7 +59,7 @@ function Dashboard() {
 
   const renderRoutes = () => {
     if (user) {
-      if (user.roleId === 'staff') {
+      if (user.roleId === Staff) {
         return (
           <Routes>
             <Route path="/" element={<Store />} />
@@ -72,7 +73,7 @@ function Dashboard() {
             <Route path="/*" element={<div>Page Not Found</div>} />
           </Routes>
         );
-      } else if (user.roleId === 'admin') {
+      } else if (user.roleId === Admin) {
         return (
           <Routes>
             <Route path="/" element={<Store />} />

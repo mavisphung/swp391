@@ -30,7 +30,7 @@ function Home() {
         />
       </div>
       <div className="home-body">
-        <di className="home-content-group">
+        <div className="home-content-group">
           <Link to={`/login`}>
             <Button variant="dark" className="login-btn">
               Đăng nhập
@@ -42,7 +42,7 @@ function Home() {
               sản phẩm cho chim.
             </strong>
           </span>
-        </di>
+        </div>
       </div>
       <div className="home-footer">
         <Container>

@@ -30,6 +30,7 @@ import './SideBar.scss';
 import { Image } from 'react-bootstrap';
 import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
+import { Admin } from '~/system/Constants/constants';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -40,8 +41,6 @@ function Sidebar() {
   let navigate = useNavigate();
   const { getCurrentUser, logOut } = useUserAuth();
   const user = getCurrentUser();
-
-  //const user = { name: 'Admin', roleId: 'admin' };
 
   const [key, setKey] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -65,7 +64,7 @@ function Sidebar() {
   };
 
   const renderMenuDependOnRole = () => {
-    if (user?.roleId === 'admin') {
+    if (user?.roleId === Admin) {
       return (
         <Menu
           onClick={handleClick}

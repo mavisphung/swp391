@@ -18,15 +18,15 @@ import { active, inactive } from '~/system/Constants/constants';
 
 const accountRoles = [
   {
-    id: 'admin',
+    id: '1',
     name: 'Quản trị viên',
   },
   {
-    id: 'staff',
+    id: '2',
     name: 'Nhân viên',
   },
   {
-    id: 'customer',
+    id: '3',
     name: 'Khách hàng',
   },
 ];
@@ -50,7 +50,7 @@ const accountList = {
       fullname: 'Bao Khang',
       email: 'admin@chytech.com.vn',
       password: 'admin123',
-      roleId: 'admin',
+      roleId: '1',
       status: '1',
       phone: '0123123123',
     },
@@ -59,7 +59,7 @@ const accountList = {
       fullname: 'Kevin Ken',
       email: 'staff@chytech.com.vn',
       password: 'staff123',
-      roleId: 'staff',
+      roleId: '2',
       status: '1',
       phone: '0123123555',
     },
@@ -68,7 +68,7 @@ const accountList = {
       fullname: 'Thái Đăng Linh',
       email: 'linhtd@gmail.com.vn',
       password: 'linhtd123',
-      roleId: 'customer',
+      roleId: '3',
       status: '1',
       phone: '0901565565',
     },
@@ -77,7 +77,7 @@ const accountList = {
       fullname: 'Phùng Hữu Kiều',
       email: 'kieuph@gmail.com.vn',
       password: 'kieuph123',
-      roleId: 'customer',
+      roleId: '3',
       status: '0',
       phone: '0901789789',
     },
