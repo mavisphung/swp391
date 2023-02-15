@@ -51,6 +51,7 @@ function LoginPage() {
             id="femail"
             type="email"
             placeholder="Vui lòng nhập email"
+            // defaultValue="nguoibimatthegioi@gmail.com"
             onChange={(e) => setEmail(e.target.value)}
           />
           <label htmlFor="fpassword">Mật khẩu</label>
@@ -59,6 +60,7 @@ function LoginPage() {
               id="fpassword"
               type={passwordShowed ? "text" : "password"}
               placeholder="Vui lòng nhập mật khẩu"
+              // defaultValue="123456"
               onChange={(e) => setPassword(e.target.value)}
             />
             <span className="eye-icon">

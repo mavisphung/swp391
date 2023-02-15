@@ -8,6 +8,7 @@ const routes = {
   category: "/dashboard/category",
   productDetails: "/product",
   cart: "/cart",
+  confirmLogin: "/cart/confirm-login",
 };
 
 const dashboardRoutes = {
@@ -18,7 +19,7 @@ const dashboardRoutes = {
 
 const cartRoutes = {
   cart: "/cart/*",
-  payment: "/payment",
+  confirmLogin: "/confirm-login",
 };
 
 const personalRoutes = {

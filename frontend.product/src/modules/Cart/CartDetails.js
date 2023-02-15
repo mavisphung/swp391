@@ -1,8 +1,9 @@
-import Bird from "~/models/Bird";
-import { formatPrice } from "~/common/Helper";
+import { useNavigate } from "react-router-dom";
 
 import "./CartLayout.scss";
 import config from "~/config";
+import Bird from "~/models/Bird";
+import { formatPrice } from "~/common/Helper";
 import CartItem from "./widgets/CartItem";
 
 const cartList = [
@@ -22,6 +23,14 @@ const cartList = [
 
 function CartDetails() {
   let total = 0;
+
+  const navigate = useNavigate();
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    navigate(config.routes.confirmLogin);
+  };
+
   return (
     <div className="container cart-detail">
       <div className="row">
@@ -53,7 +62,9 @@ function CartDetails() {
         <div className="col cart-total">
           <h5>Tổng cộng:</h5>
           <div className="price">{formatPrice(total)}đ</div>
-          <button className="btn-buy">Đặt hàng</button>
+          <button className="btn-buy" onClick={handleClick}>
+            Đặt hàng
+          </button>
           <br />
           <a href={config.routes.dashboard}>
             <span>Tiếp tục mua hàng?</span>
