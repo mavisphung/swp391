@@ -15,20 +15,20 @@ export function UserAuthContextProvider({ children }) {
     };
 
     try {
-      const response = await api.post('/auth/sign-en', payload, {
-        headers: { signUpMethod: 'local' },
-      });
-      console.log('Response: ', response.data);
-      // const response = {
-      //   data: {
-      //     id: '1',
-      //     fullname: 'Admin Chystore',
-      //     email: 'admin@chystore.vn',
-      //     password: '123456',
-      //     roleId: 1,
-      //     status: true,
-      //   },
-      // };
+      // const response = await api.post('/auth/sign-en', payload, {
+      //   headers: { signUpMethod: 'local' },
+      // });
+      // console.log('Response: ', response.data);
+      const response = {
+        data: {
+          id: '1',
+          fullname: 'Admin Chystore',
+          email: 'admin@chystore.vn',
+          password: '123456',
+          roleId: 1,
+          status: true,
+        },
+      };
       localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {

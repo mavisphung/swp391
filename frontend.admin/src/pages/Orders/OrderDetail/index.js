@@ -39,7 +39,7 @@ const orderDetailsData = {
     password: 'linhtd123',
     dob: '1995-04-15',
     roleId: 3,
-    status: '1',
+    status: true,
     phone: '0901565565',
     address: '250 Nguyễn Thị Minh Khai',
     ward: '27139',
@@ -62,7 +62,7 @@ const orderDetailsData = {
       paidDate: '',
     },
   ],
-  status: '0',
+  status: 0,
   orderDate: '2023-01-09',
   estimatedReceiveDate: '2023-01-12',
   closeDate: '',
@@ -237,7 +237,7 @@ const OrderDetail = () => {
           <p>
             <strong>Ngày đặt hàng:</strong> {customerOrder.orderDate}
           </p>
-          {customerOrder.statusId === cancelled ? (
+          {customerOrder.status === cancelled ? (
             <p>
               <strong>Ngày hủy:</strong> {customerOrder.receiveDate}
             </p>
@@ -446,7 +446,7 @@ const OrderDetail = () => {
             <p style={{ fontSize: '20px' }}>
               Chi tiết đơn hàng #{orderId} -{' '}
               <strong>{renderOrderStatus()}</strong>{' '}
-              {customerOrder.statusId === cancelled ? (
+              {customerOrder.status === cancelled ? (
                 <>
                   {' '}
                   -{' '}

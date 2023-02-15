@@ -35,7 +35,7 @@ const userAccount = {
   password: 'linhtd123',
   dob: '1995-04-15',
   roleId: 3,
-  status: '1',
+  status: true,
   phone: '0901565565',
   address: '250 Nguyễn Thị Minh Khai',
   ward: '27139',
