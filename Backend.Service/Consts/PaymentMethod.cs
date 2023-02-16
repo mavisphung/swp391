@@ -2,7 +2,7 @@
 {
     public enum PaymentMethod
     {
-        Vnpay,             // 0
+        Vnpay = 1,             // 0
         AtStore,           // 1
         PayInAdvance50,    // 2
         Cod,               // 3
