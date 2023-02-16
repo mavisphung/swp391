@@ -7,6 +7,7 @@ const routes = {
   home: "/dashboard/home",
   category: "/dashboard/category",
   productDetails: "/product",
+  birdDetails: "/bird",
   cart: "/cart",
   confirmLogin: "/cart/confirm-login",
 };

@@ -17,24 +17,43 @@ const BirdCard = (props) => {
     <Col className="pb-4 pe-3">
       <Card
         onClick={() =>
-          navigate(
-            {
-              pathname: config.routes.productDetails,
-              search: `?${createSearchParams(params)}`,
-            },
-            {
-              preventScrollReset: false,
-              state: {
-                breadcrumb: [
-                  ...historyUrl,
-                  {
-                    name: props.bird.name,
-                    url: `/product?productId=${props.bird.id}`,
+          props.type === 0
+            ? navigate(
+                {
+                  pathname: config.routes.productDetails,
+                  search: `?${createSearchParams(params)}`,
+                },
+                {
+                  preventScrollReset: false,
+                  state: {
+                    breadcrumb: [
+                      ...historyUrl,
+                      {
+                        name: props.bird.name,
+                        url: `/product?productId=${props.bird.id}`,
+                      },
+                    ],
                   },
-                ],
-              },
-            }
-          )
+                }
+              )
+            : navigate(
+                {
+                  pathname: config.routes.birdDetails,
+                  search: `?${createSearchParams(params)}`,
+                },
+                {
+                  preventScrollReset: false,
+                  state: {
+                    breadcrumb: [
+                      ...historyUrl,
+                      {
+                        name: props.bird.name,
+                        url: `/product?productId=${props.bird.id}`,
+                      },
+                    ],
+                  },
+                }
+              )
         }
       >
         <Card.Img src={props.bird.img} />
