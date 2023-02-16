@@ -17,10 +17,14 @@ import {
   pending,
 } from '~/system/Constants/constants';
 import { MSG07 } from '~/system/Messages/messages';
+import { viewOrderDetail } from '~/system/Constants/LinkURL';
+import {
+  getCustomerOrderListData,
+  getFilterCustomerOrderListData,
+} from '~/api/orders';
 
 import '../../../styles/Component/label.scss';
 import './OrdersList.scss';
-import { viewOrderDetail } from '~/system/Constants/LinkURL';
 
 const { Search } = Input;
 
@@ -30,69 +34,22 @@ const statusList = [
     tab: 'Tất cả',
   },
   {
-    key: 1,
+    key: 4,
     tab: 'Chờ xác nhận',
   },
   {
-    key: 2,
+    key: 1,
     tab: 'Đang xử lí',
   },
   {
-    key: 3,
+    key: 2,
     tab: 'Thành công',
   },
   {
-    key: 4,
+    key: 3,
     tab: 'Đã hủy',
   },
 ];
-
-const ordersList = {
-  data: [
-    {
-      id: 'OCH0123456',
-      customerAccount: {
-        fullname: 'Thái Đăng Linh',
-      },
-      status: 1,
-      orderDate: '2023-01-09',
-      estimatedReceiveDate: '2023-01-12',
-      totalPrice: '3600000',
-    },
-    {
-      id: 'OCH0123789',
-      customerAccount: {
-        fullname: 'Phùng Hữu Kiều',
-      },
-      status: 1,
-      orderDate: '2023-01-15',
-      estimatedReceiveDate: '2023-01-18',
-      totalPrice: '1500000',
-    },
-    {
-      id: 'OCH0123555',
-      customerAccount: {
-        fullname: 'Lương Bá Thành',
-      },
-      status: 2,
-      orderDate: '2023-01-12',
-      estimatedReceiveDate: '2023-01-14',
-      totalPrice: '2300000',
-    },
-    {
-      id: 'OCH0123666',
-      customerAccount: {
-        fullname: 'Trần Công Minh',
-      },
-      status: 4,
-      orderDate: '2023-02-06',
-      estimatedReceiveDate: '2023-02-10',
-      totalPrice: '3000000',
-    },
-  ],
-  pageSize: 10,
-  totalCount: 2,
-};
 
 const OrdersList = () => {
   const { pathname } = useLocation();
@@ -115,18 +72,17 @@ const OrdersList = () => {
     async (pageIndex, orderStatus, searchOrderId) => {
       try {
         if (searchOrderId === '' && orderStatus === '') {
-          const data = ordersList;
-          setOrders(data.data.map((order) => order));
+          const data = await getCustomerOrderListData(pageIndex);
+          setOrders(data.map((order) => order));
           setPageSize(data.pageSize);
           setTotalCount(data.totalCount);
         } else {
-          const data = null;
-          // const data = await getFilterCustomerOrderListData(
-          //   pageIndex,
-          //   orderStatus,
-          //   searchOrderId,
-          // );
-          setOrders(data.data.map((order) => order));
+          const data = await getFilterCustomerOrderListData(
+            pageIndex,
+            orderStatus,
+            searchOrderId,
+          );
+          setOrders(data.map((order) => order));
           setPageSize(data.pageSize);
           setTotalCount(data.totalCount);
         }
@@ -151,15 +107,15 @@ const OrdersList = () => {
   // Manage table
   const columns = [
     {
-      title: 'Mã đơn hàng',
+      title: 'Mã đơn',
       dataIndex: 'id',
       key: 'id',
     },
-    {
-      title: 'Khách hàng',
-      dataIndex: ['customerAccount', 'fullname'],
-      key: 'customer',
-    },
+    // {
+    //   title: 'Khách hàng',
+    //   dataIndex: ['customerAccount', 'fullname'],
+    //   key: 'customer',
+    // },
     {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
@@ -175,9 +131,13 @@ const OrdersList = () => {
       dataIndex: 'estimatedReceiveDate',
       key: 'estimatedReceiveDate',
       render: (text, record) => {
-        return moment(record.estimatedReceiveDate, dateConvert).format(
-          defaultDatePickerRange,
-        );
+        if (record.estimatedReceiveDate) {
+          return moment(record.estimatedReceiveDate, dateConvert).format(
+            defaultDatePickerRange,
+          );
+        } else {
+          return 'Chờ xác nhận';
+        }
       },
     },
     {
