@@ -23,13 +23,16 @@ function Product2() {
         <div className="my-hr"></div>
         <div
           style={{
-            width: "540px",
-            height: "305px",
-            backgroundColor: "blue",
             textAlign: "center",
           }}
         >
-          VIDEO
+          <iframe
+            title="chim chao mao"
+            width="540"
+            height="305"
+            allowFullScreen={true}
+            src="https://www.youtube.com/embed/OAnU9XPM5Ms"
+          ></iframe>
         </div>
         <div>
           <h6>Thông tin chi tiết</h6>

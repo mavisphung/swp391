@@ -1,9 +1,9 @@
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-// import "../ProductLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
+import { addToCart } from "~/common/LocalStorageUtil";
 
 function ProductOrderPane2({
   name = "Chào mào bẫy đấu Ba Tơ",
@@ -37,7 +37,15 @@ function ProductOrderPane2({
         <Button className="btn-buy" onClick={handleBuyClick}>
           Mua ngay
         </Button>
-        <Button className="btn-add-cart">Thêm giỏ hàng</Button>
+        <Button
+          className="btn-add-cart"
+          onClick={(e) => {
+            e.preventDefault();
+            // addToCart(props.bird);
+          }}
+        >
+          Thêm giỏ hàng
+        </Button>
       </div>
       <br />
     </div>

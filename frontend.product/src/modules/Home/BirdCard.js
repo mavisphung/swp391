@@ -4,6 +4,7 @@ import { createSearchParams, useNavigate } from "react-router-dom";
 import "./BirdCardLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
+import { addToCart } from "~/common/LocalStorageUtil";
 
 const BirdCard = (props) => {
   const navigate = useNavigate();
@@ -15,47 +16,7 @@ const BirdCard = (props) => {
 
   return (
     <Col className="pb-4 pe-3">
-      <Card
-        onClick={() =>
-          props.type === 0
-            ? navigate(
-                {
-                  pathname: config.routes.productDetails,
-                  search: `?${createSearchParams(params)}`,
-                },
-                {
-                  preventScrollReset: false,
-                  state: {
-                    breadcrumb: [
-                      ...historyUrl,
-                      {
-                        name: props.bird.name,
-                        url: `/product?productId=${props.bird.id}`,
-                      },
-                    ],
-                  },
-                }
-              )
-            : navigate(
-                {
-                  pathname: config.routes.birdDetails,
-                  search: `?${createSearchParams(params)}`,
-                },
-                {
-                  preventScrollReset: false,
-                  state: {
-                    breadcrumb: [
-                      ...historyUrl,
-                      {
-                        name: props.bird.name,
-                        url: `/product?productId=${props.bird.id}`,
-                      },
-                    ],
-                  },
-                }
-              )
-        }
-      >
+      <Card>
         <Card.Img src={props.bird.img} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
@@ -65,8 +26,59 @@ const BirdCard = (props) => {
             <span id="pro-amount-status">Còn hàng</span>
           </div>
           <div className="pro-card-ctr">
-            <Button className="btn-buy">Xem ngay</Button>
-            <Button className="btn-add-cart">Thêm giỏ hàng</Button>
+            <Button
+              className="btn-buy"
+              onClick={() =>
+                props.type === 0
+                  ? navigate(
+                      {
+                        pathname: config.routes.productDetails,
+                        search: `?${createSearchParams(params)}`,
+                      },
+                      {
+                        preventScrollReset: false,
+                        state: {
+                          breadcrumb: [
+                            ...historyUrl,
+                            {
+                              name: props.bird.name,
+                              url: `/product?productId=${props.bird.id}`,
+                            },
+                          ],
+                        },
+                      }
+                    )
+                  : navigate(
+                      {
+                        pathname: config.routes.birdDetails,
+                        search: `?${createSearchParams(params)}`,
+                      },
+                      {
+                        preventScrollReset: false,
+                        state: {
+                          breadcrumb: [
+                            ...historyUrl,
+                            {
+                              name: props.bird.name,
+                              url: `/product?productId=${props.bird.id}`,
+                            },
+                          ],
+                        },
+                      }
+                    )
+              }
+            >
+              Xem ngay
+            </Button>
+            <Button
+              className="btn-add-cart"
+              onClick={(e) => {
+                e.preventDefault();
+                addToCart(props.bird);
+              }}
+            >
+              Thêm giỏ hàng
+            </Button>
           </div>
         </Card.Body>
       </Card>

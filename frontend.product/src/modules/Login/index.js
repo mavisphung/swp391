@@ -34,7 +34,9 @@ function LoginPage() {
 
   return (
     <div>
-      <img id="login-icon" src={AppIcons.logo} alt="ChyStore icon" />
+      <a href={config.routes.dashboard}>
+        <img id="login-icon" src={AppIcons.logo} alt="ChyStore icon" />
+      </a>
       <div className="login-center login-back-link">
         <Link to={config.routes.dashboard}>
           <ArrowLeftOutlined id="login-left-arrow" />
