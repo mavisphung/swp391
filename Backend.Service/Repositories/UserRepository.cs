@@ -1,4 +1,5 @@
-﻿using Backend.Service.Entities;
+﻿using Backend.Service.Consts;
+using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
@@ -95,6 +96,57 @@ namespace Backend.Service.Repositories
             catch (Exception ex)
             {
                 throw new NotFoundException();
+            }
+        }
+
+        public User? GetUserByEmail(string email)
+        {
+            try
+            {
+                var found = _dbSet.Where(u => !u.IsDeleted && u.Email.Equals(email)).First();
+                return found;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                //return await _dbSet.SingleAsync(u => u.Id == id && !u.IsDeleted);
+                return await _dbSet.Where(u => !u.IsDeleted && u.Email.Equals(email)).Include("Cart").FirstAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public User? GetUserByPhone(string phone)
+        {
+            try
+            {
+                var found = _dbSet.Where(u => !u.IsDeleted && u.Phone.Equals(phone)).First();
+                return found;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public async Task<User?> GetUserByPhoneAsync(string phone)
+        {
+            try
+            {
+                return await _dbSet.Where(u => !u.IsDeleted && u.Phone.Equals(phone)).Include("Cart").FirstAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
             }
         }
     }

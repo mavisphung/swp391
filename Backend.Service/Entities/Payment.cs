@@ -16,5 +16,8 @@ namespace Backend.Service.Entities
         public DateTime PaidDate { get; set; } = DateTime.UtcNow;
 
         // Order foreign key
+        public int OrderId { get; set; }
+        public Order Order { get; set; }
+
     }
 }
