@@ -5,7 +5,7 @@ import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
-import { MSG07, MSG08 } from '~/system/Messages/messages';
+import { MSG07, MSG08, MSG42 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { useUserAuth } from '~/context/UserAuthContext';
 
@@ -15,6 +15,7 @@ import '../../../styles/Component/table.scss';
 import CustomModal from '~/components/Modal';
 import { updateAccount } from '~/system/Constants/LinkURL';
 import { active, inactive } from '~/system/Constants/constants';
+import { toast } from 'react-toastify';
 
 const accountRoles = [
   {
@@ -50,7 +51,7 @@ const accountList = {
     {
       id: 1,
       fullname: 'Bao Khang',
-      email: 'admin@chytech.com.vn',
+      email: 'admin@chystore.vn',
       password: 'admin123',
       roleId: 1,
       status: true,
@@ -234,6 +235,7 @@ function ViewAccountsList() {
   const handleDeactivateAccount = (accountId) => {
     const accountById = accounts.find((account) => account.id === accountId);
     deactivateAccountStatusById(accountById);
+    toast.success(MSG42, { autoClose: 1500 });
     setShow(false);
   };
 

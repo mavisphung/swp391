@@ -15,10 +15,10 @@ export const active = true;
 export const inactive = false;
 
 // Status of order
-export const pending = 0;
-export const accepted = 1;
-export const finished = 2;
-export const cancelled = 3;
+export const pending = 1;
+export const accepted = 2;
+export const finished = 3;
+export const cancelled = 4;
 
 // Status of product
 export const outOfStock = 0;

@@ -14,6 +14,7 @@ import {
   TimePicker,
 } from 'antd';
 import { Form } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
@@ -23,12 +24,10 @@ import {
   pending,
 } from '~/system/Constants/constants';
 import CustomModal from '~/components/Modal';
-
 import '../OrdersList/OrdersList.scss';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
 import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
-import { toast } from 'react-toastify';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -63,7 +62,7 @@ const orderDetailsData = {
       paidDate: '',
     },
   ],
-  status: 0,
+  status: 1,
   orderDate: '2023-01-09',
   estimatedReceiveDate: '2023-01-12',
   closeDate: '',
