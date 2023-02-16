@@ -1,16 +1,42 @@
 import { Button, Card, Col } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 
 import "./BirdCardLayout.scss";
 import config from "~/config";
-import { formatPrice } from "../../common/Helper";
+import { formatPrice } from "~/common/Helper";
 
 const BirdCard = (props) => {
   const navigate = useNavigate();
+  const params = {
+    productId: props.bird.id,
+  };
+
+  const historyUrl = props.historyUrl ? props.historyUrl : [];
 
   return (
     <Col className="pb-4 pe-3">
-      <Card onClick={() => navigate(config.routes.aboutUs)}>
+      <Card
+        onClick={() =>
+          navigate(
+            {
+              pathname: config.routes.productDetails,
+              search: `?${createSearchParams(params)}`,
+            },
+            {
+              preventScrollReset: false,
+              state: {
+                breadcrumb: [
+                  ...historyUrl,
+                  {
+                    name: props.bird.name,
+                    url: `/product?productId=${props.bird.id}`,
+                  },
+                ],
+              },
+            }
+          )
+        }
+      >
         <Card.Img src={props.bird.img} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>

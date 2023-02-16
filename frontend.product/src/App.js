@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.scss";
 import CustomRoutes from "~/routes";
 import { UserAuthContextProvider } from "~/context/UserAuthContext";
 

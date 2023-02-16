@@ -83,7 +83,7 @@ function LoginPage() {
             >
               Lưu đăng nhập
             </Checkbox>
-            <Link to="/">Quên mật khẩu?</Link>
+            <Link to={config.routes.dashboard}>Quên mật khẩu?</Link>
           </div>
           <input type="submit" value="Đăng nhập" />
         </form>

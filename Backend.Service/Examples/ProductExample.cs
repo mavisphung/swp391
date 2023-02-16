@@ -12,8 +12,9 @@ namespace Backend.Service.Examples
             return new CreateProductModel
             {
                 Name = "Chim Chào An trống",
-                Description = "Đặt gì cũng được nè",
-                CategoryId = 1,
+                Description = "Mô tả về loài chim",
+                ShortDescription = "Chim loại gì (Trung Nam, Lạng Sơn,...), chim non (bổi, thuần, mộc)",
+                CategoryId = 3,
                 Medias = new Media[]
                 {
                     //"https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.15752-9/320620423_645965470600283_5399016748258514205_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=ae9488&_nc_ohc=RVQImNi32mwAX_n7MH6&_nc_ht=scontent.fsgn5-9.fna&oh=03_AdSDrO96shUdednMeFri54TmEbV6_Kw7EL7RVVzcwLl0WA&oe=6408565D",

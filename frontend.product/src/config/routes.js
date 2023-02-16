@@ -8,6 +8,9 @@ const routes = {
   aboutUs: "/dashboard/aboutUs",
   productDetails: "/dashboard/:category?/:productId",
   paymentMethods: "/dashboard/payments",
+  category: "/dashboard/category",
+  productDetails: "/product",
+  cart: "/cart",
 };
 
 const dashboardRoutes = {
@@ -16,6 +19,12 @@ const dashboardRoutes = {
   aboutUs: "/aboutUs",
   productDetails: "/:category?/:productId",
   paymentMethods: "/payments",
+  category: "/category",
+};
+
+const cartRoutes = {
+  cart: "/cart/*",
+  payment: "/payment",
 };
 
 const personalRoutes = {
@@ -23,4 +32,4 @@ const personalRoutes = {
   passwordManagement: "/passwordManagement",
 };
 
-export { routes, dashboardRoutes, personalRoutes };
+export { routes, dashboardRoutes, cartRoutes, personalRoutes };

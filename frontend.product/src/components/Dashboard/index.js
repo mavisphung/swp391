@@ -1,47 +1,111 @@
-import { Routes, Route, Outlet } from "react-router-dom";
-import { Layout } from "antd";
+import { Component } from "react";
+// import axios from "axios";
+import { Routes, Route } from "react-router-dom";
 
-import HomePage from "~/modules/Home";
-import Navbar from "~/components/Navbar";
-import Header from "~/components/Header";
-import Footer from "~/components/Footer";
-import ProductDetails from "~/modules/Product";
 import config from "~/config";
+
 import PaymentPage from "~/modules/Payment";
 
-const Dashboard = () => {
-  const { Content } = Layout;
+import DefaultLayout from "~/components/DefaultLayout";
+import HomePage from "~/modules/Home";
+import CategoryPage from "~/modules/Category";
+class Dashboard extends Component {
+  // test = async () => {
+  //   axios.defaults.timeout = 8000;
+  //   // const source = CancelToken.source();
+  //   const timeout = setTimeout(() => {
+  //     // source.cancel();
+  //     // Timeout Logic
+  //   }, 10000);
+  //   try {
+  //     const res = await axios.get("https://localhost:7179/api/category", {
+  //       params: {
+  //         PageNumber: 1,
+  //         PageSize: 10,
+  //       },
+  //     });
+  //     clearTimeout(timeout);
+  //     console.log("RES", res.data);
+  //   } catch (error) {
+  //     console.log("Error", error);
+  //   }
+  // };
 
-  return (
-    <Routes>
-      <Route
-        element={
-          <div>
-            <Layout style={{ backgroundColor: "white" }}>
-              <Header />
-              <Navbar />
-              <Content>
-                <Outlet />
-              </Content>
-              <Footer />
-            </Layout>
-          </div>
-        }
-      >
-        <Route path={config.routes.default} element={<HomePage />} />
-        <Route path={config.dashboardRoutes.home} element={<HomePage />} />
-        <Route
-          path={config.dashboardRoutes.aboutUs}
-          element={<ProductDetails />}
-        />
-        <Route
-          path={config.dashboardRoutes.paymentMethods}
-          element={<PaymentPage />}
-        />
-        <Route path={config.routes.other} element={<div>Page Not Found</div>} />
-      </Route>
-    </Routes>
-  );
-};
+  // componentDidMount() {
+  //   axios
+  //     .get("https://localhost:7179/api/category", {
+  //       params: {
+  //         PageNumber: 1,
+  //         PageSize: 10,
+  //       },
+  //       signal: AbortSignal.timeout(8000),
+  //       // withCredentials: false,
+  //       // headers: {
+  //       //   "Access-Control-Allow-Origin": "*",
+  //       //   "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //       // },
+  //     })
+  //     .then((res) => {
+  //       console.log("Res", res);
+  //     })
+  //     .catch((error) => console.log("Error", error));
+  //   // this.test();
+  // }
+
+  //   return (
+  //     <Routes>
+  //       <Route
+  //         element={
+  //           <div>
+  //             <Layout style={{ backgroundColor: "white" }}>
+  //               <Header />
+  //               <Navbar />
+  //               <Content>
+  //                 <Outlet />
+  //               </Content>
+  //               <Footer />
+  //             </Layout>
+  //           </div>
+  //         }
+  //       >
+  //         <Route path={config.routes.default} element={<HomePage />} />
+  //         <Route path={config.dashboardRoutes.home} element={<HomePage />} />
+  //         <Route
+  //           path={config.dashboardRoutes.aboutUs}
+  //           element={<ProductDetails />}
+  //         />
+  //         <Route
+  //           path={config.dashboardRoutes.paymentMethods}
+  //           element={<PaymentPage />}
+  //         />
+  //         <Route path={config.routes.other} element={<div>Page Not Found</div>} />
+  //       </Route>
+  //     </Routes>
+  //   );
+  // };
+
+  render() {
+    return (
+      <Routes>
+        <Route element={<DefaultLayout />}>
+          <Route path={config.routes.default} element={<HomePage />} />
+          <Route path={config.dashboardRoutes.home} element={<HomePage />} />
+          <Route
+            path={config.dashboardRoutes.category}
+            element={<CategoryPage />}
+          />
+          <Route
+            path={config.dashboardRoutes.paymentMethods}
+            element={<PaymentPage />}
+          />
+          <Route
+            path={config.routes.other}
+            element={<div>Page Not Found</div>}
+          />
+        </Route>
+      </Routes>
+    );
+  }
+}
 
 export default Dashboard;

@@ -475,6 +475,9 @@ namespace Backend.Service.Migrations
                         .HasAnnotation("Npgsql:TsVectorConfig", "english")
                         .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name" });
 
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -648,10 +651,10 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("Email", "Phone")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
