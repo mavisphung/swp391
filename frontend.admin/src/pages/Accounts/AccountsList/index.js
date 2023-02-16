@@ -34,10 +34,12 @@ const accountRoles = [
 const accountStatus = [
   {
     id: '1',
+    value: true,
     name: 'Hoạt động',
   },
   {
     id: '0',
+    value: false,
     name: 'Không hoạt động',
   },
 ];
@@ -51,7 +53,7 @@ const accountList = {
       email: 'admin@chytech.com.vn',
       password: 'admin123',
       roleId: 1,
-      status: '1',
+      status: true,
       phone: '0123123123',
     },
     {
@@ -60,7 +62,7 @@ const accountList = {
       email: 'staff@chytech.com.vn',
       password: 'staff123',
       roleId: 2,
-      status: '1',
+      status: true,
       phone: '0123123555',
     },
     {
@@ -69,7 +71,7 @@ const accountList = {
       email: 'linhtd@gmail.com.vn',
       password: 'linhtd123',
       roleId: 3,
-      status: '1',
+      status: true,
       phone: '0901565565',
     },
     {
@@ -78,7 +80,7 @@ const accountList = {
       email: 'kieuph@gmail.com.vn',
       password: 'kieuph123',
       roleId: 3,
-      status: '0',
+      status: false,
       phone: '0901789789',
     },
   ],
@@ -307,7 +309,7 @@ function ViewAccountsList() {
           >
             <option value="">Chọn trạng thái</option>
             {accountStatus.map((status, index) => (
-              <option key={index} value={status.id}>
+              <option key={index} value={status.value}>
                 {status.name}
               </option>
             ))}

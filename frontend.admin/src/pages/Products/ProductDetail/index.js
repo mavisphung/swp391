@@ -4,6 +4,7 @@ import { Carousel, Rate } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, CardGroup, Col, Image, Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
+import { jpeg, jpg, png } from '~/system/Constants/constants';
 import CustomTooltip from '~/ui/CustomTooltip';
 
 import CustomWrapper from '~/ui/CustomWrapper';
@@ -30,7 +31,12 @@ function ProductDetail() {
       try {
         const data = productData;
         setProduct(data);
-        setImages(product?.Url);
+        setImages(
+          product?.medias?.filter(
+            (media) =>
+              media.type === png || media.type === jpeg || media.type === jpg,
+          ),
+        );
         setRelativeProducts(product?.relativeProducts);
       } catch (e) {
         console.log(e);
@@ -49,18 +55,18 @@ function ProductDetail() {
         <h2 style={{ textAlign: 'center' }}>Thông tin sản phẩm</h2>
         <Row className="my-3">
           <Col md={6}>
-            <Card>
+            <Card style={{ backgroundColor: '#001529' }}>
               <Card.Body>
                 <Carousel autoplay>
                   {images
-                    ? images.map((image) => {
+                    ? images.map((image, index) => {
                         return (
-                          <div>
+                          <div key={index}>
                             <h3 style={contentStyle}>
                               <Image
-                                src={image}
+                                src={image.url}
                                 style={{ width: '100%', height: 'auto' }}
-                                alt={product?.Name}
+                                alt={product?.name}
                               />
                             </h3>
                           </div>
@@ -77,7 +83,7 @@ function ProductDetail() {
               <Card.Header>
                 <Row>
                   <Col md={10}>
-                    <h4>{product?.Name}</h4>
+                    <h4>{product?.name}</h4>
                   </Col>
                   <Col md={2}>
                     <div className="text-end">
@@ -113,12 +119,12 @@ function ProductDetail() {
                     </Card.Text>
                   </Col>
                   <Col md={8}>
-                    <Card.Text>{product.ProductCode}</Card.Text>
+                    <Card.Text>{product.productCode}</Card.Text>
                     <Card.Text>
-                      {product?.ShortDescription}, {product?.CategoryId}
+                      {product?.shortDescription}, {product?.categoryId}
                     </Card.Text>
-                    <Card.Text>{product.Gender || 'giới tính'}</Card.Text>
-                    <Card.Text>{product.Age || 'tuổi'}</Card.Text>
+                    <Card.Text>{product.gender || 'giới tính'}</Card.Text>
+                    <Card.Text>{product.age || 'tuổi'}</Card.Text>
                   </Col>
                 </Row>
 
@@ -130,48 +136,39 @@ function ProductDetail() {
                     </Card.Text>
                   </Col>
                   <Col>
-                    <Card.Text>
-                      <span>
-                        <Rate
-                          allowHalf
-                          tooltips={desc}
-                          onChange={setValue}
-                          value={value}
-                        />
-                        {value ? (
-                          <span className="ant-rate-text">
-                            ({value} - {desc[Math.round(value) - 1]})
-                          </span>
-                        ) : (
-                          ''
-                        )}
+                    <Rate
+                      allowHalf
+                      tooltips={desc}
+                      onChange={setValue}
+                      value={value}
+                    />
+                    {value ? (
+                      <span className="ant-rate-text">
+                        ({value} - {desc[Math.round(value) - 1]})
                       </span>
-                    </Card.Text>
+                    ) : (
+                      ''
+                    )}
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
+
+            <Card style={{ marginTop: 20 }}>
+              <Card.Header>
+                <Row>
+                  <Col>
+                    <h5>Thông tin sản phẩm</h5>
+                  </Col>
+                </Row>
+              </Card.Header>
+              <Card.Body>
+                <Col>
+                  <span>{product?.description}</span>
+                </Col>
+              </Card.Body>
+            </Card>
           </Col>
-        </Row>
-
-        <Row className="my-3">
-          <Card>
-            <Row>
-              <Col md={6}>
-                <div style={{ fontSize: '1.4rem' }}>
-                  <strong>Thông tin sản phẩm</strong>
-                </div>
-                <p>{product?.Description}</p>
-              </Col>
-
-              <Col md={6}>
-                <div style={{ fontSize: '1.4rem' }}>
-                  <strong>Lưu ý khi mua</strong>
-                </div>
-                <p>{product?.Description}</p>
-              </Col>
-            </Row>
-          </Card>
         </Row>
 
         <div style={{ marginTop: 20 }}>
@@ -179,24 +176,35 @@ function ProductDetail() {
           <h4>Mặt hàng liên quan</h4>
           <CardGroup>
             {relativeProducts
-              ? relativeProducts.map((relativeProduct) => {
+              ? relativeProducts.map((relativeProduct, index) => {
                   return (
                     <Card
                       style={{
                         maxWidth: '25%',
                         marginRight: 16,
-                        border: '2px solid rgba(0, 0, 0, 0.3)',
+                        border: '3px solid rgba(0, 0, 0, 0.3)',
                         borderRadius: 5,
                         boxShadow: '4px 6px rgba(0, 0, 0, 0.1)',
                       }}
+                      key={index}
                     >
-                      <Card.Img variant="top" src={relativeProduct.Url} />
+                      <Card.Img
+                        variant="top"
+                        src={
+                          relativeProduct.medias.filter(
+                            (media) =>
+                              media.type === png ||
+                              media.type === jpeg ||
+                              media.type === jpg,
+                          )[0]?.url
+                        }
+                      />
                       <Card.Body>
-                        <Card.Title>{relativeProduct.Name}</Card.Title>
+                        <Card.Title>{relativeProduct.name}</Card.Title>
                         <Card.Text>
-                          Tuổi:&nbsp;{relativeProduct.Age}
+                          Tuổi:&nbsp;{relativeProduct.age}
                           <br />
-                          Giới tính:&nbsp;{relativeProduct.Gender}
+                          Giới tính:&nbsp;{relativeProduct.gender}
                         </Card.Text>
                       </Card.Body>
                       <Card.Footer className="text-end">
@@ -207,7 +215,7 @@ function ProductDetail() {
                             color: '#0A54A8',
                           }}
                         >
-                          {relativeProduct.Price}.đ
+                          {relativeProduct.price}.đ
                         </strong>
                         <Link to={``}>
                           <Button variant="dark">Xem sản phẩm</Button>

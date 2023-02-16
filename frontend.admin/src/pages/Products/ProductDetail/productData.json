@@ -1,88 +1,111 @@
 {
-  "Name": "Chim Yểng thuần 2 mùa",
-  "Url": [
-    "https://miaolands.com/wp-content/uploads/2021/07/Chim-nhong.jpg",
-    "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg"
+  "name": "Chim Yểng thuần 2 mùa",
+  "medias": [
+    {
+      "url": "https://cdn.chotot.com/xBn9lSfENJaI8dneJA7Tl3eVHZa_HkAgyGcqMLp1Aeg/preset:view/plain/5ddb2bec7b9ad02aa7cc0ab5b2e0d799-2810886282489889542.jpg",
+      "type": 2
+    },
+    {
+      "url": "https://miaolands.com/wp-content/uploads/2021/07/Chim-nhong.jpg",
+      "type": 2
+    },
+    {
+      "url": "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg",
+      "type": 2
+    },
+    {
+      "url": "https://image.nhadatmoi.net/yeuchim/wp-content/uploads/2020/09/21175428/chim-sao-an-gi.jpg",
+      "type": 2
+    }
   ],
-  "Description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung.",
-  "ShortDescription": "chim thuần",
-  "Gender": false,
-  "Age": "2 year",
-  "Price": 3000000,
-  "Quantity": 2,
-  "ImportQuantity": 2,
-  "Status": true,
-  "CategoryId": 1,
-  "SubCategoryId": 1,
-  "UpdatedDate": "2023-02-03",
-  "UpdatedBy": "AnNguyen",
-  "AddedBy": "AnNguyen",
-  "CreatedDate": "2023-02-01",
+  "description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung.",
+  "shortDescription": "chim thuần",
+  "gender": false,
+  "age": "2 năm",
+  "price": 3000000,
+  "quantity": 2,
+  "importQuantity": 2,
+  "status": true,
+  "categoryId": 1,
+  "subCategoryId": 1,
+  "updatedDate": "2023-02-03",
+  "updatedBy": "AnNguyen",
+  "addedBy": "AnNguyen",
+  "createdDate": "2023-02-01",
   "isDeleted": false,
-  "ProductCode": "BCY012116545649",
+  "productCode": "BCY012116545649",
   "relativeProducts": [
     {
-      "Name": "Chim Yểng con",
-      "Url": [
-        "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg"
+      "name": "Chim Yểng con",
+      "medias": [
+        {
+          "url": "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg",
+          "type": 2
+        }
       ],
-      "Description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung. Do vậy, khi có ý định nuôi chim Yểng, bạn đừng bao giờ nuôi một con duy nhất. Hãy nuôi từ hai chim Yeng đẹp trở lên để chúng vừa bầu bạn lại vừa có thể cùng nhau hót và tập nói.\nKhả năng thích nghi với môi trường sống mới của chim Yểng cũng không hề tệ, chúng thích nghi và làm quen với các môi trường sống mới cực nhanh. Đặc biệt, chim Yểng không chỉ là những chú chim có giọng hót tuyệt vời mà khả năng bắt chước của chúng còn vô cùng ấn tượng. Chim Yểng có thể bắt chước tiếng gọi hoặc tiếng hót của các loài chim khác, tiếng nói con người và thậm chí cả âm thanh cơ học",
-      "Gender": "Other",
-      "Age": "3 tháng",
-      "Price": "900.000",
-      "Quantity": 5,
-      "ImportQuantity": 0,
-      "Status": true,
-      "CategoryId": 1,
-      "SubCategoryId": 1,
-      "UpdatedDate": "2023-02-03",
-      "UpdatedBy": "AnNguyen",
-      "AddedBy": "AnNguyen",
-      "CreatedDate": "2023-02-01",
+      "description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung. Do vậy, khi có ý định nuôi chim Yểng, bạn đừng bao giờ nuôi một con duy nhất. Hãy nuôi từ hai chim Yeng đẹp trở lên để chúng vừa bầu bạn lại vừa có thể cùng nhau hót và tập nói.\nKhả năng thích nghi với môi trường sống mới của chim Yểng cũng không hề tệ, chúng thích nghi và làm quen với các môi trường sống mới cực nhanh. Đặc biệt, chim Yểng không chỉ là những chú chim có giọng hót tuyệt vời mà khả năng bắt chước của chúng còn vô cùng ấn tượng. Chim Yểng có thể bắt chước tiếng gọi hoặc tiếng hót của các loài chim khác, tiếng nói con người và thậm chí cả âm thanh cơ học",
+      "gender": "khác",
+      "age": "3 tháng",
+      "price": "900.000",
+      "quantity": 5,
+      "importQuantity": 0,
+      "status": true,
+      "categoryId": 1,
+      "subCategoryId": 1,
+      "updatedDate": "2023-02-03",
+      "updatedBy": "AnNguyen",
+      "addedBy": "AnNguyen",
+      "createdDate": "2023-02-01",
       "isDeleted": false,
-      "ProductCode": 1
+      "productCode": 1
     },
     {
-      "Name": "Chim Yểng con",
-      "Url": [
-        "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg"
+      "name": "Chim Yểng con",
+      "medias": [
+        {
+          "url": "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg",
+          "type": 2
+        }
       ],
-      "Description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung.",
-      "Gender": "trống",
-      "Age": "6 tháng",
-      "Price": "1.500.000",
-      "Quantity": 5,
-      "ImportQuantity": 0,
-      "Status": true,
-      "CategoryId": 1,
-      "SubCategoryId": 1,
-      "UpdatedDate": "2023-02-03",
-      "UpdatedBy": "AnNguyen",
-      "AddedBy": "AnNguyen",
-      "CreatedDate": "2023-02-01",
+      "description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung.",
+      "gender": "trống",
+      "age": "6 tháng",
+      "price": "1.500.000",
+      "quantity": 5,
+      "importQuantity": 0,
+      "status": true,
+      "categoryId": 1,
+      "subCategoryId": 1,
+      "updatedDate": "2023-02-03",
+      "updatedBy": "AnNguyen",
+      "addedBy": "AnNguyen",
+      "createdDate": "2023-02-01",
       "isDeleted": false,
-      "ProductCode": 2
+      "productCode": 2
     },
     {
-      "Name": "Chim Yểng con",
-      "Url": [
-        "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg"
+      "name": "Chim Yểng con",
+      "medias": [
+        {
+          "url": "https://animalsworld.vn/wp-content/uploads/2021/07/Chim-nhong-con.jpg",
+          "type": 2
+        }
       ],
-      "Description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung. Do vậy, khi có ý định nuôi chim Yểng, bạn đừng bao giờ nuôi một con duy nhất. Hãy nuôi từ hai chim Yeng đẹp trở lên để chúng vừa bầu bạn lại vừa có thể cùng nhau hót và tập nói.\nKhả năng thích nghi với môi trường sống mới của chim Yểng cũng không hề tệ, chúng thích nghi và làm quen với các môi trường sống mới cực nhanh. Đặc biệt, chim Yểng không chỉ là những chú chim có giọng hót tuyệt vời mà khả năng bắt chước của chúng còn vô cùng ấn tượng. Chim Yểng có thể bắt chước tiếng gọi hoặc tiếng hót của các loài chim khác, tiếng nói con người và thậm chí cả âm thanh cơ học",
-      "Gender": "mái",
-      "Age": "4 tháng",
-      "Price": "1.200.000",
-      "Quantity": 5,
-      "ImportQuantity": 0,
-      "Status": true,
-      "CategoryId": 1,
-      "SubCategoryId": 1,
-      "UpdatedDate": "2023-02-03",
-      "UpdatedBy": "AnNguyen",
-      "AddedBy": "AnNguyen",
-      "CreatedDate": "2023-02-01",
+      "description": "Chim Yểng là một trong những loài chim không quá xa lạ với bất kỳ những ai có đam mê chơi chim cảnh. Chim Yểng có bộ lông màu đen tuyền chủ đạo và điểm xuyết bằng các đốm trắng bắt mắt.\nChim Yểng là loài có tính bầy đàn cao nhất trong các loài chim, và điều này đặc biệt dễ nhận thấy vào mùa đông, khi chúng kiếm ăn theo đàn và trú ngụ chung. Do vậy, khi có ý định nuôi chim Yểng, bạn đừng bao giờ nuôi một con duy nhất. Hãy nuôi từ hai chim Yeng đẹp trở lên để chúng vừa bầu bạn lại vừa có thể cùng nhau hót và tập nói.\nKhả năng thích nghi với môi trường sống mới của chim Yểng cũng không hề tệ, chúng thích nghi và làm quen với các môi trường sống mới cực nhanh. Đặc biệt, chim Yểng không chỉ là những chú chim có giọng hót tuyệt vời mà khả năng bắt chước của chúng còn vô cùng ấn tượng. Chim Yểng có thể bắt chước tiếng gọi hoặc tiếng hót của các loài chim khác, tiếng nói con người và thậm chí cả âm thanh cơ học",
+      "gender": "mái",
+      "age": "4 tháng",
+      "price": "1.200.000",
+      "quantity": 5,
+      "importQuantity": 0,
+      "status": true,
+      "categoryId": 1,
+      "subCategoryId": 1,
+      "updatedDate": "2023-02-03",
+      "updatedBy": "AnNguyen",
+      "addedBy": "AnNguyen",
+      "createdDate": "2023-02-01",
       "isDeleted": false,
-      "ProductCode": 1
+      "productCode": 1
     }
   ]
 }
