@@ -17,19 +17,18 @@ import { Form } from 'react-bootstrap';
 
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
-  canceled,
-  denied,
-  inProgress,
-  paidInAdvance,
-  success,
-  waiting,
+  accepted,
+  cancelled,
+  finished,
+  pending,
 } from '~/system/Constants/constants';
 import CustomModal from '~/components/Modal';
 
 import '../OrdersList/OrdersList.scss';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
-import { MSG25, MSG27 } from '~/system/Messages/messages';
+import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
+import { toast } from 'react-toastify';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -40,15 +39,31 @@ const orderDetailsData = {
     gender: true,
     password: 'linhtd123',
     dob: '1995-04-15',
-    roleId: 'customer',
-    status: '1',
+    roleId: 3,
+    status: true,
     phone: '0901565565',
     address: '250 Nguyễn Thị Minh Khai',
     ward: '27139',
     district: '770',
     province: '79',
   },
-  status: '2',
+  payment: [
+    {
+      id: 1232,
+      paymentCode: '12145',
+      amount: 1600000,
+      paymentMethod: 2,
+      paidDate: '2023-01-09T08:15:00',
+    },
+    {
+      id: 1235,
+      paymentCode: '12155',
+      amount: 2000000,
+      paymentMethod: 1,
+      paidDate: '',
+    },
+  ],
+  status: 0,
   orderDate: '2023-01-09',
   estimatedReceiveDate: '2023-01-12',
   closeDate: '',
@@ -176,18 +191,14 @@ const OrderDetail = () => {
 
   // Render Order Status
   const renderOrderStatus = () => {
-    if (customerOrder.status === waiting) {
+    if (customerOrder.status === pending) {
       return 'Chờ xác nhận';
-    } else if (customerOrder.status === inProgress) {
+    } else if (customerOrder.status === accepted) {
       return 'Đang xử lí';
-    } else if (customerOrder.status === paidInAdvance) {
-      return 'Đã cọc';
-    } else if (customerOrder.status === success) {
+    } else if (customerOrder.status === finished) {
       return 'Đã nhận hàng';
-    } else if (customerOrder.status === denied) {
-      return 'Đã từ chối';
-    } else if (customerOrder.status === canceled) {
-      return 'Bị hủy';
+    } else if (customerOrder.status === cancelled) {
+      return 'Đã hủy';
     }
   };
 
@@ -227,8 +238,7 @@ const OrderDetail = () => {
           <p>
             <strong>Ngày đặt hàng:</strong> {customerOrder.orderDate}
           </p>
-          {customerOrder.statusId === denied ||
-          customerOrder.statusId === canceled ? (
+          {customerOrder.status === cancelled ? (
             <p>
               <strong>Ngày hủy:</strong> {customerOrder.receiveDate}
             </p>
@@ -243,6 +253,20 @@ const OrderDetail = () => {
               </p>
             </>
           )}
+        </>
+      ),
+    },
+    {
+      title: 'Thanh toán',
+      content: (
+        <>
+          <p>
+            <strong>Hình thức thanh toán:</strong>
+          </p>
+
+          <p>
+            <strong>Số tiền đã cọc:</strong>
+          </p>
         </>
       ),
     },
@@ -294,7 +318,7 @@ const OrderDetail = () => {
       title: 'Số lượng tồn',
       dataIndex: 'currentQuantity',
       key: 'currentQuantity',
-      hide: customerOrder.status !== waiting ? true : false,
+      hide: customerOrder.status !== pending ? true : false,
       render: (text, record) => {
         if (record.quantity > text) {
           setEnoughQuantity(false);
@@ -348,6 +372,7 @@ const OrderDetail = () => {
       return;
     } else if (reason) {
       denyOrderById(orderId);
+      toast.success(MSG28, { autoClose: 1500 });
       handleCloseDeny();
     }
   };
@@ -388,6 +413,7 @@ const OrderDetail = () => {
       return;
     } else if (dateReceive && timeReceive) {
       approveOrderById(orderId);
+      toast.success(MSG26, { autoClose: 1500 });
       handleClose();
     }
   };
@@ -423,8 +449,7 @@ const OrderDetail = () => {
             <p style={{ fontSize: '20px' }}>
               Chi tiết đơn hàng #{orderId} -{' '}
               <strong>{renderOrderStatus()}</strong>{' '}
-              {customerOrder.statusId === denied ||
-              customerOrder.statusId === canceled ? (
+              {customerOrder.status === cancelled ? (
                 <>
                   {' '}
                   -{' '}
@@ -443,7 +468,7 @@ const OrderDetail = () => {
         <List
           grid={{
             gutter: 16,
-            column: 2,
+            column: 3,
           }}
           dataSource={dataList}
           renderItem={(item) => (
@@ -485,12 +510,12 @@ const OrderDetail = () => {
       </>
 
       <Row justify="end" className="mt-2">
-        {!enoughQuantity && customerOrder.status === waiting ? (
+        {!enoughQuantity && customerOrder.status === pending ? (
           <>{renderAlert()}</>
         ) : (
           <></>
         )}
-        {customerOrder.status !== waiting ? (
+        {customerOrder.status !== pending ? (
           <></>
         ) : (
           <>

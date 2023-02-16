@@ -36,6 +36,7 @@ namespace Backend.Service.Controllers
         {
             _logger.LogInformation("Get all product invoked...");
             var data = await _productService.GetAllAsync(pagingParameter);
+            AddPaginationToHeader(data);
             return Ok(data);
 
         }

@@ -16,20 +16,22 @@ import { fullNamePattern, phonePattern } from '~/system/Constants/constants';
 import { checkFullNameMessage, checkPhoneNumber } from '../Validation';
 import CustomModal from '../Modal';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
+import '../AddEditAccountForm/AddEditAccountForm.scss';
 
 const userAccount = {
   id: 1,
-  avatar: 'Avatar',
-  fullname: 'Bao Khang',
-  email: 'admin@chytech.com.vn',
+  avatar:
+    'https://firebasestorage.googleapis.com/v0/b/bird-shop-22ade.appspot.com/o/accountImages%2FPokemon.png?alt=media&token=152ef9eb-3ad9-42c1-9101-6767c505eb39',
+  fullname: 'Admin Chystore',
+  email: 'admin@chystore.vn',
   gender: false,
-  password: 'admin123',
+  password: '123456',
   dob: '1998-07-07',
   role: {
-    roleId: 'admin',
+    roleId: 1,
     name: 'Quản trị viên',
   },
-  status: '1',
+  status: true,
   phone: '0123123123',
   address: '250 Nguyễn Thị Minh Khai',
   ward: '27139',

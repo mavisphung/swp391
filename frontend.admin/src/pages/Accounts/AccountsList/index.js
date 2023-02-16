@@ -18,15 +18,15 @@ import { active, inactive } from '~/system/Constants/constants';
 
 const accountRoles = [
   {
-    id: 'admin',
+    id: 1,
     name: 'Quản trị viên',
   },
   {
-    id: 'staff',
+    id: 2,
     name: 'Nhân viên',
   },
   {
-    id: 'customer',
+    id: 3,
     name: 'Khách hàng',
   },
 ];
@@ -34,10 +34,12 @@ const accountRoles = [
 const accountStatus = [
   {
     id: '1',
+    value: true,
     name: 'Hoạt động',
   },
   {
     id: '0',
+    value: false,
     name: 'Không hoạt động',
   },
 ];
@@ -50,8 +52,8 @@ const accountList = {
       fullname: 'Bao Khang',
       email: 'admin@chytech.com.vn',
       password: 'admin123',
-      roleId: 'admin',
-      status: '1',
+      roleId: 1,
+      status: true,
       phone: '0123123123',
     },
     {
@@ -59,8 +61,8 @@ const accountList = {
       fullname: 'Kevin Ken',
       email: 'staff@chytech.com.vn',
       password: 'staff123',
-      roleId: 'staff',
-      status: '1',
+      roleId: 2,
+      status: true,
       phone: '0123123555',
     },
     {
@@ -68,8 +70,8 @@ const accountList = {
       fullname: 'Thái Đăng Linh',
       email: 'linhtd@gmail.com.vn',
       password: 'linhtd123',
-      roleId: 'customer',
-      status: '1',
+      roleId: 3,
+      status: true,
       phone: '0901565565',
     },
     {
@@ -77,8 +79,8 @@ const accountList = {
       fullname: 'Phùng Hữu Kiều',
       email: 'kieuph@gmail.com.vn',
       password: 'kieuph123',
-      roleId: 'customer',
-      status: '0',
+      roleId: 3,
+      status: false,
       phone: '0901789789',
     },
   ],
@@ -307,7 +309,7 @@ function ViewAccountsList() {
           >
             <option value="">Chọn trạng thái</option>
             {accountStatus.map((status, index) => (
-              <option key={index} value={status.id}>
+              <option key={index} value={status.value}>
                 {status.name}
               </option>
             ))}

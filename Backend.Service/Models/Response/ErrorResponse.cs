@@ -6,8 +6,13 @@ namespace Backend.Service.Models.Response
 {
     public class ErrorResponse
     {
+        [JsonPropertyName("errorCode")]
         public int ErrorCode { get; set; }
+
+        [JsonPropertyName("message")]
         public string Message { get; set; }
+
+
         [JsonIgnore]
         public HttpStatusCode HttpStatus { get; set; }
 

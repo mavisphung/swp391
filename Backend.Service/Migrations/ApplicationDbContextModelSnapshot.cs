@@ -282,7 +282,6 @@ namespace Backend.Service.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("CancelledReason")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("CloseDate")
@@ -296,6 +295,9 @@ namespace Backend.Service.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
@@ -343,13 +345,13 @@ namespace Backend.Service.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("OrderId")
+                    b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
                     b.Property<double>("Price")
@@ -400,6 +402,9 @@ namespace Backend.Service.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("PaidDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -417,6 +422,8 @@ namespace Backend.Service.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("PaymentCode")
                         .IsUnique();
@@ -474,6 +481,9 @@ namespace Backend.Service.Migrations
                         .HasColumnType("tsvector")
                         .HasAnnotation("Npgsql:TsVectorConfig", "english")
                         .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name" });
+
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -552,6 +562,9 @@ namespace Backend.Service.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("District")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -565,6 +578,9 @@ namespace Backend.Service.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Province")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ReceivedDate")
@@ -582,6 +598,9 @@ namespace Backend.Service.Migrations
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Ward")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -648,10 +667,10 @@ namespace Backend.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("Email", "Phone")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -716,7 +735,7 @@ namespace Backend.Service.Migrations
             modelBuilder.Entity("Backend.Service.Entities.Order", b =>
                 {
                     b.HasOne("Backend.Service.Entities.ShippingAddress", "ShippingAddress")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("ShippingAddressId");
 
                     b.HasOne("Backend.Service.Entities.User", "User")
@@ -732,13 +751,13 @@ namespace Backend.Service.Migrations
                 {
                     b.HasOne("Backend.Service.Entities.User", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("Backend.Service.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Backend.Service.Entities.Order", null)
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId");
 
                     b.HasOne("Backend.Service.Entities.Product", "Product")
                         .WithMany("OrderDetails")
@@ -748,7 +767,20 @@ namespace Backend.Service.Migrations
 
                     b.Navigation("Customer");
 
+                    b.Navigation("Order");
+
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Backend.Service.Entities.Payment", b =>
+                {
+                    b.HasOne("Backend.Service.Entities.Order", "Order")
+                        .WithMany("Payments")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Product", b =>
@@ -797,6 +829,8 @@ namespace Backend.Service.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("OrderDetails");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.Product", b =>
@@ -811,6 +845,11 @@ namespace Backend.Service.Migrations
             modelBuilder.Entity("Backend.Service.Entities.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Backend.Service.Entities.ShippingAddress", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Backend.Service.Entities.User", b =>

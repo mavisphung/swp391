@@ -31,6 +31,10 @@ namespace Backend.Service.Consts
         CATEGORY_NOT_FOUND,
         PRODUCT_NOT_FOUND,
         BANNER_NOT_FOUND,
+        USER_EXISTED,
+        PHONE_NUMBER_EXISTED,
+        UNAUTHENTICATED,
+        ADDRESS_NOT_FOUND
     }
 
     public static class EnumStringMessage

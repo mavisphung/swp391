@@ -3,9 +3,9 @@ namespace Backend.Service.Consts
 {
     public enum OrderStatus
     {
-        Pending,            // 0
-        Accepted,           // 1
+        Accepted = 1,           // 1
         Finished,           // 2
         Cancelled,          // 3
+        Pending,
     }
 }
