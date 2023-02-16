@@ -1,5 +1,6 @@
 ﻿using Backend.Service.Entities;
 using Backend.Service.Models.Cart;
+using Backend.Service.Models.Order;
 using Backend.Service.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,15 +11,21 @@ namespace Backend.Service.Services
         private readonly ICartRepository _cartRepository;
         private readonly ICartItemRepository _cartItemRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IShippingAddressRepository _addressRepository;
 
         public CartService(
             ICartRepository cartRepository,
             ICartItemRepository cartItemRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IUserRepository userRepository,
+            IShippingAddressRepository addressRepository)
         {
             _cartRepository = cartRepository;
             _cartItemRepository = cartItemRepository;
             _productRepository = productRepository;
+            _userRepository = userRepository;
+            _addressRepository = addressRepository;
         }
 
         public async Task CreateCartObject(Cart cart) 

@@ -1,5 +1,7 @@
 ﻿using Backend.Service.Entities;
 using Backend.Service.Models.Cart;
+using Backend.Service.Models.Order;
+using Backend.Service.Models.Validation;
 using Backend.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,7 +69,7 @@ namespace Backend.Service.Controllers
             //Console.WriteLine($"Cart Item found: {foundCartItem.ToString()}");
             //Console.WriteLine("After generating a SQL statement hereeeeeeeeee");
 
-            var response = await _cartService.ProcessAddToCart(currentUser, model.ProductId);
+            var response = await _cartService.ProcessAddToCart(currentUser, model.ProductId.GetValueOrDefault());
 
             return Created("", response);
         }
