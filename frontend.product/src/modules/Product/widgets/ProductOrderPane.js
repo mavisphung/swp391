@@ -1,8 +1,10 @@
 import { Rate } from "antd";
 import { Button } from "react-bootstrap";
 import { MdOutlineStar } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 import "../ProductLayout.scss";
+import config from "~/config";
 import { formatPrice } from "~/common/Helper";
 
 function ProductOrderPane({ name, rating, des, price, cate }) {
@@ -13,6 +15,13 @@ function ProductOrderPane({ name, rating, des, price, cate }) {
     : "Lồng được áp dụng chính sách 'HOÀN TIỀN' nếu khách hàng tìm được lỗi sản phẩm lúc nhận hàng. Gía lồng 720.000đ áp dụng cho tất cả các size (64, 68, 72)";
   price = price ? price : 950000;
   cate = cate ? cate : ["64 nan", "72 nan", "90 nan"];
+
+  const navigate = useNavigate();
+
+  const handleBuyClick = (e) => {
+    e.preventDefault();
+    navigate(config.routes.cart);
+  };
 
   return (
     <div id="order-pane">
@@ -37,7 +46,9 @@ function ProductOrderPane({ name, rating, des, price, cate }) {
         ))}
       </select>
       <div className="pro-order-ctr">
-        <Button className="btn-buy">Mua ngay</Button>
+        <Button className="btn-buy" onClick={handleBuyClick}>
+          Mua ngay
+        </Button>
         <Button className="btn-add-cart">Thêm giỏ hàng</Button>
       </div>
       <br />

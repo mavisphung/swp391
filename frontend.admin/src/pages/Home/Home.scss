@@ -1,0 +1,53 @@
+.home-container {
+  padding: 0;
+  margin: 0;
+  background-image: url('../../assets/img/login-pic.jpg');
+  background-position: 50% 20%;
+}
+
+.home-header {
+  text-align: center;
+  background-color: #001529;
+}
+
+.image-homepage {
+  width: 50px;
+  padding: 10px 0;
+}
+
+.home-body {
+  min-height: 500px;
+  position: relative;
+}
+
+.home-content-group {
+  position: absolute;
+  left: 55%;
+  top: 25%;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-btn {
+  width: 200px;
+  height: 60px;
+  font-size: 1.4rem !important;
+  border: 3px solid white !important;
+  border-radius: 20px !important;
+}
+
+.home-quote {
+  padding-top: 20px;
+  width: 70%;
+  font-size: 1.4rem;
+  font-style: italic;
+  color: #0d0d0d;
+}
+
+.home-footer {
+  width: 100% !important;
+  padding: 20px 0;
+  text-align: center;
+  background-color: #001529;
+  color: white;
+}

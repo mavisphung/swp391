@@ -10,9 +10,7 @@ function Navbar() {
         <Link className="render-link" to={config.routes.home}>
           Trang chủ
         </Link>
-        <Link className="render-link" to={config.routes.cart}>
-          Tin tức
-        </Link>
+        <Link className="render-link">Tin tức</Link>
         <div className="dropdown">
           <button className="render-link">Giống chim</button>
           <div className="dropdown-content">
