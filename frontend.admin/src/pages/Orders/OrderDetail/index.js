@@ -27,7 +27,8 @@ import CustomModal from '~/components/Modal';
 import '../OrdersList/OrdersList.scss';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
-import { MSG25, MSG27 } from '~/system/Messages/messages';
+import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
+import { toast } from 'react-toastify';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -39,14 +40,30 @@ const orderDetailsData = {
     password: 'linhtd123',
     dob: '1995-04-15',
     roleId: 3,
-    status: '1',
+    status: true,
     phone: '0901565565',
     address: '250 Nguyễn Thị Minh Khai',
     ward: '27139',
     district: '770',
     province: '79',
   },
-  status: '0',
+  payment: [
+    {
+      id: 1232,
+      paymentCode: '12145',
+      amount: 1600000,
+      paymentMethod: 2,
+      paidDate: '2023-01-09T08:15:00',
+    },
+    {
+      id: 1235,
+      paymentCode: '12155',
+      amount: 2000000,
+      paymentMethod: 1,
+      paidDate: '',
+    },
+  ],
+  status: 0,
   orderDate: '2023-01-09',
   estimatedReceiveDate: '2023-01-12',
   closeDate: '',
@@ -221,7 +238,7 @@ const OrderDetail = () => {
           <p>
             <strong>Ngày đặt hàng:</strong> {customerOrder.orderDate}
           </p>
-          {customerOrder.statusId === cancelled ? (
+          {customerOrder.status === cancelled ? (
             <p>
               <strong>Ngày hủy:</strong> {customerOrder.receiveDate}
             </p>
@@ -355,6 +372,7 @@ const OrderDetail = () => {
       return;
     } else if (reason) {
       denyOrderById(orderId);
+      toast.success(MSG28, { autoClose: 1500 });
       handleCloseDeny();
     }
   };
@@ -395,6 +413,7 @@ const OrderDetail = () => {
       return;
     } else if (dateReceive && timeReceive) {
       approveOrderById(orderId);
+      toast.success(MSG26, { autoClose: 1500 });
       handleClose();
     }
   };
@@ -430,7 +449,7 @@ const OrderDetail = () => {
             <p style={{ fontSize: '20px' }}>
               Chi tiết đơn hàng #{orderId} -{' '}
               <strong>{renderOrderStatus()}</strong>{' '}
-              {customerOrder.statusId === cancelled ? (
+              {customerOrder.status === cancelled ? (
                 <>
                   {' '}
                   -{' '}

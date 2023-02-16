@@ -5,9 +5,8 @@ import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
   active,
-  Admin,
+  Customer,
   emailPattern,
-  Staff,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
 import { checkEmailMessage, checkPasswordMessage } from '../Validation';
@@ -16,10 +15,10 @@ import { useUserAuth } from '~/context/UserAuthContext';
 const LoginForm = () => {
   const { loginEmailAndPassword } = useUserAuth();
   let navigate = useNavigate();
-  let [email, setEmail] = useState('admin@chytech.vn');
+  let [email, setEmail] = useState('');
   const [passwordType, setPasswordType] = useState('password');
   const [eye, setEye] = useState(true);
-  const [password, setPassword] = useState('123456');
+  const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(true);
 
   const handleSubmit = async (e) => {
@@ -32,10 +31,7 @@ const LoginForm = () => {
       try {
         const user = await loginEmailAndPassword(email, password);
         console.log('User', user);
-        if (
-          (user.roleId !== Admin || user.roleId !== Staff) &&
-          user.status === true
-        ) {
+        if (user.roleId !== Customer && user.status === true) {
           setTimeout(
             () =>
               navigate({
@@ -57,7 +53,7 @@ const LoginForm = () => {
 
   const handleSetAutoDomain = (e) => {
     if (e.key === '@') {
-      email += 'chytech.com.vn';
+      email += 'chystore.vn';
       setEmail(email);
     }
   };

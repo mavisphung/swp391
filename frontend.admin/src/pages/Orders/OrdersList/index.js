@@ -30,19 +30,19 @@ const statusList = [
     tab: 'Tất cả',
   },
   {
-    key: '0',
+    key: 0,
     tab: 'Chờ xác nhận',
   },
   {
-    key: '1',
+    key: 1,
     tab: 'Đang xử lí',
   },
   {
-    key: '2',
+    key: 2,
     tab: 'Thành công',
   },
   {
-    key: '3',
+    key: 3,
     tab: 'Đã hủy',
   },
 ];
@@ -54,7 +54,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Thái Đăng Linh',
       },
-      status: '0',
+      status: 0,
       orderDate: '2023-01-09',
       estimatedReceiveDate: '2023-01-12',
       totalPrice: '3600000',
@@ -64,7 +64,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Phùng Hữu Kiều',
       },
-      status: '0',
+      status: 0,
       orderDate: '2023-01-15',
       estimatedReceiveDate: '2023-01-18',
       totalPrice: '1500000',
@@ -74,7 +74,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Lương Bá Thành',
       },
-      status: '1',
+      status: 1,
       orderDate: '2023-01-12',
       estimatedReceiveDate: '2023-01-14',
       totalPrice: '2300000',
@@ -84,7 +84,7 @@ const ordersList = {
       customerAccount: {
         fullname: 'Trần Công Minh',
       },
-      status: '3',
+      status: 3,
       orderDate: '2023-02-06',
       estimatedReceiveDate: '2023-02-10',
       totalPrice: '3000000',
@@ -111,18 +111,33 @@ const OrdersList = () => {
   const user = getCurrentUser();
 
   // Get customer order list
-  const getCustomerOrderList = useCallback(async (pageIndex) => {
-    try {
-      const data = ordersList;
-      setOrders(data.data.map((order) => order));
-      setPageSize(data.pageSize);
-      setTotalCount(data.totalCount);
-      setLoading(false);
-      setLoadingSearch(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  const getCustomerOrderList = useCallback(
+    async (pageIndex, orderStatus, searchOrderId) => {
+      try {
+        if (searchOrderId === '' && orderStatus === '') {
+          const data = ordersList;
+          setOrders(data.data.map((order) => order));
+          setPageSize(data.pageSize);
+          setTotalCount(data.totalCount);
+        } else {
+          const data = null;
+          // const data = await getFilterCustomerOrderListData(
+          //   pageIndex,
+          //   orderStatus,
+          //   searchOrderId,
+          // );
+          setOrders(data.data.map((order) => order));
+          setPageSize(data.pageSize);
+          setTotalCount(data.totalCount);
+        }
+        setLoading(false);
+        setLoadingSearch(false);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     getCustomerOrderList(pageIndex, orderStatus, searchOrderId);
