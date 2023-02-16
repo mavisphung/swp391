@@ -36,11 +36,6 @@ class Dashboard extends Component {
           PageSize: 10,
         },
         signal: AbortSignal.timeout(8000),
-        // withCredentials: false,
-        // headers: {
-        //   "Access-Control-Allow-Origin": "*",
-        //   "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-        // },
       })
       .then((res) => {
         console.log("Res", res);

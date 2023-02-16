@@ -19,7 +19,6 @@ const dashboardRoutes = {
 
 const cartRoutes = {
   cart: "/cart/*",
-  confirmLogin: "/confirm-login",
 };
 
 const personalRoutes = {
