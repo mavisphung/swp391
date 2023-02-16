@@ -111,18 +111,33 @@ const OrdersList = () => {
   const user = getCurrentUser();
 
   // Get customer order list
-  const getCustomerOrderList = useCallback(async (pageIndex) => {
-    try {
-      const data = ordersList;
-      setOrders(data.data.map((order) => order));
-      setPageSize(data.pageSize);
-      setTotalCount(data.totalCount);
-      setLoading(false);
-      setLoadingSearch(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  const getCustomerOrderList = useCallback(
+    async (pageIndex, orderStatus, searchOrderId) => {
+      try {
+        if (searchOrderId === '' && orderStatus === '') {
+          const data = ordersList;
+          setOrders(data.data.map((order) => order));
+          setPageSize(data.pageSize);
+          setTotalCount(data.totalCount);
+        } else {
+          const data = null;
+          // const data = await getFilterCustomerOrderListData(
+          //   pageIndex,
+          //   orderStatus,
+          //   searchOrderId,
+          // );
+          setOrders(data.data.map((order) => order));
+          setPageSize(data.pageSize);
+          setTotalCount(data.totalCount);
+        }
+        setLoading(false);
+        setLoadingSearch(false);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     getCustomerOrderList(pageIndex, orderStatus, searchOrderId);

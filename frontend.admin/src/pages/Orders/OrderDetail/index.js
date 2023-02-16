@@ -27,7 +27,8 @@ import CustomModal from '~/components/Modal';
 import '../OrdersList/OrdersList.scss';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
-import { MSG25, MSG27 } from '~/system/Messages/messages';
+import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
+import { toast } from 'react-toastify';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -371,6 +372,7 @@ const OrderDetail = () => {
       return;
     } else if (reason) {
       denyOrderById(orderId);
+      toast.success(MSG28, { autoClose: 1500 });
       handleCloseDeny();
     }
   };
@@ -411,6 +413,7 @@ const OrderDetail = () => {
       return;
     } else if (dateReceive && timeReceive) {
       approveOrderById(orderId);
+      toast.success(MSG26, { autoClose: 1500 });
       handleClose();
     }
   };
