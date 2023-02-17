@@ -4,31 +4,57 @@ import { useEffect, useState } from "react";
 import "./HomeLayout.scss";
 import ProductCarousel from "./ProductCarousel";
 import CategoryCard from "./CategoryCard";
-import api from "~/context/AppApi";
-import { birdList, cateList } from "~/data/Products";
+// import api from "~/context/AppApi";
+import { cateList } from "~/data/Products";
 import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "~/context/AppApi";
 
 function HomePage() {
   const [birds, setBirds] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [foods, setFoods] = useState([]);
+  const [popular, setPopular] = useState([]);
+  const [others, setOthers] = useState([]);
+  // const [categories, setCategories] = useState([]);
+
+  const getProducts = async () => {
+    try {
+      const response = await api.get("/product", {
+        params: {
+          PageNumber: 1,
+          PageSize: 10,
+        },
+      });
+
+      console.log("RES", response);
+      console.log("RES.DATA", response.data);
+      if (response.data) {
+        const tmp1 = [];
+        const tmp2 = [];
+        const tmp3 = [];
+        response.data.map((p) => {
+          if (p.categoryType == 1) {
+            tmp1.push(p);
+          } else if (p.categoryType == 2) {
+            tmp2.push(p);
+          } else {
+            tmp3.push(p);
+          }
+        });
+        const tmp4 = tmp1.concat(tmp2);
+        setBirds(tmp1);
+        setFoods(tmp2);
+        setOthers(tmp3);
+        setPopular(tmp4);
+      }
+    } catch (error) {
+      console.log("Get /product/ Error", error);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      const productRequests = await axios.get(
-        "https://localhost:7179/api/product"
-      );
-      const cateRequests = await axios.get(
-        "https://localhost:7179/api/category"
-      );
-      setBirds(productRequests.data);
-      console.log(cateRequests.data);
-      // setBirds(dataRequests.data.results);
-      return productRequests;
-    }
-    fetchData();
+    getProducts();
   }, []);
+
   return (
     <div className="container">
       <BirdCarousel />
@@ -47,7 +73,7 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Sản phẩm bán chạy
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={popular} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
@@ -59,13 +85,13 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Phụ kiện dành cho chim
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={others} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Thức ăn dành cho chim
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={foods} />
         </Row>
         <div style={{ paddingBottom: "150px" }}></div>
       </div>

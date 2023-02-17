@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
-import { addToCart } from "~/common/LocalStorageUtil";
+// import { addToCart } from "~/common/LocalStorageUtil";
 
 function ProductOrderPane2({
   name = "Chào mào bẫy đấu Ba Tơ",

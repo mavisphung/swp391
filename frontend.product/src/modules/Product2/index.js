@@ -1,18 +1,75 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import "./Product2Layout.scss";
+import api from "~/context/AppApi";
 import { des1 } from "~/data/Descriptions";
-import { birdList } from "~/data/Products";
 import ProductCarousel from "../Home/ProductCarousel";
 import ImageSlider from "../Product/widgets/ImageSlider";
 import ProductOrderPane2 from "./widgets/ProductOrderPane2";
 import AppTrace from "~/components/AppTrace";
 
 function BirdProductDetails() {
+  const [searchParams] = useSearchParams();
+  const productId = parseInt(searchParams.get("productId"));
+
+  const [pro, setPro] = useState();
+  const [relate, setRelate] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getProductWithId = async (id) => {
+    try {
+      const response = await api.get(`/product/${id}`);
+
+      console.log("RES", response);
+      console.log("RES.DATA", response.data);
+      if (response.data) {
+        setPro(response.data);
+      }
+    } catch (error) {
+      console.log("Get /product/:id Error", error);
+    }
+  };
+
+  const getProduct = async () => {
+    try {
+      const response = await api.get("/product", {
+        params: {
+          PageNumber: 1,
+          PageSize: 10,
+        },
+      });
+
+      console.log("RES", response);
+      console.log("RES.DATA", response.data);
+      if (response.data) {
+        const tmp1 = [];
+        response.data.map((p) => {
+          if (p.categoryType === 1) {
+            tmp1.push(p);
+          }
+        });
+        setRelate(tmp1);
+      }
+    } catch (error) {
+      console.log("Get /product/ Error", error);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getProductWithId(productId);
+    getProduct();
+  }, []);
+
+  if (!pro || isLoading) return <h1>Loading</h1>;
+
   return (
     <div className="container pro2-ly">
       <AppTrace />
       <div className="row">
         <div className="col-6">
-          <ImageSlider />
+          <ImageSlider imgs={pro.medias.filter((_, index) => index !== 0)} />
         </div>
         <div className="col-6">
           <ProductOrderPane2 />
@@ -49,7 +106,7 @@ function BirdProductDetails() {
       <div>
         <h5>Sản phẩm tương tự</h5>
         <div className="my-hr"></div>
-        <ProductCarousel list={birdList} />
+        <ProductCarousel list={relate} />
       </div>
       <div style={{ paddingBottom: "150px" }}></div>
     </div>

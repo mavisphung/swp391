@@ -6,7 +6,7 @@ import {
   Col,
   Container,
   Form,
-  Image,
+  // Image,
   Row,
 } from "react-bootstrap";
 import CartItems from "./components/CartItems";
@@ -52,7 +52,7 @@ function PaymentPage() {
           />
           <Row>
             <Col>
-              <a href="#" style={{ color: "#ee3e6a" }} className="h6">
+              <a href="/" style={{ color: "#ee3e6a" }} className="h6">
                 Thay đổi giỏ hàng
               </a>
             </Col>

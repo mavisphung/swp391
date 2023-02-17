@@ -5,9 +5,6 @@ import "./BirdCardLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
 import { addToCart } from "~/common/LocalStorageUtil";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import requests from "~/data/Requests";
 
 const BirdCard = (props) => {
   const navigate = useNavigate();
@@ -17,39 +14,11 @@ const BirdCard = (props) => {
 
   const historyUrl = props.historyUrl ? props.historyUrl : [];
 
-  let url = props.bird.img;
-  const medias = props.bird.medias;
-  if (medias) {
-    const img = medias.at(1);
-    url = img.url;
-  }
-
   const quantity = props.bird.quantity ? props.bird.quantity : 100;
 
   return (
     <Col className="pb-4 pe-3">
-      <Card
-        onClick={() =>
-          navigate(
-            {
-              pathname: config.routes.productDetails,
-              search: `?${createSearchParams(params)}`,
-            },
-            {
-              preventScrollReset: false,
-              state: {
-                breadcrumb: [
-                  ...historyUrl,
-                  {
-                    name: props.bird.name,
-                    url: `/product?productId=${props.bird.id}`,
-                  },
-                ],
-              },
-            }
-          )
-        }
-      >
+      <Card>
         <Card.Img src={props.bird.medias[1].url} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
@@ -64,10 +33,10 @@ const BirdCard = (props) => {
             <Button
               className="btn-buy"
               onClick={() =>
-                props.type === 0
+                props.bird.categoryType === 1
                   ? navigate(
                       {
-                        pathname: config.routes.productDetails,
+                        pathname: config.routes.birdDetails,
                         search: `?${createSearchParams(params)}`,
                       },
                       {
@@ -85,7 +54,7 @@ const BirdCard = (props) => {
                     )
                   : navigate(
                       {
-                        pathname: config.routes.birdDetails,
+                        pathname: config.routes.productDetails,
                         search: `?${createSearchParams(params)}`,
                       },
                       {
@@ -98,6 +67,7 @@ const BirdCard = (props) => {
                               url: `/product?productId=${props.bird.id}`,
                             },
                           ],
+                          categoryType: props.bird.categoryType,
                         },
                       }
                     )
