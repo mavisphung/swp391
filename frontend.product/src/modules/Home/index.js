@@ -15,12 +15,13 @@ function HomePage() {
   useEffect(() => {
     async function fetchData() {
       const productRequests = await axios.get(
-        "https://localhost:7179/api/product"
+        "https://localhost:7179/api/product?PageSize=50"
       );
       const cateRequests = await axios.get(
-        "https://localhost:7179/api/category"
+        "https://localhost:7179/api/category?PageSize=50"
       );
       setBirds(productRequests.data);
+      setCategories(cateRequests.data);
       console.log(cateRequests.data);
       // setBirds(dataRequests.data.results);
       return productRequests;
@@ -45,25 +46,29 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Sản phẩm bán chạy
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={birds.filter((b) => b.quantity > 10)} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Giống chim đang hot
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={birds.filter((b) => b.quantity < 10)} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Phụ kiện dành cho chim
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel
+            list={birds.filter(
+              (b) => b.categoryType === 3 || b.categoryType === 4
+            )}
+          />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Thức ăn dành cho chim
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={birds.filter((b) => b.categoryType === 2)} />
         </Row>
 
         {/* <Row>
