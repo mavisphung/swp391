@@ -10,6 +10,7 @@ function ProductOrderPane2({ bird }) {
 
   const handleBuyClick = (e) => {
     e.preventDefault();
+    addToCart(bird);
     navigate(config.routes.cart);
   };
 

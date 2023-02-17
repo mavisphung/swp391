@@ -79,7 +79,7 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Giống chim đang hot
           </div>
-          <ProductCarousel list={birds} />
+          <ProductCarousel list={birds.filter((b) => b.quantity < 10)} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">

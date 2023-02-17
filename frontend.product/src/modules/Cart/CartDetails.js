@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./CartLayout.scss";
@@ -17,6 +16,12 @@ function CartDetails() {
 
   const handleClick = (e) => {
     e.preventDefault();
+    if (cartList.length == 0) {
+      alert(
+        "Giỏ hàng của bạn đang trống! Bạn hãy quay lại trang chủ và chọn món hàng muốn đặt nhé."
+      );
+      return;
+    }
     navigate(config.routes.confirmLogin);
   };
 
@@ -36,7 +41,7 @@ function CartDetails() {
                 name={e.name}
                 img={img}
                 price={e.price}
-                amount={1}
+                amount={e.amount}
                 isBuy={true}
               />
             );

@@ -22,7 +22,7 @@ const BirdCard = (props) => {
         <Card.Img src={props.bird.medias[1].url} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
-          <Card.Text>ML: LT720</Card.Text>
+          <Card.Text>ML: {`LT0${props.bird.id}`}</Card.Text>
           <div className="d-flex justify-content-between">
             <div className="price">{formatPrice(props.bird.price)} đ</div>
             <span id="pro-amount-status">
