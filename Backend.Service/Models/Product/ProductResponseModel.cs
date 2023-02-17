@@ -15,6 +15,7 @@ namespace Backend.Service.Models.Product
         public int ImportQuantity { get; set; } = 0;
 
         public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
 
         // Đã thử bỏ cái này vào, vô dụng
         //[Required]
@@ -32,12 +33,9 @@ namespace Backend.Service.Models.Product
             Quantity = entity.Quantity;
             Status = entity.Status;
             ImportQuantity = entity.ImportQuantity;
-            if (entity.Category != null)
-            {
-                CategoryType = entity.Category.CategoryType;
-                CategoryId = entity.CategoryId;
-            }
-
+            CategoryType = entity.Category.CategoryType;
+            CategoryId = entity.Category.Id;
+            CategoryName = entity.Category.Name;
         }
     }
 }

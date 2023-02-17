@@ -60,14 +60,17 @@ namespace Backend.Service.Controllers
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        /// 
+        /// <response code="202">Cập nhật thành công</response>
+        /// <response code="400">Body là 1 con số</response>
         // PUT api/order/5
         [HttpPut("{id}")]
+        [ValidateModel]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
-        public async Task<IActionResult> Put(int id, [FromBody] OrderStatus status)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderStatusModel model)
         {
-            var response = await _orderService.UpdateStatusAsync(id, status);
-            return Accepted(response);
+            var response = await _orderService.UpdateStatusAsync(id, model);
+            return Accepted(new OrderResponseModel(response));
         }
 
         // DELETE api/<OrderController>/5

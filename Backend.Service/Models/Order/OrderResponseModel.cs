@@ -13,6 +13,8 @@ namespace Backend.Service.Models.Order
         public DateTime? EstimatedReceiveDate { get; set; }
         public ICollection<OrderDetailRM> OrderDetails { get; set; }
 
+        public SAddressRM CustomerInfo { get; set; }
+
         public OrderResponseModel(Entities.Order entity) : base(entity) 
         {
             TotalPrice = entity.TotalPrice;
@@ -22,6 +24,29 @@ namespace Backend.Service.Models.Order
             CloseDate = entity.CloseDate;
             EstimatedReceiveDate = entity.EstimatedReceiveDate;
             OrderDetails = entity.OrderDetails.Select(od => new OrderDetailRM(od)).ToList();
+            CustomerInfo = new SAddressRM(entity.ShippingAddress);
+        }
+    }
+
+    public class SAddressRM : BaseModel<Entities.ShippingAddress>
+    {
+        public string Email { get; set; }
+        public string Fullname { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Address { get; set; }
+        public string? Ward { get; set; }
+        public string? District { get; set; }
+        public string? Province { get; set; }
+
+        public SAddressRM(Entities.ShippingAddress entity) : base(entity)
+        {
+            Email = entity.Email;
+            Fullname = entity.FullName;
+            PhoneNumber = entity.PhoneNumber;
+            Address = entity.Address;
+            Ward = entity.Ward;
+            District = entity.District;
+            Province = entity.Province;
         }
     }
 
