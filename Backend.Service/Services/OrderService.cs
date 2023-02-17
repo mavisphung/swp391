@@ -119,6 +119,8 @@ namespace Backend.Service.Services
                 p => !p.IsDeleted 
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
 
+            // TODO: trừ số lượng sản phẩm trong product
+
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();

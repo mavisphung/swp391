@@ -17,13 +17,16 @@ namespace Backend.Service.Services
     public class ProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<ProductService> _logger;
         public ProductService(
             IProductRepository productRepository, 
-            ILogger<ProductService> logger)
+            ILogger<ProductService> logger,
+            ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _logger = logger;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
@@ -40,6 +43,12 @@ namespace Backend.Service.Services
                 predicate = predicate.And(product => product.SearchVector.Matches(filter.Search));
             }
 
+            if (filter.CategoryType.HasValue)
+            {
+                Console.WriteLine("CategoryType has value");
+                predicate = predicate.And(product => product.Category.CategoryType == filter.CategoryType.Value);
+            }
+
             IEnumerable<Product> query = await _productRepository.GetAllAsync(
                 filter: predicate,
                 includeProperties: "Category");
@@ -52,6 +61,8 @@ namespace Backend.Service.Services
 
         internal async Task<ProductResponseModel> AddAsync(CreateProductModel model)
         {
+            Category category = await _categoryRepository.GetAsync(model.CategoryId);
+
             var product = new Product()
             {
                 Name = model.Name,
@@ -61,7 +72,10 @@ namespace Backend.Service.Services
                 Quantity = model.Quantity,
                 ImportQuantity = model.Quantity,
                 Medias = model.Medias ?? new List<Media>(),
-                CategoryId = model.CategoryId,
+                CategoryId = category.Id,
+                Category = category,
+                Gender = model.Gender,
+                Age = model.Age
             };
 
             try
@@ -74,6 +88,8 @@ namespace Backend.Service.Services
                 _logger.LogInformation("ProductRepository: AddAsync | Error while saving");
                 throw new NotFoundException(BaseError.CATEGORY_NOT_FOUND.ToString());
             }
+            _logger.LogInformation($"---------------------------------------------------------------");
+            _logger.LogInformation($"Product.Category: {product.Category}");
             return new ProductResponseModel(product);
         }
 

@@ -23,6 +23,9 @@ namespace Backend.Service.Entities
         [Column(TypeName = "text")]
         public string? ShortDescription { get; set; } = string.Empty;
 
+        public bool? Gender { get; set; } = null;
+        public string? Age { get; set; } = null;
+
         public double Price { get; set; } = 0.0;
         public int Quantity { get; set; } = 0;
         public int ImportQuantity { get; set; } = 0;
