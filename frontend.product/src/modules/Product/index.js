@@ -20,10 +20,10 @@ function ProductDetails() {
       <AppTrace />
       <div className="row">
         <div className="col-6">
-          <ImageSlider img={pro.img} />
+          <ImageSlider img={pro?.img} />
         </div>
         <div className="col-6">
-          <ProductOrderPane name={pro.name} price={pro.price} />
+          <ProductOrderPane name={pro?.name} price={pro?.price} />
         </div>
       </div>
       <ProductInfo />

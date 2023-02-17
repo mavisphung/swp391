@@ -38,7 +38,7 @@ const BirdCard = (props) => {
           )
         }
       >
-        <Card.Img src={props.bird.img} />
+        <Card.Img src={props?.bird?.medias[1]?.url} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
           <Card.Text>ML: LT720</Card.Text>
