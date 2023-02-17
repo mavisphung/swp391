@@ -5,6 +5,9 @@ const routes = {
   register: "/registration",
   dashboard: "/dashboard",
   home: "/dashboard/home",
+  aboutUs: "/dashboard/aboutUs",
+  productDetails: "/dashboard/:category?/:productId",
+  paymentMethods: "/dashboard/payments",
   category: "/dashboard/category",
   productDetails: "/product",
   birdDetails: "/bird",
@@ -15,6 +18,9 @@ const routes = {
 const dashboardRoutes = {
   dashbard: "/dashboard/*",
   home: "/home",
+  aboutUs: "/aboutUs",
+  productDetails: "/:category?/:productId",
+  paymentMethods: "/payments",
   category: "/category",
 };
 

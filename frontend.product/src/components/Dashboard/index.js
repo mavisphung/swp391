@@ -3,6 +3,9 @@ import { Component } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import config from "~/config";
+
+import PaymentPage from "~/modules/Payment";
+
 import DefaultLayout from "~/components/DefaultLayout";
 import HomePage from "~/modules/Home";
 import CategoryPage from "~/modules/Category";
@@ -16,6 +19,10 @@ class Dashboard extends Component {
           <Route
             path={config.dashboardRoutes.category}
             element={<CategoryPage />}
+          />
+          <Route
+            path={config.dashboardRoutes.paymentMethods}
+            element={<PaymentPage />}
           />
           <Route
             path={config.routes.other}

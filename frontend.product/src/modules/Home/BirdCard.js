@@ -5,6 +5,9 @@ import "./BirdCardLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
 import { addToCart } from "~/common/LocalStorageUtil";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import requests from "~/data/Requests";
 
 const BirdCard = (props) => {
   const navigate = useNavigate();
@@ -25,8 +28,29 @@ const BirdCard = (props) => {
 
   return (
     <Col className="pb-4 pe-3">
-      <Card>
-        <Card.Img src={url} />
+      <Card
+        onClick={() =>
+          navigate(
+            {
+              pathname: config.routes.productDetails,
+              search: `?${createSearchParams(params)}`,
+            },
+            {
+              preventScrollReset: false,
+              state: {
+                breadcrumb: [
+                  ...historyUrl,
+                  {
+                    name: props.bird.name,
+                    url: `/product?productId=${props.bird.id}`,
+                  },
+                ],
+              },
+            }
+          )
+        }
+      >
+        <Card.Img src={props.bird.medias[1].url} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
           <Card.Text>ML: LT720</Card.Text>
