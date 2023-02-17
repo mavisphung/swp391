@@ -1,4 +1,5 @@
-﻿using Backend.Service.Helper;
+﻿using Backend.Service.Consts;
+using Backend.Service.Helper;
 using Backend.Service.Models.Order;
 using Backend.Service.Models.Validation;
 using Backend.Service.Services;
@@ -33,11 +34,17 @@ namespace Backend.Service.Controllers
             return Ok(response);
         }
 
-        // GET api/<OrderController>/5
+        /// <summary>
+        /// [ADMIN] Lấy Order theo mã
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        // GET api/order/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var entity = await _orderService.GetOneAsync(id);
+            return Ok(new OrderResponseModel(entity));
         }
 
         // POST api/<OrderController>
@@ -46,10 +53,24 @@ namespace Backend.Service.Controllers
         {
         }
 
-        // PUT api/<OrderController>/5
+
+        /// <summary>
+        /// [ADMIN] Cập nhật trạng thái của order tùy theo body truyền xuống
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        /// <response code="202">Cập nhật thành công</response>
+        /// <response code="400">Body là 1 con số</response>
+        // PUT api/order/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderStatusModel model)
         {
+            var response = await _orderService.UpdateStatusAsync(id, model);
+            return Accepted(new OrderResponseModel(response));
         }
 
         // DELETE api/<OrderController>/5

@@ -34,7 +34,8 @@ namespace Backend.Service.Consts
         USER_EXISTED,
         PHONE_NUMBER_EXISTED,
         UNAUTHENTICATED,
-        ADDRESS_NOT_FOUND
+        ADDRESS_NOT_FOUND,
+        ORDER_NOT_FOUND
     }
 
     public static class EnumStringMessage
