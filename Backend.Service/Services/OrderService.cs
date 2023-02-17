@@ -50,7 +50,7 @@ namespace Backend.Service.Services
 
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
-                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product");
+                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
 
             return PagedList<OrderResponseModel>.ToPagedList(
                 query.AsQueryable().OrderBy(u => u.Id).Select(entity => new OrderResponseModel(entity)),
@@ -62,7 +62,7 @@ namespace Backend.Service.Services
         {
             var found = await _orderRepository.GetFirstOrDefaultAsync(
                 o => !o.IsDeleted && o.Id == id,
-                "ShippingAddress,OrderDetails,OrderDetails.Product");
+                "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
             if (found == null)
                 throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
             return found;
@@ -149,10 +149,10 @@ namespace Backend.Service.Services
             return new OrderResponseModel(newOrder);
         }
 
-        public async Task<Order> UpdateStatusAsync(int id, OrderStatus status)
+        public async Task<Order> UpdateStatusAsync(int id, UpdateOrderStatusModel model)
         {
             Order found = await GetOneAsync(id);
-            found.Status = status;
+            found.Status = model.OrderStatus;
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
             return found;
