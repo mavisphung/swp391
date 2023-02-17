@@ -5,8 +5,28 @@ import ProductCarousel from "./ProductCarousel";
 import CategoryCard from "./CategoryCard";
 import { birdList, cateList } from "~/data/Products";
 import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function HomePage() {
+  const [birds, setBirds] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const productRequests = await axios.get(
+        "https://localhost:7179/api/product"
+      );
+      const cateRequests = await axios.get(
+        "https://localhost:7179/api/category"
+      );
+      setBirds(productRequests.data);
+      console.log(cateRequests.data);
+      // setBirds(dataRequests.data.results);
+      return productRequests;
+    }
+    fetchData();
+  }, []);
   return (
     <div className="container">
       <BirdCarousel />
@@ -25,25 +45,25 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Sản phẩm bán chạy
           </div>
-          <ProductCarousel list={birdList} />
+          <ProductCarousel list={birds} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Giống chim đang hot
           </div>
-          <ProductCarousel list={birdList} />
+          <ProductCarousel list={birds} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Phụ kiện dành cho chim
           </div>
-          <ProductCarousel list={birdList} />
+          <ProductCarousel list={birds} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
             Thức ăn dành cho chim
           </div>
-          <ProductCarousel list={birdList} />
+          <ProductCarousel list={birds} />
         </Row>
 
         {/* <Row>

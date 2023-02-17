@@ -12,7 +12,7 @@ function ProductCarousel({ list }) {
       <Carousel
         className="my-carousel"
         dots={false}
-        slidesToShow={3}
+        slidesToShow={2}
         ref={(ref) => {
           slider.current = ref;
         }}

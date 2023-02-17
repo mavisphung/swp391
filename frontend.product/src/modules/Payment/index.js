@@ -13,18 +13,7 @@ import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 
 function PaymentPage() {
-  const [payAdvanced, setPayAdvanced] = useState("VNPa");
-
-  const onPaymentChange = (p) => {
-    // if (p.target.value === "PayInAdvanced") {
-    //   setPayAdvanced(true);
-    //   console.log(payAdvanced);
-    // } else {
-    //   setPayAdvanced(false);
-    //   console.log(payAdvanced);
-    // }
-    setPayAdvanced(p.target.value);
-  };
+  const [isPayAdvanced, setPayAdvanced] = useState(false);
 
   return (
     <Container>
@@ -74,22 +63,26 @@ function PaymentPage() {
               </span>
             </Col>
           </Row>
-          <Row className="d-flex justify-content-end align-items-center">
-            <Col className="d-flex justify-content-end align-items-center">
-              Cọc trước:{" "}
-              <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
-                935,000đ
-              </span>
-            </Col>
-          </Row>
-          <Row className="d-flex justify-content-end align-items-center">
-            <Col className="d-flex justify-content-end align-items-center">
-              Còn lại:{" "}
-              <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
-                935,000đ
-              </span>
-            </Col>
-          </Row>
+          {isPayAdvanced && (
+            <>
+              <Row className="d-flex justify-content-end align-items-center">
+                <Col className="d-flex justify-content-end align-items-center">
+                  Cọc trước:{" "}
+                  <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
+                    935,000đ
+                  </span>
+                </Col>
+              </Row>
+              <Row className="d-flex justify-content-end align-items-center">
+                <Col className="d-flex justify-content-end align-items-center">
+                  Còn lại:{" "}
+                  <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
+                    935,000đ
+                  </span>
+                </Col>
+              </Row>
+            </>
+          )}
         </Col>
         <Col lg="3" md>
           <Row className="h5">Ghi chú đơn hàng</Row>
@@ -111,33 +104,33 @@ function PaymentPage() {
                 name="paymentGroup"
                 id="vnPayRadio"
                 label="Bằng VNPay"
-                onChange={onPaymentChange}
+                // checked={payAdvanced === "VNPay"}
+                onClick={() => setPayAdvanced(false)}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
-                onChange={onPaymentChange}
+                // checked={payAdvanced === "CashPay"}
+                onClick={() => setPayAdvanced(false)}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="payInAdvanceRadio"
                 label="Đặt cọc trước 50%"
-                onChange={onPaymentChange}
+                onClick={() => setPayAdvanced(true)}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="shippingPayRadio"
                 label="Thanh toán trực tiếp cho nhân viên giao hàng"
-                onChange={onPaymentChange}
+                // checked={payAdvanced === "ShippingPay"}
+                onClick={() => setPayAdvanced(false)}
               />
             </Form>
-            <p>
-              Selected: <strong>{payAdvanced}</strong>
-            </p>
           </Row>
           <Row>
             {" "}

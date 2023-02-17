@@ -4,6 +4,9 @@ import { createSearchParams, useNavigate } from "react-router-dom";
 import "./BirdCardLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import requests from "~/data/Requests";
 
 const BirdCard = (props) => {
   const navigate = useNavigate();
@@ -37,7 +40,7 @@ const BirdCard = (props) => {
           )
         }
       >
-        <Card.Img src={props.bird.img} />
+        <Card.Img src={props.bird.medias[1].url} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
           <Card.Text>ML: LT720</Card.Text>
