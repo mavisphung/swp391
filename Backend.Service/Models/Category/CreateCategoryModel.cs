@@ -13,6 +13,9 @@ namespace Backend.Service.Models.Category
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "This field is required")]
+        public string Image { get; set; }
+
+        [Required(ErrorMessage = "This field is required")]
         [EnumDataType(typeof(CategoryType), ErrorMessage = "Category type is invalid. Try again from 0 to 4")]
         public CategoryType CategoryType { get; set; }
 

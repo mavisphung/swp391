@@ -38,7 +38,6 @@ namespace Backend.Service.Controllers
             var data = await _productService.GetAllAsync(pagingParameter);
             AddPaginationToHeader(data);
             return Ok(data);
-
         }
 
         /// <summary>

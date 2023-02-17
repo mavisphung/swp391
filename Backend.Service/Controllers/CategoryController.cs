@@ -49,21 +49,10 @@ namespace Backend.Service.Controllers
         }
 
         /// <summary>
-        /// Creates a Category.
+        /// [ADMIN] Tạo một category
         /// </summary>
         /// <param name="item"></param>
         /// <returns>A newly created Category</returns>
-        /// <remarks>
-        /// Sample request:
-        ///
-        ///     POST /api/category
-        ///     {
-        ///        "name": "Chim chào mào",
-        ///        "description": "Đây là chim chào mào",
-        ///        "categoryType": 1
-        ///     }
-        ///
-        /// </remarks>
         /// <response code="201">Returns the newly created item</response>
         /// <response code="400">If the body is invalid</response>
         [HttpPost]
@@ -76,7 +65,13 @@ namespace Backend.Service.Controllers
             return Created("", category);
         }
 
-        // PUT api/<CategoryController>/5
+        /// <summary>
+        /// [ADMIN] Dùng để update category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        // PUT api/category/5
         [HttpPut("{id}")]
         [ValidateModel]
         public async Task<IActionResult> Put(int id, [FromBody] CreateCategoryModel model)
