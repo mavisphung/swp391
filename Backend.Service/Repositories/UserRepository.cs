@@ -82,7 +82,7 @@ namespace Backend.Service.Repositories
             }
             catch (Exception ex)
             {
-                throw new NotFoundException();
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
             }
         }
 
