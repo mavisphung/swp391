@@ -15,6 +15,7 @@ import {
 } from 'antd';
 import { Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
@@ -26,16 +27,16 @@ import {
   pending,
 } from '~/system/Constants/constants';
 import CustomModal from '~/components/Modal';
-import '../OrdersList/OrdersList.scss';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
 import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
 import { getCustomerOrderDetailDataByOrderId } from '~/api/orders';
-import moment from 'moment';
+import '../OrdersList/OrdersList.scss';
+import './OrderDetail.scss';
 
 const orderDetailsData = {
   id: 'OCH0123456',
-  customerAccount: {
+  customerInfo: {
     id: 3,
     fullname: 'Thái Đăng Linh',
     email: 'linhtd@gmail.com.vn',
@@ -100,8 +101,6 @@ const OrderDetail = () => {
     try {
       const data = await getCustomerOrderDetailDataByOrderId(orderId);
       console.log('apiData:', data);
-
-      //const data = orderDetailsData;
       setCustomerOrder(data);
       setOrderDetails(data.orderDetails?.map((product) => product));
       setLoading(false);
@@ -119,39 +118,36 @@ const OrderDetail = () => {
     setProvinceObj(
       PROVINCEVN.province.find(
         (province) =>
-          province.idProvince === customerOrder.customerAccount?.province,
+          province.idProvince === customerOrder.customerInfo?.province,
       ),
     );
-  }, [customerOrder.customerAccount?.province]);
+  }, [customerOrder.customerInfo?.province]);
 
   useEffect(() => {
     const listDistrict = PROVINCEVN.district.filter(
-      (item) => item.idProvince === customerOrder.customerAccount?.province,
+      (item) => item.idProvince === customerOrder.customerInfo?.province,
     );
     setDistrictObj(
       listDistrict.find(
         (district) =>
-          district.idDistrict === customerOrder.customerAccount?.district,
+          district.idDistrict === customerOrder.customerInfo?.district,
       ),
     );
   }, [
-    customerOrder.customerAccount?.district,
-    customerOrder.customerAccount?.province,
+    customerOrder.customerInfo?.district,
+    customerOrder.customerInfo?.province,
   ]);
 
   useEffect(() => {
     const listCommune = PROVINCEVN.commune.filter(
-      (item) => item.idDistrict === customerOrder.customerAccount?.district,
+      (item) => item.idDistrict === customerOrder.customerInfo?.district,
     );
     setCommuneObj(
       listCommune.find(
-        (commune) => commune.idCommune === customerOrder.customerAccount?.ward,
+        (commune) => commune.idCommune === customerOrder.customerInfo?.ward,
       ),
     );
-  }, [
-    customerOrder.customerAccount?.district,
-    customerOrder.customerAccount?.ward,
-  ]);
+  }, [customerOrder.customerInfo?.district, customerOrder.customerInfo?.ward]);
 
   // Render Order Status
   const renderOrderStatus = () => {
@@ -174,17 +170,17 @@ const OrderDetail = () => {
         <>
           <p>
             <strong>Tên khách hàng:</strong>{' '}
-            {customerOrder.customerAccount?.fullname}
+            {customerOrder.customerInfo?.fullname}
           </p>
           <p>
-            <strong>Email:</strong> {customerOrder.customerAccount?.email}
+            <strong>Email:</strong> {customerOrder.customerInfo?.email}
           </p>
           <p>
             <strong>Số điện thoại:</strong>{' '}
-            {customerOrder.customerAccount?.phone}
+            {customerOrder.customerInfo?.phoneNumber}
           </p>
           <p>
-            <strong>Địa chỉ:</strong> {customerOrder.customerAccount?.address}
+            <strong>Địa chỉ:</strong> {customerOrder.customerInfo?.address}
             {', '}
             {communeObj?.name}
             {', '}
@@ -229,11 +225,11 @@ const OrderDetail = () => {
       content: (
         <>
           <p>
-            <strong>Hình thức thanh toán:</strong>
+            <strong>Hình thức thanh toán:</strong> COD
           </p>
 
           <p>
-            <strong>Số tiền đã cọc:</strong>
+            <strong>Số tiền đã cọc:</strong> Không có
           </p>
         </>
       ),
@@ -264,8 +260,8 @@ const OrderDetail = () => {
     },
     {
       title: 'Loại sản phẩm',
-      dataIndex: ['product', 'categoryType'],
-      key: ['product', 'categoryType'],
+      dataIndex: ['product', 'categoryName'],
+      key: ['product', 'categoryName'],
     },
     {
       title: 'Đơn giá',
@@ -323,12 +319,14 @@ const OrderDetail = () => {
   const denyOrderById = async (orderId) => {
     try {
       const order = {
-        id: orderId,
+        orderStatus: cancelled,
         reason,
+        staffAccountId: user.id,
       };
+      console.log('Deny Body: ', order);
       // call api deny
       handleCloseDeny();
-      getOrderDataByOrderId();
+      getOrderDataByOrderId(orderId);
     } catch (error) {
       console.log(error);
     }
@@ -361,15 +359,16 @@ const OrderDetail = () => {
   //Approve order
   const approveOrderById = async (orderId) => {
     try {
-      var estimatedReceiveDate = dateReceive + ' ' + timeReceive;
+      var estimatedReceiveDate = dateReceive + 'T' + timeReceive + ':00';
       const order = {
-        id: orderId,
+        orderStatus: accepted,
         estimatedReceiveDate: estimatedReceiveDate,
         staffAccountId: user.id,
       };
+      console.log('Approve Body: ', order);
       // call api approve
       handleClose();
-      getOrderDataByOrderId();
+      getOrderDataByOrderId(orderId);
     } catch (error) {
       console.log(error);
     }
@@ -446,10 +445,8 @@ const OrderDetail = () => {
                 style={{
                   textAlign: 'left',
                   height: 280,
-                  border: '2px solid rgba(0, 0, 0, 0.2)',
-                  borderRadius: 5,
-                  boxShadow: '4px 6px rgba(0, 0, 0, 0.1)',
                 }}
+                className="card-content"
               >
                 {item.content}
               </Card>
@@ -459,10 +456,8 @@ const OrderDetail = () => {
         <Card
           style={{
             marginBottom: '20px',
-            border: '2px solid rgba(0, 0, 0, 0.2)',
-            borderRadius: 5,
-            boxShadow: '4px 6px rgba(0, 0, 0, 0.1)',
           }}
+          className="card-content"
         >
           <Table
             className="mb-3"
@@ -493,7 +488,19 @@ const OrderDetail = () => {
           <></>
         )}
         {customerOrder.status !== pending ? (
-          <></>
+          <>
+            {customerOrder.status === accepted ? (
+              <>
+                <Col>
+                  <Button danger onClick={() => handleShowDeny()}>
+                    Từ chối
+                  </Button>
+                </Col>
+              </>
+            ) : (
+              <></>
+            )}
+          </>
         ) : (
           <>
             <Col className="mx-2">
