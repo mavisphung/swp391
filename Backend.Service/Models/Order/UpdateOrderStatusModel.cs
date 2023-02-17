@@ -10,7 +10,7 @@ namespace Backend.Service.Models.Order
 
         public DateTime? EstimatedReceiveDate { get; set; }
 
-        public int StaffACcountId { get; set; }
+        public int StaffAccountId { get; set; }
 
         public string? Reason { get; set; }
     }
