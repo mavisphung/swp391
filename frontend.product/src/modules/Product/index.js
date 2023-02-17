@@ -81,11 +81,7 @@ function ProductDetails() {
       <AppTrace />
       <div className="row">
         <div className="col-6">
-          {/* <<<<<<< HEAD
-          <ImageSlider img={pro?.img} />
-=======
           <ImageSlider imgs={pro.medias.filter((_, index) => index !== 0)} />
->>>>>>> origin/bproduct */}
         </div>
         <div className="col-6">
           <ProductOrderPane name={pro?.name} price={pro?.price} />
