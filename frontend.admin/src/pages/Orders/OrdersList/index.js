@@ -25,6 +25,7 @@ import {
 
 import '../../../styles/Component/label.scss';
 import './OrdersList.scss';
+import CustomSpinner from '~/ui/CustomSpinner';
 
 const { Search } = Input;
 
@@ -55,7 +56,7 @@ const OrdersList = () => {
   const { pathname } = useLocation();
 
   const [orderStatus, setOrderStatus] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [searchOrderId, setSearchOrderId] = useState('');
   const [pageIndex, setPageIndex] = useState(1);
@@ -198,50 +199,56 @@ const OrdersList = () => {
 
   return (
     <>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Danh sách đơn đặt hàng</h2>
-      </div>
-      <Card
-        tabList={statusList}
-        activeTabKey={orderStatus}
-        onTabChange={(rowkey) => {
-          onStatusChange(rowkey);
-        }}
-        className="status_card"
-      />
-      <Row className="my-3" justify="center">
-        <Search
-          style={{ width: '48%' }}
-          placeholder="Tìm mã đơn hàng"
-          enterButton
-          size="large"
-          loading={loadingSearch}
-          onSearch={(value) => {
-            setPageIndex(1);
-            setSearchOrderId(value);
-            setLoadingSearch(true);
-          }}
-        />
-      </Row>
-      <div className="my-3">
-        <Table
-          rowKey="id"
-          locale={{ emptyText: MSG07 }}
-          columns={columns}
-          dataSource={orders}
-          pagination={{
-            defaultCurrent: 1,
-            current: pageIndex,
-            pageSize: pageSize,
-            total: totalCount,
-            position: ['none', 'bottomCenter'],
-            onChange: (page) => {
-              setPageIndex(page);
-            },
-          }}
-          bordered
-        />
-      </div>
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <div style={{ textAlign: 'center' }}>
+            <h2>Danh sách đơn đặt hàng</h2>
+          </div>
+          <Card
+            tabList={statusList}
+            activeTabKey={orderStatus}
+            onTabChange={(rowkey) => {
+              onStatusChange(rowkey);
+            }}
+            className="status_card"
+          />
+          <Row className="my-3" justify="center">
+            <Search
+              style={{ width: '48%' }}
+              placeholder="Tìm mã đơn hàng"
+              enterButton
+              size="large"
+              loading={loadingSearch}
+              onSearch={(value) => {
+                setPageIndex(1);
+                setSearchOrderId(value);
+                setLoadingSearch(true);
+              }}
+            />
+          </Row>
+          <div className="my-3">
+            <Table
+              rowKey="id"
+              locale={{ emptyText: MSG07 }}
+              columns={columns}
+              dataSource={orders}
+              pagination={{
+                defaultCurrent: 1,
+                current: pageIndex,
+                pageSize: pageSize,
+                total: totalCount,
+                position: ['none', 'bottomCenter'],
+                onChange: (page) => {
+                  setPageIndex(page);
+                },
+              }}
+              bordered
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

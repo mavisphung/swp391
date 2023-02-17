@@ -21,9 +21,7 @@ import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
   cancelled,
-  dateConvert,
   dateTimeConvert,
-  defaultDatePickerRange,
   defaultDateTimePickerRange,
   finished,
   pending,
@@ -35,6 +33,7 @@ import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
 import { getCustomerOrderDetailDataByOrderId, updateOrder } from '~/api/orders';
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
+import CustomSpinner from '~/ui/CustomSpinner';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -199,15 +198,15 @@ const OrderDetail = () => {
         <>
           <p>
             <strong>Ngày đặt hàng:</strong>{' '}
-            {moment(customerOrder.orderDate, dateConvert).format(
-              defaultDatePickerRange,
+            {moment(customerOrder.orderDate, dateTimeConvert).format(
+              defaultDateTimePickerRange,
             )}
           </p>
           {customerOrder.status === cancelled ? (
             <p>
               <strong>Ngày hủy:</strong>{' '}
-              {moment(customerOrder.closeDate, dateConvert).format(
-                defaultDatePickerRange,
+              {moment(customerOrder.closeDate, dateTimeConvert).format(
+                defaultDateTimePickerRange,
               )}
             </p>
           ) : (
@@ -329,7 +328,7 @@ const OrderDetail = () => {
       const body = {
         orderStatus: cancelled,
         reason,
-        staffACcountId: user.id,
+        staffAccountId: user.id,
       };
       console.log('Deny Body: ', body);
       // call api deny
@@ -368,11 +367,11 @@ const OrderDetail = () => {
   //Approve order
   const approveOrderById = async (orderId) => {
     try {
-      var estimatedReceiveDate = dateReceive + 'T' + timeReceive + ':00.000Z';
+      var estimatedReceiveDate = dateReceive + 'T' + timeReceive + ':00';
       const body = {
         orderStatus: accepted,
         estimatedReceiveDate: estimatedReceiveDate,
-        staffACcountId: user.id,
+        staffAccountId: user.id,
       };
       console.log('Approve Body: ', body);
       // call api approve
@@ -420,221 +419,227 @@ const OrderDetail = () => {
 
   return (
     <>
-      <>
-        <Row>
-          <Col>
-            <p style={{ fontSize: '20px' }}>
-              Chi tiết đơn hàng #{orderId} -{' '}
-              <strong>{renderOrderStatus()}</strong>{' '}
-              {customerOrder.status === cancelled ? (
-                <>
-                  {' '}
-                  -{' '}
-                  <strong style={{ color: 'red' }} className="my-2">
-                    Lí do:
-                  </strong>{' '}
-                  {customerOrder.reason}
-                </>
-              ) : (
-                <></>
-              )}
-            </p>
-          </Col>
-        </Row>
-
-        <List
-          grid={{
-            gutter: 16,
-            column: 3,
-          }}
-          dataSource={dataList}
-          renderItem={(item) => (
-            <List.Item>
-              <Card
-                title={item.title}
-                style={{
-                  textAlign: 'left',
-                  height: 280,
-                }}
-                className="card-content"
-              >
-                {item.content}
-              </Card>
-            </List.Item>
-          )}
-        />
-        <Card
-          style={{
-            marginBottom: '20px',
-          }}
-          className="card-content"
-        >
-          <Table
-            className="mb-3"
-            rowKey={(record) => record?.id}
-            loading={loading}
-            columns={columns}
-            pagination={false}
-            dataSource={orderDetails}
-          />
-          <Row justify="end" className="mx-3">
-            <h4>
-              Tổng cộng:
-              <span className="mx-2">
-                {new Intl.NumberFormat('vi-VN', {
-                  style: 'currency',
-                  currency: 'VND',
-                }).format(customerOrder.totalPrice)}
-              </span>
-            </h4>
-          </Row>
-        </Card>
-      </>
-
-      <Row justify="end" className="mt-2">
-        {!enoughQuantity && customerOrder.status === pending ? (
-          <>{renderAlert()}</>
-        ) : (
-          <></>
-        )}
-        {customerOrder.status !== pending ? (
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
           <>
-            {customerOrder.status === accepted ? (
+            <Row>
+              <Col>
+                <p style={{ fontSize: '20px' }}>
+                  Chi tiết đơn hàng #{orderId} -{' '}
+                  <strong>{renderOrderStatus()}</strong>{' '}
+                  {customerOrder.status === cancelled ? (
+                    <>
+                      {' '}
+                      -{' '}
+                      <strong style={{ color: 'red' }} className="my-2">
+                        Lí do:
+                      </strong>{' '}
+                      {customerOrder.cancelReason}
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </p>
+              </Col>
+            </Row>
+
+            <List
+              grid={{
+                gutter: 16,
+                column: 3,
+              }}
+              dataSource={dataList}
+              renderItem={(item) => (
+                <List.Item>
+                  <Card
+                    title={item.title}
+                    style={{
+                      textAlign: 'left',
+                      height: 280,
+                    }}
+                    className="card-content"
+                  >
+                    {item.content}
+                  </Card>
+                </List.Item>
+              )}
+            />
+            <Card
+              style={{
+                marginBottom: '20px',
+              }}
+              className="card-content"
+            >
+              <Table
+                className="mb-3"
+                rowKey={(record) => record?.id}
+                loading={loading}
+                columns={columns}
+                pagination={false}
+                dataSource={orderDetails}
+              />
+              <Row justify="end" className="mx-3">
+                <h4>
+                  Tổng cộng:
+                  <span className="mx-2">
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(customerOrder.totalPrice)}
+                  </span>
+                </h4>
+              </Row>
+            </Card>
+          </>
+
+          <Row justify="end" className="mt-2">
+            {!enoughQuantity && customerOrder.status === pending ? (
+              <>{renderAlert()}</>
+            ) : (
+              <></>
+            )}
+            {customerOrder.status !== pending ? (
               <>
+                {customerOrder.status === accepted ? (
+                  <>
+                    <Col>
+                      <Button danger onClick={() => handleShowDeny()}>
+                        Từ chối
+                      </Button>
+                    </Col>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </>
+            ) : (
+              <>
+                <Col className="mx-2">
+                  <Button
+                    type="primary"
+                    disabled={!enoughQuantity}
+                    onClick={() => handleShow(customerOrder.orderId)}
+                  >
+                    Chấp nhận
+                  </Button>
+                </Col>
                 <Col>
                   <Button danger onClick={() => handleShowDeny()}>
                     Từ chối
                   </Button>
                 </Col>
               </>
-            ) : (
-              <></>
             )}
-          </>
-        ) : (
-          <>
-            <Col className="mx-2">
-              <Button
-                type="primary"
-                disabled={!enoughQuantity}
-                onClick={() => handleShow(customerOrder.orderId)}
-              >
-                Chấp nhận
-              </Button>
-            </Col>
+          </Row>
+          <Row justify="center">
             <Col>
-              <Button danger onClick={() => handleShowDeny()}>
-                Từ chối
+              <Button
+                type="link"
+                onClick={handleGoBack}
+                style={{ color: '#014B92' }}
+              >
+                <strong>{`<< Quay lại danh sách đơn hàng`}</strong>
               </Button>
             </Col>
-          </>
-        )}
-      </Row>
-      <Row justify="center">
-        <Col>
-          <Button
-            type="link"
-            onClick={handleGoBack}
-            style={{ color: '#014B92' }}
+          </Row>
+
+          <Modal
+            title={<h4>Chấp nhận đơn hàng</h4>}
+            open={show}
+            onCancel={handleClose}
+            footer={
+              <>
+                <Button
+                  type="primary"
+                  danger
+                  onClick={handleClose}
+                  className="mx-2"
+                >
+                  Hủy
+                </Button>
+                <Button type="primary" onClick={() => handleApproveOrder()}>
+                  Đồng ý
+                </Button>
+              </>
+            }
           >
-            <strong>{`<< Quay lại danh sách đơn hàng`}</strong>
-          </Button>
-        </Col>
-      </Row>
-
-      <Modal
-        title={<h4>Chấp nhận đơn hàng</h4>}
-        open={show}
-        onCancel={handleClose}
-        footer={
-          <>
-            <Button
-              type="primary"
-              danger
-              onClick={handleClose}
-              className="mx-2"
-            >
-              Hủy
-            </Button>
-            <Button type="primary" onClick={() => handleApproveOrder()}>
-              Đồng ý
-            </Button>
-          </>
-        }
-      >
-        <hr />
-        {MSG25 + ' ' + orderId}
-        <Form.Group style={{ fontSize: '1rem' }}>
-          <Form.Label>Chọn ngày và giờ dự kiến giao:</Form.Label>
-          <Space direction="horizontal">
-            <Form.Control
-              type="date"
-              value={dateReceive}
-              min={disablePastDate()}
-              // max={disableFutureDate()}
-              onChange={handleDate}
-              style={{ width: '250px' }}
-              required
-            />
-            <TimePicker
-              placeholder="HH:mm"
-              format="HH:mm"
-              allowClear
-              disabledTime={disabledDateTime}
-              onChange={(time, timeString) => {
-                setTimeReceive(timeString);
-                setErrorApprove(false);
-              }}
-            />
-          </Space>
-        </Form.Group>
-        <br />
-        <hr />
-        {errorApprove && (
-          <Alert
-            banner
-            message="Vui lòng chọn ngày và giờ dự kiến giao"
-            type="error"
-            className="my-2"
-          />
-        )}
-      </Modal>
-
-      <CustomModal
-        show={showDeny}
-        title="Từ chối đơn hàng"
-        body={
-          <>
-            {MSG27 + ' ' + orderId}
-            <br />
-            <br />
-            <Form.Group className="mb-3">
-              <Form.Control
-                as="textarea"
-                placeholder="Lý do từ chối đơn"
-                style={{ height: '100px' }}
-                value={reason}
-                maxLength={500}
-                onChange={(e) => {
-                  setReason(e.target.value);
-                  setErrorDeny(false);
-                }}
-                required
-              />
+            <hr />
+            {MSG25 + ' ' + orderId}
+            <Form.Group style={{ fontSize: '1rem' }}>
+              <Form.Label>Chọn ngày và giờ dự kiến giao:</Form.Label>
+              <Space direction="horizontal">
+                <Form.Control
+                  type="date"
+                  value={dateReceive}
+                  min={disablePastDate()}
+                  // max={disableFutureDate()}
+                  onChange={handleDate}
+                  style={{ width: '250px' }}
+                  required
+                />
+                <TimePicker
+                  placeholder="HH:mm"
+                  format="HH:mm"
+                  allowClear
+                  disabledTime={disabledDateTime}
+                  onChange={(time, timeString) => {
+                    setTimeReceive(timeString);
+                    setErrorApprove(false);
+                  }}
+                />
+              </Space>
             </Form.Group>
-            {errorDeny && (
+            <br />
+            <hr />
+            {errorApprove && (
               <Alert
                 banner
-                message="Vui lòng cho biết lí do từ chối đơn"
+                message="Vui lòng chọn ngày và giờ dự kiến giao"
                 type="error"
                 className="my-2"
               />
             )}
-          </>
-        }
-        handleClose={handleCloseDeny}
-        handleSubmit={() => handleDenyOrder(orderId)}
-      />
+          </Modal>
+
+          <CustomModal
+            show={showDeny}
+            title="Từ chối đơn hàng"
+            body={
+              <>
+                {MSG27 + ' ' + orderId}
+                <br />
+                <br />
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Lý do từ chối đơn"
+                    style={{ height: '100px' }}
+                    value={reason}
+                    maxLength={500}
+                    onChange={(e) => {
+                      setReason(e.target.value);
+                      setErrorDeny(false);
+                    }}
+                    required
+                  />
+                </Form.Group>
+                {errorDeny && (
+                  <Alert
+                    banner
+                    message="Vui lòng cho biết lí do từ chối đơn"
+                    type="error"
+                    className="my-2"
+                  />
+                )}
+              </>
+            }
+            handleClose={handleCloseDeny}
+            handleSubmit={() => handleDenyOrder(orderId)}
+          />
+        </>
+      )}
     </>
   );
 };
