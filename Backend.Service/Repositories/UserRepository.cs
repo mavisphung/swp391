@@ -1,10 +1,13 @@
-﻿using Backend.Service.Entities;
+﻿using Backend.Service.Consts;
+using Backend.Service.Entities;
+using Backend.Service.Exceptions;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +17,10 @@ namespace Backend.Service.Repositories
     {
         private readonly ApplicationDbContext _dbContext;
         internal DbSet<User> _dbSet;
-        public UserRepository(ApplicationDbContext dbContext) : base(dbContext)
+
+        public UserRepository(
+            ApplicationDbContext dbContext
+            ) : base(dbContext)
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<User>();
@@ -65,6 +71,83 @@ namespace Backend.Service.Repositories
                 }
             }
             return -2;
+        }
+
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            try
+            {
+                //return await _dbSet.SingleAsync(u => u.Id == id && !u.IsDeleted);
+                return await _dbSet.Where(u => u.Id == id && !u.IsDeleted).Include("Cart").FirstAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public User? GetUserById(int id)
+        {
+            try
+            {
+                var found = _dbSet.Where(u => u.Id == id && !u.IsDeleted).First();
+                return found;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException();
+            }
+        }
+
+        public User? GetUserByEmail(string email)
+        {
+            try
+            {
+                var found = _dbSet.Where(u => !u.IsDeleted && u.Email.Equals(email)).First();
+                return found;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                //return await _dbSet.SingleAsync(u => u.Id == id && !u.IsDeleted);
+                return await _dbSet.Where(u => !u.IsDeleted && u.Email.Equals(email)).Include("Cart").FirstAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public User? GetUserByPhone(string phone)
+        {
+            try
+            {
+                var found = _dbSet.Where(u => !u.IsDeleted && u.Phone.Equals(phone)).First();
+                return found;
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
+        }
+
+        public async Task<User?> GetUserByPhoneAsync(string phone)
+        {
+            try
+            {
+                return await _dbSet.Where(u => !u.IsDeleted && u.Phone.Equals(phone)).Include("Cart").FirstAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
+            }
         }
     }
 }

@@ -1,30 +1,26 @@
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Layout, Menu, Row, Space } from 'antd';
-import { Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Layout, Row, Space } from 'antd';
+import { Image } from 'react-bootstrap';
+
 import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
-import { home, login } from '~/system/Constants/LinkURL';
+import { home } from '~/system/Constants/LinkURL';
 import './Header.scss';
+import { Admin } from '~/system/Constants/constants';
 
 const { Header } = Layout;
-const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 
 function HeaderContent() {
   const { getCurrentUser } = useUserAuth();
 
   const user = getCurrentUser();
-  //const user = { name: 'Admin', roleId: 'admin' };
-  //const user = null;
 
   const handleRenderHeader = () => {
-    if (user && user.roleId === 'admin') {
+    if (user && user.roleId === Admin) {
       return (
         <>
-          <Space mode="horizontal">
-            <Row style={{ color: 'white' }}>Welcome, {user.name}</Row>
+          <Space>
+            <Row style={{ color: 'white' }}>Xin chào {user.fullname}</Row>
           </Space>
         </>
       );
@@ -38,24 +34,6 @@ function HeaderContent() {
               className="c-image-homepage"
             />
           </Link>
-
-          <Menu mode="horizontal" theme="dark" className="c-menu-homepage">
-            <SubMenu
-              key="sub1"
-              icon={
-                <FontAwesomeIcon
-                  icon={faUser}
-                  style={{ fontSize: 32, paddingTop: 8, paddingLeft: 8 }}
-                />
-              }
-            >
-              <MenuItemGroup>
-                <Menu.Item key="1">
-                  <Link to={`/${login}`}>Đăng nhập</Link>
-                </Menu.Item>
-              </MenuItemGroup>
-            </SubMenu>
-          </Menu>
         </div>
       );
     }

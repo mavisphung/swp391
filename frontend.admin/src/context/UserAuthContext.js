@@ -9,25 +9,31 @@ export function UserAuthContextProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
 
   async function loginEmailAndPassword(email, password) {
+    let payload = {
+      email,
+      password,
+    };
+
     try {
-      // const response = await api.post('/auth/sign-in', {
-      //   email,
-      //   password,
+      // const response = await api.post('/auth/sign-en', payload, {
+      //   headers: { signUpMethod: 'local' },
       // });
+      // console.log('Response: ', response.data);
       const response = {
-        type: 'get',
         data: {
-          name: 'Bao Khang',
-          email: 'admin@chytech.com.vn',
-          password: 'admin123',
-          roleId: 'admin',
-          statusId: 'active',
+          id: '1',
+          fullname: 'Admin Chystore',
+          email: 'admin@chystore.vn',
+          password: '123456',
+          roleId: 1,
+          status: true,
         },
       };
       localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.log('Error', error);
+      return 0;
     }
   }
 

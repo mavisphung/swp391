@@ -1,7 +1,9 @@
 ﻿using Backend.Service.Entities;
+using Backend.Service.Exceptions;
 using Backend.Service.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Backend.Service.Repositories
 {
@@ -50,9 +52,9 @@ namespace Backend.Service.Repositories
 
             if (orderBy != null)
             {
-                return orderBy(query).ToList();
+                return orderBy(query);
             }
-            return query.ToList();
+            return query;
         }
 
         public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null)
@@ -102,13 +104,78 @@ namespace Backend.Service.Repositories
         public void Remove(int id)
         {
             T entity = dbSet.Find(id);
-            Remove(entity);
+            if (entity == null)
+                throw new NotFoundException();
+
+            // Reflection
+            PropertyInfo? propertyInfo = entity.GetType().GetProperty("IsDeleted");
+            propertyInfo?.SetValue(entity, true);
         }
 
         public int Count()
         {
             var count = dbSet.Count();
             return count;
+        }
+
+        public async Task<bool> SaveDbChangeAsync()
+        {
+            return (await _db.SaveChangesAsync() >= 0);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>> filter = null, 
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+            string includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query);
+            }
+            return query;
+        }
+
+        public async Task AddAsync(T entity)
+        {
+            await dbSet.AddAsync(entity);
+        }
+
+        public DbSet<T> GetDbSet()
+        {
+            return dbSet;
+        }
+
+        public Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, string includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            return query.FirstOrDefaultAsync();
         }
     }
 }

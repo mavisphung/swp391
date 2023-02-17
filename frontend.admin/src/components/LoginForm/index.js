@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
+  active,
+  Customer,
   emailPattern,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
@@ -28,10 +30,8 @@ const LoginForm = () => {
     } else if (emailPattern.test(email)) {
       try {
         const user = await loginEmailAndPassword(email, password);
-        if (
-          (user.roleId !== 'admin' || user.roleId !== 'staff') &&
-          user.statusId === 'active'
-        ) {
+        console.log('User', user);
+        if (user.roleId !== Customer && user.status === true) {
           setTimeout(
             () =>
               navigate({
@@ -53,7 +53,7 @@ const LoginForm = () => {
 
   const handleSetAutoDomain = (e) => {
     if (e.key === '@') {
-      email += 'chytech.com.vn';
+      email += 'chystore.vn';
       setEmail(email);
     }
   };
@@ -68,7 +68,7 @@ const LoginForm = () => {
               <Form.Label>
                 <strong>Email</strong> <span className="text-danger">*</span>
               </Form.Label>
-              <InputGroup style={{ paddingRight: 44 }}>
+              <InputGroup>
                 <Form.Control
                   type="email"
                   value={email}

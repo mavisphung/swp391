@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Space, Table } from 'antd';
-import { Link } from 'react-router-dom';
+import { Image, Space, Table } from 'antd';
+import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
-import { MSG07, MSG08 } from '~/system/Messages/messages';
+import { MSG07, MSG08, MSG42 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { useUserAuth } from '~/context/UserAuthContext';
 
@@ -13,80 +13,44 @@ import '../../../styles/Component/button.scss';
 import '../../../styles/Component/label.scss';
 import '../../../styles/Component/table.scss';
 import CustomModal from '~/components/Modal';
+import { updateAccount } from '~/system/Constants/LinkURL';
+import { active, inactive } from '~/system/Constants/constants';
+import { toast } from 'react-toastify';
+import { getAccountsListData } from '~/api/accounts';
 
 const accountRoles = [
   {
-    id: 'admin',
-    name: 'Admin',
+    id: 1,
+    name: 'Quản trị viên',
   },
   {
-    id: 'staff',
-    name: 'Staff',
+    id: 2,
+    name: 'Nhân viên',
   },
   {
-    id: 'customer',
-    name: 'Customer',
+    id: 3,
+    name: 'Khách hàng',
   },
 ];
 
 const accountStatus = [
   {
-    id: 'active',
-    name: 'Active',
+    id: '1',
+    value: true,
+    name: 'Hoạt động',
   },
   {
-    id: 'inactive',
-    name: 'Inactive',
+    id: '0',
+    value: false,
+    name: 'Không hoạt động',
   },
 ];
-
-const accountList = {
-  type: 'list',
-  data: [
-    {
-      id: 1,
-      fullname: 'Bao Khang',
-      email: 'admin@chytech.com.vn',
-      password: 'admin123',
-      roleId: 'admin',
-      statusId: 'active',
-      phone: '0123123123',
-    },
-    {
-      id: 2,
-      fullname: 'Kevin Ken',
-      email: 'staff@chytech.com.vn',
-      password: 'staff123',
-      roleId: 'staff',
-      statusId: 'active',
-      phone: '0123123555',
-    },
-    {
-      id: 3,
-      fullname: 'Thái Đăng Linh',
-      email: 'linhtd@gmail.com.vn',
-      password: 'linhtd123',
-      roleId: 'customer',
-      statusId: 'active',
-      phone: '0901565565',
-    },
-    {
-      id: 4,
-      fullname: 'Phùng Hữu Kiều',
-      email: 'kieuph@gmail.com.vn',
-      password: 'kieuph123',
-      roleId: 'customer',
-      statusId: 'active',
-      phone: '0901789789',
-    },
-  ],
-  pageSize: 10,
-  totalCount: 4,
-};
 
 function ViewAccountsList() {
   const { getCurrentUser } = useUserAuth();
   const user = getCurrentUser();
+
+  const { pathname } = useLocation();
 
   const [accounts, setAccounts] = useState([]);
   const [searchAccountEmail, setSearchAccountEmail] = useState('');
@@ -99,9 +63,9 @@ function ViewAccountsList() {
   const [accountId, setAccountId] = useState('');
 
   // Get all accounts
-  const getAccountsList = useCallback((pageIndex) => {
-    const data = accountList;
-    setAccounts(data.data.map((account) => account));
+  const getAccountsList = useCallback(async (pageIndex) => {
+    const data = await getAccountsListData(pageIndex);
+    setAccounts(data.map((account) => account));
     setPageSize(data.pageSize);
     setTotalCount(data.totalCount);
   }, []);
@@ -111,10 +75,10 @@ function ViewAccountsList() {
   }, [getAccountsList, pageIndex]);
 
   //Enable the Deactivate Button
-  const checkDisableButton = (email, statusId) => {
+  const checkDisableButton = (email, isDeleted) => {
     if (user.email === email) {
       return true;
-    } else if (statusId !== 'active') {
+    } else if (isDeleted !== inactive) {
       return true;
     } else {
       return false;
@@ -125,7 +89,7 @@ function ViewAccountsList() {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${updateAccount}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button className="mx-2" variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
@@ -137,11 +101,11 @@ function ViewAccountsList() {
             variant="outline-danger"
             size="xs"
             disabled={
-              checkDisableButton(record.email, record.statusId) ? true : false
+              checkDisableButton(record.email, record.isDeleted) ? true : false
             }
             onClick={() => handleShowModal(record.id)}
           >
-            <FontAwesomeIcon icon={faTrashCan} size="lg" />
+            <FontAwesomeIcon icon={faBan} size="lg" />
           </Button>
         </CustomTooltip>
       </Space>
@@ -155,15 +119,39 @@ function ViewAccountsList() {
       key: 'id',
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      width: 250,
+      title: 'Ảnh',
+      dataIndex: 'avatar',
+      key: 'avatar',
+      width: 50,
+      render: (text, record) => {
+        return record.avatar ? (
+          <>
+            <div
+              style={{
+                display: 'inline-block',
+                borderRadius: '50%',
+                width: 40,
+                height: 40,
+                overflow: 'hidden',
+              }}
+            >
+              <Image src={record.avatar} />
+            </div>
+          </>
+        ) : (
+          'NaN'
+        );
+      },
     },
     {
       title: 'Họ và tên',
       dataIndex: 'fullname',
       key: 'fullname',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Vai trò',
@@ -173,23 +161,26 @@ function ViewAccountsList() {
         const roleName = accountRoles.find(
           (role) => role.id === record.roleId,
         )?.name;
-        return roleName;
+        return roleName || 'NaN';
       },
     },
     {
       title: 'Số điện thoại',
       dataIndex: 'phone',
       key: 'phone',
+      render: (text, record) => {
+        return record.phone || 'Chưa cập nhật';
+      },
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'statusId',
-      key: 'statusId',
+      dataIndex: 'isDeleted',
+      key: 'isDeleted',
       width: 200,
       render: (text, record) => {
-        if (record.statusId === 'active') {
+        if (record.isDeleted === inactive) {
           return <span className="c-label c-label-success"> Hoạt động</span>;
-        } else if (record.statusId === 'inactive') {
+        } else if (record.isDeleted === active) {
           return (
             <span className="c-label c-label-danger"> Không hoạt động</span>
           );
@@ -217,7 +208,7 @@ function ViewAccountsList() {
   const deactivateAccountStatusById = async (accountById) => {
     try {
       // call api
-      accountById.statusId = 'inactive';
+      accountById.status = inactive;
 
       getAccountsList(pageIndex);
     } catch (e) {
@@ -228,6 +219,7 @@ function ViewAccountsList() {
   const handleDeactivateAccount = (accountId) => {
     const accountById = accounts.find((account) => account.id === accountId);
     deactivateAccountStatusById(accountById);
+    toast.success(MSG42, { autoClose: 1500 });
     setShow(false);
   };
 
@@ -276,12 +268,12 @@ function ViewAccountsList() {
             value={searchAccountEmail}
             type="text"
           />
-          <Form.Control
+          {/* <Form.Control
             placeholder="Tìm tên"
             onChange={handleChangeAccountEmail}
             value={searchAccountEmail}
             type="text"
-          />
+          /> */}
           <Form.Select
             value={searchAccountRole}
             onChange={handleChangeAccountRole}
@@ -301,8 +293,9 @@ function ViewAccountsList() {
             aria-label="Chọn trạng thái"
             required
           >
+            <option value="">Chọn trạng thái</option>
             {accountStatus.map((status, index) => (
-              <option key={index} value={status.id}>
+              <option key={index} value={status.value}>
                 {status.name}
               </option>
             ))}

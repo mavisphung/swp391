@@ -1,4 +1,7 @@
-﻿using Backend.Service.Repositories.IRepositories;
+﻿using Backend.Service.Entities;
+using Backend.Service.Helper;
+using Backend.Service.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Services
 {
@@ -6,9 +9,43 @@ namespace Backend.Service.Services
     {
         private readonly IUserRepository _userRepository;
 
-        public UserService(IUserRepository userRepository)
+        //private readonly ApplicationDbContext _context;
+        public UserService(
+            IUserRepository userRepository
+            //ApplicationDbContext context
+        )
         {
             _userRepository = userRepository;
+            //_context = context;
+        }
+
+        public IEnumerable<User> GetAll(FilterParameter pagingParameter)
+        {
+            IEnumerable<User> query = _userRepository.GetAll();
+            return PagedList<User>.ToPagedList(
+                query.AsQueryable().OrderBy(u => u.Id),
+                pagingParameter.PageNumber,
+                pagingParameter.PageSize);
+        }
+
+        public async Task<PagedList<User>> GetAllAsync(FilterParameter pagingParameter)
+        {
+            IEnumerable<User> query = await _userRepository.GetAllAsync();
+
+            return PagedList<User>.ToPagedList(
+                query.AsQueryable().OrderBy(u => u.Id), 
+                pagingParameter.PageNumber, 
+                pagingParameter.PageSize);
+        }
+
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            return await _userRepository.GetUserByIdAsync(id);
+        }
+
+        public User? GetUserById(int id)
+        {
+            return _userRepository.GetUserById(id);
         }
 
         //public PagedList<User> GetAllUsers(UserParameter userParam, PagingParameter paging)
@@ -49,7 +86,7 @@ namespace Backend.Service.Services
         //    }
         //    if (!string.IsNullOrWhiteSpace(userParam.Email))
         //    {
-        //        values = values.Where(x => x.Email.Contains(userParam.Email,StringComparison.InvariantCultureIgnoreCase));
+        //        values = values.Where(x => x.Email.Contains(userParam.Email, StringComparison.InvariantCultureIgnoreCase));
         //    }
 
         //    if (!string.IsNullOrWhiteSpace(userParam.sort))
@@ -101,7 +138,7 @@ namespace Backend.Service.Services
         //    {
         //        var abc = user;
         //        _userRepository.CreateLocalUser(user);
-                
+
         //        _userRepository.SaveDbChange();
         //        return true;
         //    }

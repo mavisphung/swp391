@@ -2,25 +2,35 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu } from 'antd';
 import {
   faArrowRightFromBracket,
-  faBarChart,
   faClipboardList,
   faFeatherPointed,
+  faSquarePollVertical,
   faStore,
+  faTableCellsLarge,
+  faUser,
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 
 import {
+  accountProfile,
+  addAccount,
+  addCategory,
+  addProduct,
+  changePassword,
   home,
   viewAccountsList,
+  viewCategoriesList,
   viewOrdersList,
+  viewProductsList,
   viewStatistics,
 } from '~/system/Constants/LinkURL';
 import './SideBar.scss';
 import { Image } from 'react-bootstrap';
 import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
+import { Admin } from '~/system/Constants/constants';
 
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -31,8 +41,6 @@ function Sidebar() {
   let navigate = useNavigate();
   const { getCurrentUser, logOut } = useUserAuth();
   const user = getCurrentUser();
-
-  //const user = { name: 'Admin', roleId: 'admin' };
 
   const [key, setKey] = useState('');
   const [collapsed, setCollapsed] = useState(false);
@@ -56,7 +64,7 @@ function Sidebar() {
   };
 
   const renderMenuDependOnRole = () => {
-    if (user?.roleId === 'admin') {
+    if (user?.roleId === Admin) {
       return (
         <Menu
           onClick={handleClick}
@@ -66,6 +74,9 @@ function Sidebar() {
         >
           <Menu.Item key="1" icon={<FontAwesomeIcon icon={faStore} />}>
             <Link to={`${pathname}`}>Cửa hàng</Link>
+          </Menu.Item>
+          <Menu.Item key="6" icon={<FontAwesomeIcon icon={faClipboardList} />}>
+            <Link to={`${pathname}/${viewOrdersList}`}>Đơn hàng</Link>
           </Menu.Item>
           <SubMenu
             key="sub1"
@@ -79,7 +90,7 @@ function Sidebar() {
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Link to={``}>Tạo tài khoản</Link>
+                <Link to={`${pathname}/${addAccount}`}>Tạo tài khoản</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
@@ -90,29 +101,63 @@ function Sidebar() {
           >
             <MenuItemGroup>
               <Menu.Item key="4">
-                <Link to={``}>Danh sách sản phẩm</Link>
+                <Link to={`${pathname}/${viewProductsList}`}>
+                  Danh sách sản phẩm
+                </Link>
               </Menu.Item>
               <Menu.Item key="5">
-                <Link to={``}>Tạo sản phẩm</Link>
+                <Link to={`${pathname}/${addProduct}`}>Tạo sản phẩm</Link>
               </Menu.Item>
             </MenuItemGroup>
           </SubMenu>
-          <Menu.Item key="6" icon={<FontAwesomeIcon icon={faClipboardList} />}>
-            <Link to={`${pathname}/${viewOrdersList}`}>Đơn hàng</Link>
-          </Menu.Item>
-          <Menu.Item key="7" icon={<FontAwesomeIcon icon={faBarChart} />}>
+          <SubMenu
+            key="sub3"
+            title="Loại hàng"
+            icon={<FontAwesomeIcon icon={faTableCellsLarge} />}
+          >
+            <MenuItemGroup>
+              <Menu.Item key="11">
+                <Link to={`${pathname}/${viewCategoriesList}`}>
+                  Danh sách loại hàng
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="12">
+                <Link to={`${pathname}/${addCategory}`}>Tạo loại hàng</Link>
+              </Menu.Item>
+            </MenuItemGroup>
+          </SubMenu>
+          <Menu.Item
+            key="7"
+            icon={<FontAwesomeIcon icon={faSquarePollVertical} />}
+          >
             <Link to={`${pathname}/${viewStatistics}`}>Thống kê</Link>
           </Menu.Item>
           <Menu.Divider />
+          <SubMenu
+            key="sub4"
+            title="Thông tin"
+            icon={<FontAwesomeIcon icon={faUser} />}
+          >
+            <MenuItemGroup>
+              <Menu.Item key="8">
+                <Link to={`${pathname}/${accountProfile}`}>Hồ sơ</Link>
+              </Menu.Item>
+              <Menu.Item key="10">
+                <Link to={`${pathname}/${changePassword}`}>
+                  Thay đổi mật khẩu
+                </Link>
+              </Menu.Item>
+            </MenuItemGroup>
+          </SubMenu>
           <Menu.Item
             key="9"
             icon={
               <FontAwesomeIcon
                 className="c-logout-icon"
                 icon={faArrowRightFromBracket}
+                style={{ color: '#ff4d4f' }}
               />
             }
-            onClick={() => handleLogOut()}
           >
             <Button type="link" onClick={() => handleLogOut()} danger>
               Log Out

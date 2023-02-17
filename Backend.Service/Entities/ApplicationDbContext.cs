@@ -1,22 +1,44 @@
 ﻿using System.Runtime.CompilerServices;
+using Backend.Service.Consts;
 using Backend.Service.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Backend.Service.Entities
 {
     public partial class ApplicationDbContext : DbContext
     {
+        private readonly PasswordHasher _passwordHasher;
 
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Role> Roles { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Category> Categories { get; set; } = null!;
+        public virtual DbSet<Product> Products { get; set; } = null!;
+        public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = null!;
+        public virtual DbSet<Payment> Payments { get; set; } = null!;
+        public virtual DbSet<Banner> Banners { get; set; } = null!;
+        public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
+        public virtual DbSet<Cart> Carts { get; set; } = null!;
+        public virtual DbSet<CartItem> CartItems { get; set; } = null!;
+        public virtual DbSet<Feedback> FeedBacks { get; set; } = null!;
 
         // Needed for Add-Migration command
-        public ApplicationDbContext() { }
+        public ApplicationDbContext() 
+        {
+            // For seeding data
+            var path = System.AppContext.BaseDirectory;
+            var _configuration = new ConfigurationBuilder()
+                .SetBasePath(path)
+                .AddJsonFile("appsettings.json")
+                .Build();
+            _passwordHasher = new PasswordHasher(new BirdStoreConst(_configuration));
+        }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             Database.EnsureCreated();
-            Console.WriteLine("Created database successfully");
+            //Console.WriteLine("Created database successfully");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -30,7 +52,35 @@ namespace Backend.Service.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.GenerateRoles();
+            //modelBuilder.GenerateRoles(_passwordHasher);
+
+            // FTS for category
+            modelBuilder.Entity<Category>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",  // Text search config
+                    p => new { p.Name })  // Included properties
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN"); // Index method on the search vector (GIN or GIST)
+
+            // FTS for product
+            modelBuilder.Entity<Product>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",
+                    p => new { p.Name })
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN");
+
+            // FTS for banner
+            modelBuilder.Entity<Banner>()
+                .HasGeneratedTsVectorColumn(
+                    p => p.SearchVector,
+                    "english",
+                    p => new { p.Name })
+                .HasIndex(p => p.SearchVector)
+                .HasMethod("GIN");
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -45,15 +95,43 @@ namespace Backend.Service.Entities
 
             foreach (var entityEntry in entries)
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.UtcNow;
                 }
             }
 
             return base.SaveChanges();
+        }
+
+        private Task<EntityEntry> UpdateEntitiesAsync(EntityEntry entityEntry)
+        {
+            return Task.Run(() => 
+            {
+                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.UtcNow;
+                }
+                return entityEntry;
+            });
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            // Automatically add CreatedDate and UpdatedDate if changes happen
+            var entries = ChangeTracker
+                            .Entries()
+                            .Where(e => e.Entity is BaseEntity && (
+                                    e.State == EntityState.Added
+                                    || e.State == EntityState.Modified))
+                            .Select(et => UpdateEntitiesAsync(et));
+
+            await Task.WhenAll(entries);
+            return await base.SaveChangesAsync();
         }
     }
 }
