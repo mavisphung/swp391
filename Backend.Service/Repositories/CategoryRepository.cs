@@ -1,4 +1,5 @@
-﻿using Backend.Service.Entities;
+﻿using Backend.Service.Consts;
+using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace Backend.Service.Repositories
                 return await dbSet.Where(cate => !cate.IsDeleted && cate.Id == id).SingleAsync();
             } catch(Exception _)
             {
-                throw new NotFoundException();
+                throw new NotFoundException(BaseError.CATEGORY_NOT_FOUND.ToString());
             }
         }
     }

@@ -17,13 +17,16 @@ namespace Backend.Service.Services
     public class ProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<ProductService> _logger;
         public ProductService(
             IProductRepository productRepository, 
-            ILogger<ProductService> logger)
+            ILogger<ProductService> logger,
+            ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _logger = logger;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
@@ -58,6 +61,8 @@ namespace Backend.Service.Services
 
         internal async Task<ProductResponseModel> AddAsync(CreateProductModel model)
         {
+            Category category = await _categoryRepository.GetAsync(model.CategoryId);
+
             var product = new Product()
             {
                 Name = model.Name,
@@ -67,7 +72,8 @@ namespace Backend.Service.Services
                 Quantity = model.Quantity,
                 ImportQuantity = model.Quantity,
                 Medias = model.Medias ?? new List<Media>(),
-                CategoryId = model.CategoryId,
+                CategoryId = category.Id,
+                Category = category,
                 Gender = model.Gender,
                 Age = model.Age
             };
