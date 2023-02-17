@@ -48,9 +48,9 @@ namespace Backend.Service.Helper.GlobalErrorHanding
             }
             catch (Exception ex)
             {
-                await Task.WhenAll(
-                    //transaction.RollbackAsync(),
-                    HandleExceptionAsync(httpContext, ex));
+                //await Task.WhenAll(
+                //    transaction.RollbackAsync());
+                await HandleExceptionAsync(httpContext, ex);
                 //await transaction.RollbackAsync();
                 //await HandleExceptionAsync(httpContext, ex);
             }
@@ -67,7 +67,7 @@ namespace Backend.Service.Helper.GlobalErrorHanding
             {
                 errorResponse = _cachedException[typeof(Exception).Name](exception);
             }
-             
+            
             context.Response.StatusCode = (int)errorResponse.HttpStatus;
             if (errorResponse.HttpStatus == HttpStatusCode.Unauthorized)
             {

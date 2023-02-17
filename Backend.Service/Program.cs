@@ -146,6 +146,7 @@ builder.Services.AddTransient<IBannerRepository, BannerRepository>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddTransient<ICartItemRepository, CartItemRepository>();
+builder.Services.AddTransient<IShippingAddressRepository, ShippingAddressRepository>();
 
 // Add services
 builder.Services.AddTransient<UserService, UserService>();
