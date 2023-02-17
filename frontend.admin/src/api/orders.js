@@ -73,12 +73,7 @@ export const getCustomerOrderDetailDataByOrderId = async (orderId) => {
   }
 };
 
-// Deny customer order
-export const denyOrder = async (order) => {
-  await api.put(`${orderURL}/customer-order-deny`, order);
-};
-
-// Approve customer order
-export const approveOrder = async (order) => {
-  await api.put(`${orderURL}/customer-order-approve`, order);
+// Update customer order status
+export const updateOrder = async (orderId, body) => {
+  await api.put(`/${orderURL}/${orderId}`, body);
 };

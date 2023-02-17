@@ -111,11 +111,11 @@ const OrdersList = () => {
       dataIndex: 'id',
       key: 'id',
     },
-    // {
-    //   title: 'Khách hàng',
-    //   dataIndex: ['customerAccount', 'fullname'],
-    //   key: 'customer',
-    // },
+    {
+      title: 'Khách hàng',
+      dataIndex: ['customerInfo', 'fullname'],
+      key: 'customer',
+    },
     {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
@@ -132,9 +132,13 @@ const OrdersList = () => {
       key: 'estimatedReceiveDate',
       render: (text, record) => {
         if (record.estimatedReceiveDate) {
-          return moment(record.estimatedReceiveDate, dateConvert).format(
-            defaultDatePickerRange,
-          );
+          if (record.status === cancelled) {
+            return 'Đã hủy';
+          } else {
+            return moment(record.estimatedReceiveDate, dateConvert).format(
+              defaultDatePickerRange,
+            );
+          }
         } else {
           return 'Chờ xác nhận';
         }

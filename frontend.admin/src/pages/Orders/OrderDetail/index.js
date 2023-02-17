@@ -22,7 +22,9 @@ import {
   accepted,
   cancelled,
   dateConvert,
+  dateTimeConvert,
   defaultDatePickerRange,
+  defaultDateTimePickerRange,
   finished,
   pending,
 } from '~/system/Constants/constants';
@@ -30,7 +32,7 @@ import CustomModal from '~/components/Modal';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
 import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
-import { getCustomerOrderDetailDataByOrderId } from '~/api/orders';
+import { getCustomerOrderDetailDataByOrderId, updateOrder } from '~/api/orders';
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
 
@@ -203,13 +205,19 @@ const OrderDetail = () => {
           </p>
           {customerOrder.status === cancelled ? (
             <p>
-              <strong>Ngày hủy:</strong> {customerOrder.receiveDate}
+              <strong>Ngày hủy:</strong>{' '}
+              {moment(customerOrder.closeDate, dateConvert).format(
+                defaultDatePickerRange,
+              )}
             </p>
           ) : (
             <>
               <p>
                 <strong>Ngày dự kiến giao:</strong>{' '}
-                {customerOrder.estimatedReceiveDate || 'Chưa xác nhận'}
+                {moment(
+                  customerOrder.estimatedReceiveDate,
+                  dateTimeConvert,
+                ).format(defaultDateTimePickerRange) || 'Chưa xác nhận'}
               </p>
               <p>
                 <strong>Ngày lấy hàng: </strong>{' '}
@@ -318,13 +326,14 @@ const OrderDetail = () => {
   // Deny request
   const denyOrderById = async (orderId) => {
     try {
-      const order = {
+      const body = {
         orderStatus: cancelled,
         reason,
-        staffAccountId: user.id,
+        staffACcountId: user.id,
       };
-      console.log('Deny Body: ', order);
+      console.log('Deny Body: ', body);
       // call api deny
+      await updateOrder(orderId, body);
       handleCloseDeny();
       getOrderDataByOrderId(orderId);
     } catch (error) {
@@ -359,14 +368,15 @@ const OrderDetail = () => {
   //Approve order
   const approveOrderById = async (orderId) => {
     try {
-      var estimatedReceiveDate = dateReceive + 'T' + timeReceive + ':00';
-      const order = {
+      var estimatedReceiveDate = dateReceive + 'T' + timeReceive + ':00.000Z';
+      const body = {
         orderStatus: accepted,
         estimatedReceiveDate: estimatedReceiveDate,
-        staffAccountId: user.id,
+        staffACcountId: user.id,
       };
-      console.log('Approve Body: ', order);
+      console.log('Approve Body: ', body);
       // call api approve
+      await updateOrder(orderId, body);
       handleClose();
       getOrderDataByOrderId(orderId);
     } catch (error) {
@@ -423,7 +433,7 @@ const OrderDetail = () => {
                   <strong style={{ color: 'red' }} className="my-2">
                     Lí do:
                   </strong>{' '}
-                  {customerOrder.reason}{' '}
+                  {customerOrder.reason}
                 </>
               ) : (
                 <></>

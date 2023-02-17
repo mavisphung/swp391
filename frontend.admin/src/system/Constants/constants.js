@@ -30,6 +30,8 @@ export const available = 1;
 export const defaultDBDateFormatter = 'DD-MM-YYYY HH:mm';
 export const dateConvert = 'YYYY-MM-DD';
 export const defaultDatePickerRange = 'DD/MM/YYYY';
+export const dateTimeConvert = 'YYYY-MM-DDTHH:mm:ss';
+export const defaultDateTimePickerRange = 'DD/MM/YYYY HH:mm';
 
 // Payment Method
 export const vnpay = 0;
