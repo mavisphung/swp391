@@ -11,6 +11,7 @@ namespace Backend.Service.Models.Order
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public DateTime? CloseDate { get; set; }
         public DateTime? EstimatedReceiveDate { get; set; }
+        public string? CancelReason { get; set; }
         public ICollection<OrderDetailRM> OrderDetails { get; set; }
 
         public SAddressRM CustomerInfo { get; set; }
@@ -25,6 +26,7 @@ namespace Backend.Service.Models.Order
             EstimatedReceiveDate = entity.EstimatedReceiveDate;
             OrderDetails = entity.OrderDetails.Select(od => new OrderDetailRM(od)).ToList();
             CustomerInfo = new SAddressRM(entity.ShippingAddress);
+            CancelReason = entity.CancelledReason;
         }
     }
 
