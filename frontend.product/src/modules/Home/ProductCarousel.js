@@ -5,20 +5,22 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import "./HomeLayout.scss";
 import BirdCard from "./BirdCard";
 
-function ProductCarousel({ list }) {
+function ProductCarousel({ list, type = 0 }) {
   let slider = useRef();
+  const slides = list.length >= 3 ? 3 : list.length;
   return (
     <div>
       <Carousel
         className="my-carousel"
         dots={false}
-        slidesToShow={3}
+        slidesToScroll={3}
+        slidesToShow={slides}
         ref={(ref) => {
           slider.current = ref;
         }}
       >
         {list.map((b) => (
-          <BirdCard key={b.id} bird={b} />
+          <BirdCard key={b.id} bird={b} type={type} />
         ))}
       </Carousel>
       <div className="d-flex justify-content-center">

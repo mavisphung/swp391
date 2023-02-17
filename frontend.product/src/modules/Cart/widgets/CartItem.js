@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { formatPrice } from "~/common/Helper";
 
 import "../CartLayout.scss";
+import { formatPrice } from "~/common/Helper";
+// import { removeFromCart } from "~/common/LocalStorageUtil";
 
 function CartItem({ id, name, img, cate, price, amount, isBuy }) {
   const [newAmount, setAmount] = useState(amount);
@@ -44,10 +45,23 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
           </div>
         </div>
         <div className="col-3 d-flex align-items-end flex-column">
-          <a href="/">{isBuy ? "Để dành lần sau" : "Thêm vào đơn hàng"}</a>
-          <a href="/" className="mt15">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              // addToCart(props.bird);
+            }}
+          >
+            {isBuy ? "Để dành lần sau" : "Thêm vào đơn hàng"}
+          </button>
+          <button
+            className="mt15"
+            onClick={(e) => {
+              e.preventDefault();
+              // removeFromCart()
+            }}
+          >
             Xóa?
-          </a>
+          </button>
         </div>
       </div>
     </div>

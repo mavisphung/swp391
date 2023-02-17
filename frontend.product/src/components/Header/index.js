@@ -5,8 +5,10 @@ import { Col, Container, Form, Image, Nav, Navbar } from "react-bootstrap";
 import "./HeaderLayout.scss";
 import config from "~/config";
 import AppIcons from "~/assets/icons";
+import { getCartAmount } from "~/common/LocalStorageUtil";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+
 function Header() {
   return (
     <div>
@@ -21,13 +23,8 @@ function Header() {
         </div>
         <Navbar expand="lg" variant="light" className="">
           <Container fluid style={{ padding: 0 }}>
-            <Navbar.Brand href="#">
-              <Image
-                // id="register-icon"
-                src={AppIcons.logo}
-                alt="ChyStore icon"
-                // className="mb-4"
-              />
+            <Navbar.Brand href={config.routes.dashboard}>
+              <Image src={AppIcons.logo} alt="ChyStore icon" />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
@@ -48,8 +45,8 @@ function Header() {
                 </Form>
               </Nav>
               <div className="d-flex">
-                <Nav.Link href="#cartAction" className="pl-2">
-                  <BsCartFill color="#ee3e6a" /> (0)
+                <Nav.Link href={config.routes.cart} className="pl-2">
+                  <BsCartFill color="#ee3e6a" /> ({getCartAmount()})
                 </Nav.Link>
                 <Nav.Link href={config.routes.login} className="px-2">
                   Đăng nhập
