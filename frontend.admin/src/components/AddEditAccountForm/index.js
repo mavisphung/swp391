@@ -3,7 +3,7 @@ import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import {
   Customer,
-  emailPattern,
+  emailCommonPattern,
   fullNamePattern,
   inactive,
   phonePattern,
@@ -160,7 +160,7 @@ const AddEditAccountForm = () => {
 
   const handleSetAutoDomain = (e) => {
     if (e.key === '@') {
-      email += 'chytech.com.vn';
+      email += 'chystore.vn';
       setEmail(email);
     }
   };
@@ -176,7 +176,7 @@ const AddEditAccountForm = () => {
       setValidated(true);
     } else if (
       fullNamePattern.test(fullName) &&
-      emailPattern.test(email) &&
+      emailCommonPattern.test(email) &&
       phonePattern.test(phone) &&
       emailIsExisted === false
     ) {
@@ -208,7 +208,8 @@ const AddEditAccountForm = () => {
                     placeholder={templateEmailPlaceholder}
                     onChange={(e) => setEmail(e.target.value)}
                     isInvalid={
-                      email && (!emailPattern.test(email) || emailIsExisted)
+                      email &&
+                      (!emailCommonPattern.test(email) || emailIsExisted)
                     }
                     onKeyUp={handleSetAutoDomain}
                     autoComplete="username"
