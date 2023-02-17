@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
+using Backend.Service.Extensions;
 using Backend.Service.Helper;
 using Backend.Service.Models.Category;
 using Backend.Service.Repositories;
@@ -45,6 +47,7 @@ namespace Backend.Service.Services
                 Name = model.Name,
                 Description = model.Description,
                 CategoryType = model.CategoryType,
+                Image = model.Image
             };
             await _cateRepository.AddAsync(category);
             await _cateRepository.SaveDbChangeAsync();
@@ -72,9 +75,22 @@ namespace Backend.Service.Services
             if (found == null)
                 throw new NotFoundException();
 
-            found.Name = found.Name.Equals(model.Name) ? found.Name : model.Name;
-            found.Description = model.Description ?? found.Description;
-            found.CategoryType = found.CategoryType == model.CategoryType ? found.CategoryType : model.CategoryType;
+            //found.Name = found.Name.Equals(model.Name) ? found.Name : model.Name;
+            //found.Description = model.Description ?? found.Description;
+            //found.CategoryType = found.CategoryType == model.CategoryType ? found.CategoryType : model.CategoryType;
+            Type updateModel = model.GetType();
+            IEnumerable<PropertyInfo> props = new List<PropertyInfo>(updateModel.GetProperties());
+
+            foreach (PropertyInfo prop in props)
+            {
+                object? value = prop.GetValue(model);
+                bool isMatched = found.GetType().GetProperties().Where(pi => pi.Name == prop.Name).Any();
+
+                if (!isMatched || value == null || (decimal)value == 0) continue;
+
+                found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
+            }
+
             _cateRepository.Update(found);
             _cateRepository.SaveDbChange();
             return new CategoryResponseModel(found);
