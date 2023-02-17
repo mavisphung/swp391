@@ -40,6 +40,12 @@ namespace Backend.Service.Services
                 predicate = predicate.And(product => product.SearchVector.Matches(filter.Search));
             }
 
+            if (filter.CategoryType.HasValue)
+            {
+                Console.WriteLine("CategoryType has value");
+                predicate = predicate.And(product => product.Category.CategoryType == filter.CategoryType.Value);
+            }
+
             IEnumerable<Product> query = await _productRepository.GetAllAsync(
                 filter: predicate,
                 includeProperties: "Category");
@@ -62,6 +68,8 @@ namespace Backend.Service.Services
                 ImportQuantity = model.Quantity,
                 Medias = model.Medias ?? new List<Media>(),
                 CategoryId = model.CategoryId,
+                Gender = model.Gender,
+                Age = model.Age
             };
 
             try
@@ -74,6 +82,8 @@ namespace Backend.Service.Services
                 _logger.LogInformation("ProductRepository: AddAsync | Error while saving");
                 throw new NotFoundException(BaseError.CATEGORY_NOT_FOUND.ToString());
             }
+            _logger.LogInformation($"---------------------------------------------------------------");
+            _logger.LogInformation($"Product.Category: {product.Category}");
             return new ProductResponseModel(product);
         }
 
