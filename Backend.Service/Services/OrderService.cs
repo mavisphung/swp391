@@ -153,8 +153,21 @@ namespace Backend.Service.Services
 
         public async Task<Order> UpdateStatusAsync(int id, UpdateOrderStatusModel model)
         {
+            User? staff = await _userRepository.GetUserByIdAsync(model.StaffACcountId);
             Order found = await GetOneAsync(id);
             found.Status = model.OrderStatus;
+            found.UpdatedBy = staff!.Fullname;
+
+            if (model.OrderStatus == OrderStatus.Accepted && model.EstimatedReceiveDate != null)
+            {
+                found.EstimatedReceiveDate = model.EstimatedReceiveDate;
+            }
+
+            if (model.OrderStatus == OrderStatus.Cancelled && !string.IsNullOrEmpty(model.Reason))
+            {
+                found.CancelledReason = model.Reason;
+            }
+
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
             return found;
