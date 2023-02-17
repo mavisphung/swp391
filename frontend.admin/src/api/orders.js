@@ -59,15 +59,13 @@ export const getFilterCustomerOrderListData = async (
 // Get customer order detail by order id
 export const getCustomerOrderDetailDataByOrderId = async (orderId) => {
   try {
-    const response = await api.get(
-      `${orderURL}?${id}=${orderId}&includeProperties=CustomerOrderDetails,CustomerAccount`,
-    );
+    const response = await api.get(`/${orderURL}/${orderId}`);
     if (response.status !== 200) {
       throw new Error('Customer order detail by order id has the problem');
     }
     const data = await response.data;
     if (data) {
-      return data.data[0];
+      return data;
     }
     return false;
   } catch (e) {

@@ -20,6 +20,8 @@ import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
   cancelled,
+  dateConvert,
+  defaultDatePickerRange,
   finished,
   pending,
 } from '~/system/Constants/constants';
@@ -28,6 +30,8 @@ import '../OrdersList/OrdersList.scss';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
 import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
+import { getCustomerOrderDetailDataByOrderId } from '~/api/orders';
+import moment from 'moment';
 
 const orderDetailsData = {
   id: 'OCH0123456',
@@ -69,37 +73,6 @@ const orderDetailsData = {
   totalPrice: '3600000',
 };
 
-const orderProductsListData = [
-  {
-    productId: 'C116',
-    name: 'Chào mào bẫy đấu Minh Long',
-    image: '',
-    productCategory: {
-      categoryId: 'C1',
-      name: 'Chim chào mào',
-    },
-    description:
-      'Chào mào bẫy đấu vùng Minh Long - Quảng Ngãi. Sản phẩm sẽ được mở bán vào lúc 19h ngày 13/06/2015.',
-    price: '3000000',
-    quantity: '1',
-    currentQuantity: '5',
-  },
-  {
-    productId: 'LV11',
-    name: 'Lồng vuông tre chạm trụ chữ T',
-    image: '',
-    productCategory: {
-      categoryId: 'L1',
-      name: 'Lồng chim',
-    },
-    description:
-      'Lồng được áp dụng chính sách "HOÀN TIỀN" nếu khách hàng tìm được nơi nào bán rẻ hơn. Quý khách hàng có thể đặt mẫu theo yêu cầu.',
-    price: '600000',
-    quantity: '1',
-    currentQuantity: '10',
-  },
-];
-
 const OrderDetail = () => {
   let navigate = useNavigate();
   const { orderId } = useParams();
@@ -123,21 +96,14 @@ const OrderDetail = () => {
   const user = getCurrentUser();
 
   // Get customer order by order id
-  const getOrderDataByOrderId = useCallback(async () => {
+  const getOrderDataByOrderId = useCallback(async (orderId) => {
     try {
-      const data = orderDetailsData;
-      setCustomerOrder(data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+      const data = await getCustomerOrderDetailDataByOrderId(orderId);
+      console.log('apiData:', data);
 
-  // Get customer product detail by order id
-  const getProductListByOrderId = useCallback(async () => {
-    try {
-      const data = orderProductsListData;
-      setOrderDetails(data.map((product) => product));
+      //const data = orderDetailsData;
+      setCustomerOrder(data);
+      setOrderDetails(data.orderDetails?.map((product) => product));
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -145,9 +111,8 @@ const OrderDetail = () => {
   }, []);
 
   useEffect(() => {
-    getOrderDataByOrderId();
-    getProductListByOrderId();
-  }, [getOrderDataByOrderId, getProductListByOrderId]);
+    getOrderDataByOrderId(orderId);
+  }, [getOrderDataByOrderId, orderId]);
 
   // Render customer address
   useEffect(() => {
@@ -235,7 +200,10 @@ const OrderDetail = () => {
       content: (
         <>
           <p>
-            <strong>Ngày đặt hàng:</strong> {customerOrder.orderDate}
+            <strong>Ngày đặt hàng:</strong>{' '}
+            {moment(customerOrder.orderDate, dateConvert).format(
+              defaultDatePickerRange,
+            )}
           </p>
           {customerOrder.status === cancelled ? (
             <p>
@@ -245,10 +213,11 @@ const OrderDetail = () => {
             <>
               <p>
                 <strong>Ngày dự kiến giao:</strong>{' '}
-                {customerOrder.estimatedReceiveDate}
+                {customerOrder.estimatedReceiveDate || 'Chưa xác nhận'}
               </p>
               <p>
-                <strong>Ngày lấy hàng: </strong> {customerOrder.receiveDate}
+                <strong>Ngày lấy hàng: </strong>{' '}
+                {customerOrder.receiveDate || 'Chưa lấy hàng'}
               </p>
             </>
           )}
@@ -275,32 +244,32 @@ const OrderDetail = () => {
   const columns = [
     {
       title: 'Mã sản phẩm',
-      dataIndex: 'productId',
-      key: 'productId',
+      dataIndex: ['product', 'productCode'],
+      key: 'productCode',
       render: (text, record) => text,
     },
     {
       title: 'Sản phẩm',
-      dataIndex: 'name',
+      dataIndex: ['product', 'name'],
       key: 'name',
-      // render: (text, record) => {
-      //   return (
-      //     <>
-      //       <Image width={100} src={text.product.image} />
-      //       <span className="mx-2">{text.product.name}</span>
-      //     </>
-      //   );
-      // },
+      render: (text, record) => {
+        return (
+          <>
+            <Image width={100} src={record.product.medias[1].url} />
+            <span className="mx-2">{record.product.name}</span>
+          </>
+        );
+      },
       width: 400,
     },
     {
       title: 'Loại sản phẩm',
-      dataIndex: ['productCategory', 'name'],
-      key: ['productCategory', 'name'],
+      dataIndex: ['product', 'categoryType'],
+      key: ['product', 'categoryType'],
     },
     {
       title: 'Đơn giá',
-      dataIndex: 'price',
+      dataIndex: ['product', 'price'],
       key: 'price',
       render: (text, record) =>
         new Intl.NumberFormat('vi-VN', {
@@ -315,7 +284,7 @@ const OrderDetail = () => {
     },
     {
       title: 'Số lượng tồn',
-      dataIndex: 'currentQuantity',
+      dataIndex: ['product', 'quantity'],
       key: 'currentQuantity',
       hide: customerOrder.status !== pending ? true : false,
       render: (text, record) => {
@@ -333,7 +302,7 @@ const OrderDetail = () => {
         let price = new Intl.NumberFormat('vi-VN', {
           style: 'currency',
           currency: 'VND',
-        }).format(record.price * record.quantity);
+        }).format(record.product.price * record.quantity);
         return price;
       },
     },
@@ -476,8 +445,10 @@ const OrderDetail = () => {
                 title={item.title}
                 style={{
                   textAlign: 'left',
-                  height: '300px',
-                  borderRadius: '15px',
+                  height: 280,
+                  border: '2px solid rgba(0, 0, 0, 0.2)',
+                  borderRadius: 5,
+                  boxShadow: '4px 6px rgba(0, 0, 0, 0.1)',
                 }}
               >
                 {item.content}
@@ -485,10 +456,17 @@ const OrderDetail = () => {
             </List.Item>
           )}
         />
-        <Card>
+        <Card
+          style={{
+            marginBottom: '20px',
+            border: '2px solid rgba(0, 0, 0, 0.2)',
+            borderRadius: 5,
+            boxShadow: '4px 6px rgba(0, 0, 0, 0.1)',
+          }}
+        >
           <Table
             className="mb-3"
-            rowKey={(record) => record?.productId}
+            rowKey={(record) => record?.id}
             loading={loading}
             columns={columns}
             pagination={false}
