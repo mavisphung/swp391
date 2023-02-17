@@ -1,4 +1,5 @@
-﻿using Backend.Service.Consts;
+﻿using System.Security.Permissions;
+using Backend.Service.Consts;
 using Backend.Service.Entities.Poco;
 
 namespace Backend.Service.Models.Product
@@ -9,10 +10,12 @@ namespace Backend.Service.Models.Product
         public Guid ProductCode { get; set; }
         public ICollection<Media> Medias { get; set; } = new List<Media>();
         public string? Description { get; set; }
-
         public double Price { get; set; } = 0.0;
         public int Quantity { get; set; } = 0;
         public int ImportQuantity { get; set; } = 0;
+        public bool? Gender { get; set; }
+        public string? ShortDescription { get; set; }
+        public string? Age { get; set; }
 
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
@@ -33,9 +36,15 @@ namespace Backend.Service.Models.Product
             Quantity = entity.Quantity;
             Status = entity.Status;
             ImportQuantity = entity.ImportQuantity;
-            CategoryType = entity.Category.CategoryType;
-            CategoryId = entity.Category.Id;
-            CategoryName = entity.Category.Name;
+            ShortDescription = entity.ShortDescription;
+            Age = entity.Age;
+            Gender = entity.Gender;
+            if (entity.Category != null)
+            {
+                CategoryId = entity.Category.Id;
+                CategoryName = entity.Category.Name;
+                CategoryType = entity.Category.CategoryType;
+            }
         }
     }
 }
