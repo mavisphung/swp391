@@ -40,3 +40,4 @@ export const MSG38 = 'Cập nhật thông tin sản phẩm thành công';
 export const MSG39 = 'Hình ảnh chưa được chọn';
 export const MSG40 = 'Loại sản phẩm chưa được chọn';
 export const MSG41 = 'Mô tả không được để trống';
+export const MSG42 = 'Vô hiệu hóa tài khoản thành công';
