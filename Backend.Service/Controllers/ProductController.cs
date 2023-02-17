@@ -108,5 +108,17 @@ namespace Backend.Service.Controllers
             await _productService.RemoveAsync(id);
             return NoContent();
         }
+
+
+        /// <summary>
+        /// Lấy các sản phẩm liên quan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{productId}/relatives")]
+        public async Task<IActionResult> GetRelativeProduct(int productId)
+        {
+            return Ok();
+        }
     }
 }
