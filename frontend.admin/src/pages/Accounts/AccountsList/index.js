@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Space, Table } from 'antd';
+import { Image, Space, Table } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
-import { MSG07, MSG08 } from '~/system/Messages/messages';
+import { MSG07, MSG08, MSG42 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { useUserAuth } from '~/context/UserAuthContext';
 
@@ -15,6 +15,8 @@ import '../../../styles/Component/table.scss';
 import CustomModal from '~/components/Modal';
 import { updateAccount } from '~/system/Constants/LinkURL';
 import { active, inactive } from '~/system/Constants/constants';
+import { toast } from 'react-toastify';
+import { getAccountsListData } from '~/api/accounts';
 
 const accountRoles = [
   {
@@ -44,50 +46,6 @@ const accountStatus = [
   },
 ];
 
-const accountList = {
-  type: 'list',
-  data: [
-    {
-      id: 1,
-      fullname: 'Bao Khang',
-      email: 'admin@chytech.com.vn',
-      password: 'admin123',
-      roleId: 1,
-      status: true,
-      phone: '0123123123',
-    },
-    {
-      id: 2,
-      fullname: 'Kevin Ken',
-      email: 'staff@chytech.com.vn',
-      password: 'staff123',
-      roleId: 2,
-      status: true,
-      phone: '0123123555',
-    },
-    {
-      id: 3,
-      fullname: 'Thái Đăng Linh',
-      email: 'linhtd@gmail.com.vn',
-      password: 'linhtd123',
-      roleId: 3,
-      status: true,
-      phone: '0901565565',
-    },
-    {
-      id: 4,
-      fullname: 'Phùng Hữu Kiều',
-      email: 'kieuph@gmail.com.vn',
-      password: 'kieuph123',
-      roleId: 3,
-      status: false,
-      phone: '0901789789',
-    },
-  ],
-  pageSize: 10,
-  totalCount: 4,
-};
-
 function ViewAccountsList() {
   const { getCurrentUser } = useUserAuth();
   const user = getCurrentUser();
@@ -105,9 +63,9 @@ function ViewAccountsList() {
   const [accountId, setAccountId] = useState('');
 
   // Get all accounts
-  const getAccountsList = useCallback((pageIndex) => {
-    const data = accountList;
-    setAccounts(data.data.map((account) => account));
+  const getAccountsList = useCallback(async (pageIndex) => {
+    const data = await getAccountsListData(pageIndex);
+    setAccounts(data.map((account) => account));
     setPageSize(data.pageSize);
     setTotalCount(data.totalCount);
   }, []);
@@ -117,10 +75,10 @@ function ViewAccountsList() {
   }, [getAccountsList, pageIndex]);
 
   //Enable the Deactivate Button
-  const checkDisableButton = (email, status) => {
+  const checkDisableButton = (email, isDeleted) => {
     if (user.email === email) {
       return true;
-    } else if (status !== active) {
+    } else if (isDeleted !== inactive) {
       return true;
     } else {
       return false;
@@ -143,7 +101,7 @@ function ViewAccountsList() {
             variant="outline-danger"
             size="xs"
             disabled={
-              checkDisableButton(record.email, record.status) ? true : false
+              checkDisableButton(record.email, record.isDeleted) ? true : false
             }
             onClick={() => handleShowModal(record.id)}
           >
@@ -161,15 +119,39 @@ function ViewAccountsList() {
       key: 'id',
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      width: 250,
+      title: 'Ảnh',
+      dataIndex: 'avatar',
+      key: 'avatar',
+      width: 50,
+      render: (text, record) => {
+        return record.avatar ? (
+          <>
+            <div
+              style={{
+                display: 'inline-block',
+                borderRadius: '50%',
+                width: 40,
+                height: 40,
+                overflow: 'hidden',
+              }}
+            >
+              <Image src={record.avatar} />
+            </div>
+          </>
+        ) : (
+          'NaN'
+        );
+      },
     },
     {
       title: 'Họ và tên',
       dataIndex: 'fullname',
       key: 'fullname',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Vai trò',
@@ -179,23 +161,26 @@ function ViewAccountsList() {
         const roleName = accountRoles.find(
           (role) => role.id === record.roleId,
         )?.name;
-        return roleName;
+        return roleName || 'NaN';
       },
     },
     {
       title: 'Số điện thoại',
       dataIndex: 'phone',
       key: 'phone',
+      render: (text, record) => {
+        return record.phone || 'Chưa cập nhật';
+      },
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'isDeleted',
+      key: 'isDeleted',
       width: 200,
       render: (text, record) => {
-        if (record.status === active) {
+        if (record.isDeleted === inactive) {
           return <span className="c-label c-label-success"> Hoạt động</span>;
-        } else if (record.status === inactive) {
+        } else if (record.isDeleted === active) {
           return (
             <span className="c-label c-label-danger"> Không hoạt động</span>
           );
@@ -234,6 +219,7 @@ function ViewAccountsList() {
   const handleDeactivateAccount = (accountId) => {
     const accountById = accounts.find((account) => account.id === accountId);
     deactivateAccountStatusById(accountById);
+    toast.success(MSG42, { autoClose: 1500 });
     setShow(false);
   };
 

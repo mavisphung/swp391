@@ -1,14 +1,14 @@
 import api from './api';
 
-const orderURL = 'orders';
-const status = 'statusId';
+const orderURL = 'order';
+const status = 'OrderStatus';
 const id = 'orderId';
 
 // Get all customer orders
 export const getCustomerOrderListData = async (page) => {
   try {
     const response = await api.get(
-      `${orderURL}?dir=desc&sort=order-date&pageNumber=${page}&includeProperties=CustomerAccount`,
+      `/${orderURL}?PageNumber=${page}&PageSize=10`,
     );
     if (response.status !== 200) {
       throw new Error('Customer order list has the problem');
@@ -29,10 +29,10 @@ export const getFilterCustomerOrderListData = async (
   statusId,
   orderId,
 ) => {
-  let url = `${orderURL}?dir=desc&sort=order-date&pageNumber=${page}&includeProperties=CustomerAccount`;
+  let url = `/${orderURL}?PageNumber=${page}&PageSize=10`;
   try {
     // Create url
-    if (statusId >= 0) {
+    if (statusId) {
       url = `${url}&${status}=${statusId}`;
     }
     if (orderId) {
@@ -40,11 +40,13 @@ export const getFilterCustomerOrderListData = async (
     }
 
     // Call api
+    console.log('Url:', url);
     const response = await api.get(`${url}`);
     if (response.status !== 200) {
       throw new Error('Filtered customer orders list has the problem');
     }
     const data = await response.data;
+    console.log('api:', data);
     if (data) {
       return data;
     }
@@ -57,15 +59,13 @@ export const getFilterCustomerOrderListData = async (
 // Get customer order detail by order id
 export const getCustomerOrderDetailDataByOrderId = async (orderId) => {
   try {
-    const response = await api.get(
-      `${orderURL}?${id}=${orderId}&includeProperties=CustomerOrderDetails,CustomerAccount`,
-    );
+    const response = await api.get(`/${orderURL}/${orderId}`);
     if (response.status !== 200) {
       throw new Error('Customer order detail by order id has the problem');
     }
     const data = await response.data;
     if (data) {
-      return data.data[0];
+      return data;
     }
     return false;
   } catch (e) {
@@ -73,12 +73,7 @@ export const getCustomerOrderDetailDataByOrderId = async (orderId) => {
   }
 };
 
-// Deny customer order
-export const denyOrder = async (order) => {
-  await api.put(`${orderURL}/customer-order-deny`, order);
-};
-
-// Approve customer order
-export const approveOrder = async (order) => {
-  await api.put(`${orderURL}/customer-order-approve`, order);
+// Update customer order status
+export const updateOrder = async (orderId, body) => {
+  await api.put(`/${orderURL}/${orderId}`, body);
 };
