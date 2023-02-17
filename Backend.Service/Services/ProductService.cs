@@ -20,7 +20,7 @@ namespace Backend.Service.Services
         private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<ProductService> _logger;
         public ProductService(
-            IProductRepository productRepository, 
+            IProductRepository productRepository,
             ILogger<ProductService> logger,
             ICategoryRepository categoryRepository)
         {
@@ -83,7 +83,8 @@ namespace Backend.Service.Services
                 _logger.LogInformation("ProductRepository: AddAsync invoked");
                 await _productRepository.AddAsync(product);
                 await _productRepository.SaveDbChangeAsync();
-            } catch(Exception _)
+            }
+            catch (Exception _)
             {
                 _logger.LogInformation("ProductRepository: AddAsync | Error while saving");
                 throw new NotFoundException(BaseError.CATEGORY_NOT_FOUND.ToString());
@@ -105,7 +106,6 @@ namespace Backend.Service.Services
             await _productRepository.SaveDbChangeAsync();
         }
 
-        [Transactional]
         internal async Task<ProductResponseModel> UpdateProduct(int id, UpdateProductModel model)
         {
             var found = await _productRepository.GetAsync(id);
@@ -116,19 +116,12 @@ namespace Backend.Service.Services
             {
                 object? value = prop.GetValue(model);
                 bool isMatched = found.GetType().GetProperties().Where(pi => pi.Name == prop.Name).Any();
-                
+
                 if (!isMatched || value == null) continue;
-                
-                if (prop.Name.Equals("Images"))
-                {
-                    found.GetType().GetProperty("Images")?.SetValue(found, StringExtension.ToImages((IEnumerable<string>)value));
-                }
-                else
-                {
-                    found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
-                }
+
+                found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
             }
-            
+
             //_productRepository.Update(found);
             //await _productRepository.SaveDbChangeAsync();
             _logger.LogInformation($"Updated product {id} successfully");
