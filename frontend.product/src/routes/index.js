@@ -22,7 +22,6 @@ const CustomRoutes = () => {
       <Route path={config.dashboardRoutes.dashbard} element={<Dashboard />} />
       <Route path={config.routes.login} element={<LoginPage />} />
       <Route path={config.routes.register} element={<RegisterPage />} />
-      <Route path={"/payments"} element={<PaymentPage />} />
       <Route path={config.routes.other} element={<div>Page Not Found</div>} />
       <Route path={config.cartRoutes.cart} element={<Cart />} />
       <Route

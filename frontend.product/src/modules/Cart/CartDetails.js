@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./CartLayout.scss";
@@ -7,6 +8,7 @@ import { getCart } from "~/common/LocalStorageUtil";
 import CartItem from "./widgets/CartItem";
 
 function CartDetails() {
+  // const [nextTimeList, setNextTimeList] = useState([]);
   let total = 0;
 
   const cartList = getCart();
@@ -26,12 +28,13 @@ function CartDetails() {
           <hr />
           {cartList.map((e) => {
             total += e.price * 1;
+            const img = e.medias[1].url;
             return (
               <CartItem
                 key={e.id}
                 id={e.id}
                 name={e.name}
-                img={e.img}
+                img={img}
                 price={e.price}
                 amount={1}
                 isBuy={true}
@@ -64,7 +67,7 @@ function CartDetails() {
         <div className="col-12 col-lg-9">
           <h5>Lần sau mua tiếp</h5>
           <hr />
-          {cartList.map((e) => (
+          {[].map((e) => (
             <CartItem
               key={e.id}
               id={e.id}

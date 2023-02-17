@@ -9,11 +9,21 @@ import {
   // Image,
   Row,
 } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 
 function PaymentPage() {
+  const location = useLocation();
+  const { name, tel, email, address, cart } = location.state;
+
   const [isPayAdvanced, setPayAdvanced] = useState(false);
+
+  console.log("NAME", name);
+  console.log("TEL", tel);
+  console.log("EMAIL", email);
+  console.log("ADDRESS", address);
+  console.log("CART", cart);
 
   return (
     <Container>
@@ -88,7 +98,7 @@ function PaymentPage() {
           <Row className="h5">Ghi chú đơn hàng</Row>
           <Row>
             <textarea
-              class="w-75 form-control form-rounded"
+              className="w-75 form-control form-rounded"
               rows="7"
               placeholder="Ghi chú nếu địa chỉ khó tìm"
               required

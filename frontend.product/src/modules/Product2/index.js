@@ -72,7 +72,7 @@ function BirdProductDetails() {
           <ImageSlider imgs={pro.medias.filter((_, index) => index !== 0)} />
         </div>
         <div className="col-6">
-          <ProductOrderPane2 />
+          <ProductOrderPane2 bird={pro} />
         </div>
       </div>
       <div>

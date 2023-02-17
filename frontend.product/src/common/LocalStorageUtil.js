@@ -1,8 +1,7 @@
 export function addToCart(pro) {
   const jsonCart = localStorage.getItem("CART");
-  let cart = JSON.parse(jsonCart);
-  if (!cart) cart = [];
-  const newCart = cart.splice();
+  let newCart = JSON.parse(jsonCart);
+  if (!newCart) newCart = [];
   newCart.push(pro);
   localStorage.setItem("CART", JSON.stringify(newCart));
 }
