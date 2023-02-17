@@ -52,7 +52,11 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Giống chim đang hot
           </div>
+<<<<<<< HEAD
           <ProductCarousel list={birds.filter((b) => b.quantity < 10)} />
+=======
+          <ProductCarousel list={birdList} type={1} />
+>>>>>>> origin/bproduct
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
@@ -70,12 +74,6 @@ function HomePage() {
           </div>
           <ProductCarousel list={birds.filter((b) => b.categoryType === 2)} />
         </Row>
-
-        {/* <Row>
-          <Card>
-            <Card.Img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"></Card.Img>
-          </Card>
-        </Row> */}
         <div style={{ paddingBottom: "150px" }}></div>
       </div>
     </div>

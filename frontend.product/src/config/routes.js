@@ -10,6 +10,7 @@ const routes = {
   paymentMethods: "/dashboard/payments",
   category: "/dashboard/category",
   productDetails: "/product",
+  birdDetails: "/bird",
   cart: "/cart",
   confirmLogin: "/cart/confirm-login",
 };
@@ -25,7 +26,6 @@ const dashboardRoutes = {
 
 const cartRoutes = {
   cart: "/cart/*",
-  confirmLogin: "/confirm-login",
 };
 
 const personalRoutes = {

@@ -9,6 +9,8 @@ import PaymentPage from "~/modules/Payment";
 import Cart from "~/modules/Cart";
 import DefaultLayout from "~/components/DefaultLayout";
 import ProductDetails from "~/modules/Product";
+import Product2 from "~/modules/Product2";
+import ConfirmLogin from "~/modules/ConfirmLogin";
 
 const CustomRoutes = () => {
   return (
@@ -31,6 +33,15 @@ const CustomRoutes = () => {
           </DefaultLayout>
         }
       />
+      <Route
+        path={config.routes.birdDetails}
+        element={
+          <DefaultLayout>
+            <Product2 />
+          </DefaultLayout>
+        }
+      />
+      <Route path={config.routes.confirmLogin} element={<ConfirmLogin />} />
     </Routes>
   );
 };

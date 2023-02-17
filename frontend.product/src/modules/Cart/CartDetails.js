@@ -2,27 +2,14 @@ import { useNavigate } from "react-router-dom";
 
 import "./CartLayout.scss";
 import config from "~/config";
-import Bird from "~/models/Bird";
 import { formatPrice } from "~/common/Helper";
+import { getCart } from "~/common/LocalStorageUtil";
 import CartItem from "./widgets/CartItem";
-
-const cartList = [
-  new Bird(
-    0,
-    "Chim nhồng (chim yểng)",
-    "https://tmdl.edu.vn/wp-content/uploads/2022/08/cac-loai-chim-chao-mao-6.jpg",
-    1050000
-  ),
-  new Bird(
-    1,
-    "Ba lô đeo lồng chim ChyStore",
-    "https://www.chimcanhvietnam.vn/images/sanpham/210765393421390586_341776619584210_635816962_o.jpg",
-    20000
-  ),
-];
 
 function CartDetails() {
   let total = 0;
+
+  const cartList = getCart();
 
   const navigate = useNavigate();
 

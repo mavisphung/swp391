@@ -42,7 +42,7 @@ function ProductDetails() {
         <h5>Sản phẩm tương tự</h5>
         <ProductCarousel list={proList} />
       </div>
-      <div style={{ marginBottom: "60px" }}></div>
+      <div style={{ paddingBottom: "150px" }}></div>
     </div>
   );
 }

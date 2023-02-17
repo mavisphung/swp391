@@ -10,10 +10,6 @@ function Cart() {
     <Routes>
       <Route element={<DefaultLayout />}>
         <Route path={config.routes.default} element={<CartDetails />} />
-        <Route
-          path={config.cartRoutes.confirmLogin}
-          element={<ConfirmLogin />}
-        />
         <Route path={config.routes.other} element={<div>Page Not Found</div>} />
       </Route>
     </Routes>

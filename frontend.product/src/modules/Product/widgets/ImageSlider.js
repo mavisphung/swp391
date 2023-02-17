@@ -3,7 +3,9 @@ import ImageGallery from "react-image-gallery";
 import "../ProductLayout.scss";
 import "../../../../node_modules/react-image-gallery/styles/css/image-gallery.css";
 
-function ImageSlider({ img }) {
+function ImageSlider({
+  img = "https://tmdl.edu.vn/wp-content/uploads/2022/08/cac-loai-chao-mao.jpg",
+}) {
   const images = [
     {
       original: img,

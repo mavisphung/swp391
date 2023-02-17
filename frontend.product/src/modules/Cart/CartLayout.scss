@@ -17,9 +17,16 @@
     margin-bottom: 0;
   }
 
-  a {
+  button {
     color: #f2635f;
     font-size: 14px;
+    background-color: white;
+    border: none;
+  }
+
+  button:hover,
+  button:active {
+    text-decoration: underline;
   }
 
   .mt15 {
