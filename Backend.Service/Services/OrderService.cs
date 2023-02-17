@@ -1,4 +1,6 @@
-﻿using Backend.Service.Entities;
+﻿using Backend.Service.Consts;
+using Backend.Service.Entities;
+using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
 using Backend.Service.Models.Order;
@@ -48,12 +50,22 @@ namespace Backend.Service.Services
 
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
-                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product");
+                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
 
             return PagedList<OrderResponseModel>.ToPagedList(
                 query.AsQueryable().OrderBy(u => u.Id).Select(entity => new OrderResponseModel(entity)),
                 filter.PageNumber,
                 filter.PageSize);
+        }
+
+        public async Task<Order> GetOneAsync(int id)
+        {
+            var found = await _orderRepository.GetFirstOrDefaultAsync(
+                o => !o.IsDeleted && o.Id == id,
+                "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+            if (found == null)
+                throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
+            return found;
         }
 
         public async Task<OrderResponseModel> ProcessAddToCartUnauth(UnauthOrderRequestModel model)
@@ -135,6 +147,15 @@ namespace Backend.Service.Services
             // TODO: Thêm payment vào version sau
 
             return new OrderResponseModel(newOrder);
+        }
+
+        public async Task<Order> UpdateStatusAsync(int id, UpdateOrderStatusModel model)
+        {
+            Order found = await GetOneAsync(id);
+            found.Status = model.OrderStatus;
+            _orderRepository.Update(found);
+            await _orderRepository.SaveDbChangeAsync();
+            return found;
         }
     }
 }

@@ -35,6 +35,11 @@ namespace Backend.Service.Repositories.IRepositories
             string includeProperties = null
             );
 
+        Task<T> GetFirstOrDefaultAsync(
+            Expression<Func<T, bool>> filter = null,
+            string includeProperties = null
+            );
+
         // Add object
         void Add(T entity);
         Task AddAsync(T entity);
