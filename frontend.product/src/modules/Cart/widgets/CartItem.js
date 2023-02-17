@@ -57,7 +57,7 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
             className="mt15"
             onClick={(e) => {
               e.preventDefault();
-              // removeFromCart()
+              // removeFromCart();
             }}
           >
             Xóa?

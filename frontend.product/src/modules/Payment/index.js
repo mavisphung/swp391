@@ -6,14 +6,33 @@ import {
   Col,
   Container,
   Form,
-  Image,
+  // Image,
   Row,
 } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
+import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 
 function PaymentPage() {
+  const location = useLocation();
+  const { name, tel, email, address, cart } = location.state;
+
   const [isPayAdvanced, setPayAdvanced] = useState(false);
+
+  console.log("NAME", name);
+  console.log("TEL", tel);
+  console.log("EMAIL", email);
+  console.log("ADDRESS", address);
+  console.log("CART", cart);
+
+  let sum = 0;
+
+  cart.map((c) => {
+    sum = sum + c.price;
+  });
+
+  console.log(`sum: ${sum}`);
 
   return (
     <Container>
@@ -52,14 +71,14 @@ function PaymentPage() {
           />
           <Row>
             <Col>
-              <a href="#" style={{ color: "#ee3e6a" }} className="h6">
+              <a href="/" style={{ color: "#ee3e6a" }} className="h6">
                 Thay đổi giỏ hàng
               </a>
             </Col>
             <Col className="d-flex justify-content-end align-items-center">
               Tổng cộng:{" "}
               <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
-                1,870,000đ
+                {formatPrice(sum)}đ
               </span>
             </Col>
           </Row>
@@ -69,7 +88,7 @@ function PaymentPage() {
                 <Col className="d-flex justify-content-end align-items-center">
                   Cọc trước:{" "}
                   <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
-                    935,000đ
+                    {formatPrice(sum / 2)}đ
                   </span>
                 </Col>
               </Row>
@@ -77,7 +96,7 @@ function PaymentPage() {
                 <Col className="d-flex justify-content-end align-items-center">
                   Còn lại:{" "}
                   <span className="h3 ps-1" style={{ color: "#ee3e6a" }}>
-                    935,000đ
+                    {formatPrice(sum / 2)}đ
                   </span>
                 </Col>
               </Row>
@@ -88,7 +107,7 @@ function PaymentPage() {
           <Row className="h5">Ghi chú đơn hàng</Row>
           <Row>
             <textarea
-              class="w-75 form-control form-rounded"
+              className="w-75 form-control form-rounded"
               rows="7"
               placeholder="Ghi chú nếu địa chỉ khó tìm"
               required

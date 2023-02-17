@@ -27,7 +27,7 @@ function CartItems({ productImage, productName, productType, productPrice }) {
                   defaultValue={"1"}
                   type="text"
                   id="input1"
-                  class="form-control p-0 text-center"
+                  className="form-control p-0 text-center"
                 />
               </div>
             </Col>

@@ -9,7 +9,7 @@ import PaymentPage from "~/modules/Payment";
 import Cart from "~/modules/Cart";
 import DefaultLayout from "~/components/DefaultLayout";
 import ProductDetails from "~/modules/Product";
-import Product2 from "~/modules/Product2";
+import BirdProductDetails from "~/modules/Product2";
 import ConfirmLogin from "~/modules/ConfirmLogin";
 
 const CustomRoutes = () => {
@@ -22,7 +22,6 @@ const CustomRoutes = () => {
       <Route path={config.dashboardRoutes.dashbard} element={<Dashboard />} />
       <Route path={config.routes.login} element={<LoginPage />} />
       <Route path={config.routes.register} element={<RegisterPage />} />
-      <Route path={"/payments"} element={<PaymentPage />} />
       <Route path={config.routes.other} element={<div>Page Not Found</div>} />
       <Route path={config.cartRoutes.cart} element={<Cart />} />
       <Route
@@ -37,7 +36,7 @@ const CustomRoutes = () => {
         path={config.routes.birdDetails}
         element={
           <DefaultLayout>
-            <Product2 />
+            <BirdProductDetails />
           </DefaultLayout>
         }
       />

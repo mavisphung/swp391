@@ -5,13 +5,7 @@ import config from "~/config";
 import { formatPrice } from "~/common/Helper";
 import { addToCart } from "~/common/LocalStorageUtil";
 
-function ProductOrderPane2({
-  name = "Chào mào bẫy đấu Ba Tơ",
-  code = "BT71",
-  createdDate = "12-01-2023",
-  age = "3 tháng",
-  price = 1200000,
-}) {
+function ProductOrderPane2({ bird }) {
   const navigate = useNavigate();
 
   const handleBuyClick = (e) => {
@@ -21,18 +15,18 @@ function ProductOrderPane2({
 
   return (
     <div id="order-pane">
-      <h4 style={{ fontWeight: 400 }}>{name}</h4>
+      <h4 style={{ fontWeight: 400 }}>{bird.name}</h4>
       <span>Mã chuồng: </span>
-      <span>{code}</span>
+      <span>{bird.productCode.substring(0, 7)}</span>
       <br />
       <span>Ngày đăng: </span>
-      <span>{createdDate}</span>
+      <span>{bird.createdDate}</span>
       <br />
       <span>Tuổi: </span>
-      <span>{age}</span>
+      <span></span>
       <br />
       <span>Giá: </span>
-      <span className="price">{formatPrice(price)} đ</span>
+      <span className="price">{formatPrice(bird.price)} đ</span>
       <div className="pro-order-ctr">
         <Button className="btn-buy" onClick={handleBuyClick}>
           Mua ngay
@@ -41,7 +35,7 @@ function ProductOrderPane2({
           className="btn-add-cart"
           onClick={(e) => {
             e.preventDefault();
-            // addToCart(props.bird);
+            addToCart(bird);
           }}
         >
           Thêm giỏ hàng

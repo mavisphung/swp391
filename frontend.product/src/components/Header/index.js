@@ -45,8 +45,8 @@ function Header() {
                 </Form>
               </Nav>
               <div className="d-flex">
-                <Nav.Link href="#cartAction" className="pl-2">
-                  <BsCartFill color="#ee3e6a" /> (0)
+                <Nav.Link href={config.routes.cart} className="pl-2">
+                  <BsCartFill color="#ee3e6a" /> ({getCartAmount()})
                 </Nav.Link>
                 <Nav.Link href={config.routes.login} className="px-2">
                   Đăng nhập

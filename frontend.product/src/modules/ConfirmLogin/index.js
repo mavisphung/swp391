@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Checkbox } from "antd";
 import { FcGoogle } from "react-icons/fc";
 import {
@@ -10,6 +10,7 @@ import {
 
 import "./ComfirmLoginLayout.scss";
 import config from "~/config";
+import { getCart } from "~/common/LocalStorageUtil";
 
 function ConfirmLogin() {
   const [name, setName] = useState("");
@@ -22,8 +23,23 @@ function ConfirmLogin() {
   const [password, setPassword] = useState("");
   const [passwordShowed, setPasswordShowed] = useState(false);
 
-  const handleSubmit1 = () => {
-    return 0;
+  const navigate = useNavigate();
+
+  const cartList = getCart();
+
+  const handleSubmit1 = (e) => {
+    e.preventDefault();
+    if (name && tel && email1 && address && checked) {
+      navigate(config.routes.paymentMethods, {
+        state: {
+          name: name,
+          tel: tel,
+          email: email1,
+          address: address,
+          cart: cartList,
+        },
+      });
+    }
   };
 
   const handleSubmit2 = () => {

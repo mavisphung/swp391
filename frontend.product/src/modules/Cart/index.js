@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import config from "~/config";
 import CartDetails from "./CartDetails";
 import DefaultLayout from "~/components/DefaultLayout";
-import ConfirmLogin from "~/modules/ConfirmLogin";
 
 function Cart() {
   return (
