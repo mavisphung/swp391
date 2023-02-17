@@ -19,6 +19,8 @@ namespace Backend.Service.Models.Product
         public ICollection<Media>? Medias { get; set; }
         public string? Description { get; set; }
         public string? ShortDescription { get; set; }
+        public bool? Gender { get; set; } = null;
+        public string? Age { get; set; } = null;
 
         [Range(0.0, double.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]
         public double Price { get; set; } = 0.0;
@@ -27,7 +29,6 @@ namespace Backend.Service.Models.Product
         public int Quantity { get; set; } = 0;
 
         public int CategoryId { get; set; }
-
 
         public override string? ToString()
         {
