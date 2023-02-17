@@ -6,7 +6,7 @@ import ImageSlider from "../Product/widgets/ImageSlider";
 import ProductOrderPane2 from "./widgets/ProductOrderPane2";
 import AppTrace from "~/components/AppTrace";
 
-function Product2() {
+function BirdProductDetails() {
   return (
     <div className="container pro2-ly">
       <AppTrace />
@@ -56,4 +56,4 @@ function Product2() {
   );
 }
 
-export default Product2;
+export default BirdProductDetails;
