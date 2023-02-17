@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import "../CartLayout.scss";
 import { formatPrice } from "~/common/Helper";
-// import { removeFromCart } from "~/common/LocalStorageUtil";
+import { removeFromCart } from "~/common/LocalStorageUtil";
 
 function CartItem({ id, name, img, cate, price, amount, isBuy }) {
   const [newAmount, setAmount] = useState(amount);
@@ -57,7 +57,7 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
             className="mt15"
             onClick={(e) => {
               e.preventDefault();
-              // removeFromCart();
+              removeFromCart(id);
             }}
           >
             Xóa?
