@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams, useLocation, Link } from "react-router-dom";
 
 import "./ProductLayout.scss";
 import ProductCarousel from "../Home/ProductCarousel";
@@ -95,7 +95,7 @@ function ProductDetails() {
       <div className="product-block">
         <div className="d-flex justify-content-between">
           <h5>Đánh giá từ người dùng</h5>
-          <a href={config.routes.dashboard}>Xem thêm</a>
+          <Link to={config.routes.dashboard}>Xem thêm</Link>
         </div>
         <ListComment />
       </div>

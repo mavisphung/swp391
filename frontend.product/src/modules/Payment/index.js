@@ -2,20 +2,12 @@ import { HomeFilled, RightOutlined } from "@ant-design/icons";
 import { Alert } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
-import {
-  Breadcrumb,
-  Button,
-  Col,
-  Container,
-  Form,
-  // Image,
-  Row,
-} from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Breadcrumb, Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import config from "~/config";
 
 function PaymentPage() {
@@ -100,9 +92,13 @@ function PaymentPage() {
 
           <Row>
             <Col>
-              <a href="/" style={{ color: "#ee3e6a" }} className="h6">
+              <Link
+                to={config.routes.cart}
+                style={{ color: "#ee3e6a" }}
+                className="h6"
+              >
                 Thay đổi giỏ hàng
-              </a>
+              </Link>
             </Col>
             <Col className="d-flex justify-content-end align-items-center">
               Tổng cộng:{" "}

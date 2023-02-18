@@ -1,7 +1,5 @@
 export function addToCart(pro) {
-  const jsonCart = localStorage.getItem("CART");
-  let newCart = JSON.parse(jsonCart);
-  if (!newCart) newCart = [];
+  const newCart = getCart();
   const existed = newCart.findIndex((e) => e.id === pro.id);
   if (existed !== -1) {
     newCart = newCart.map((e) => {
@@ -19,26 +17,20 @@ export function addToCart(pro) {
 }
 
 export function removeFromCart(id) {
-  const jsonCart = localStorage.getItem("CART");
-  let cart = JSON.parse(jsonCart);
-  if (!cart) {
-    cart = [];
-    return;
-  }
+  const cart = getCart();
+  if (cart.length === 0) return;
   const newCart = cart.filter((p) => p.id !== id);
   localStorage.setItem("CART", JSON.stringify(newCart));
 }
 
 export function getCart() {
   const jsonCart = localStorage.getItem("CART");
-  let cart = JSON.parse(jsonCart);
-  if (!cart) cart = [];
+  const cart = JSON.parse(jsonCart);
+  if (!cart) return [];
   return cart;
 }
 
 export function getCartAmount() {
-  const jsonCart = localStorage.getItem("CART");
-  let cart = JSON.parse(jsonCart);
-  if (!cart) cart = [];
+  const cart = getCart();
   return cart.length;
 }

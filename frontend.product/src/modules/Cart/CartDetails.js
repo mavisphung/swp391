@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import "./CartLayout.scss";
 import config from "~/config";
@@ -62,11 +62,14 @@ function CartDetails() {
             Đặt hàng
           </button>
           <br />
-          <a href={config.routes.dashboard}>
+          <Link to={config.routes.dashboard}>
             <span>Tiếp tục mua hàng?</span>
-            <br />
+          </Link>
+          <br />
+          <br />
+          <Link>
             <span>Trở về</span>
-          </a>
+          </Link>
         </div>
       </div>
       <div className="row" style={{ marginTop: "37px" }}>
