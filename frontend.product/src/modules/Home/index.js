@@ -32,9 +32,9 @@ function HomePage() {
         const tmp2 = [];
         const tmp3 = [];
         response.data.map((p) => {
-          if (p.categoryType == 1) {
+          if (p.categoryType === 1) {
             tmp1.push(p);
-          } else if (p.categoryType == 2) {
+          } else if (p.categoryType === 2) {
             tmp2.push(p);
           } else {
             tmp3.push(p);
