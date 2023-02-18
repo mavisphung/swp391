@@ -5,7 +5,6 @@ import config from "~/config";
 import LoginPage from "~/modules/Login";
 import RegisterPage from "~/modules/Register";
 import Dashboard from "~/components/Dashboard";
-import PaymentPage from "~/modules/Payment";
 import Cart from "~/modules/Cart";
 import DefaultLayout from "~/components/DefaultLayout";
 import ProductDetails from "~/modules/Product";
