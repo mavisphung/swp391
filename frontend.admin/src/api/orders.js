@@ -13,7 +13,8 @@ export const getCustomerOrderListData = async (page) => {
     if (response.status !== 200) {
       throw new Error('Customer order list has the problem');
     }
-    const data = await response.data;
+    //console.log(JSON.parse(response.headers['x-pagination']));
+    const data = await response;
     if (data) {
       return data;
     }
