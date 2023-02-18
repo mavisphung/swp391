@@ -198,25 +198,24 @@ const OrderDetail = () => {
         <>
           <p>
             <strong>Ngày đặt hàng:</strong>{' '}
-            {moment(customerOrder.orderDate, dateTimeConvert).format(
-              defaultDateTimePickerRange,
-            )}
+            {moment(customerOrder.orderDate, dateTimeConvert)
+              .add(7, 'hours')
+              .format(defaultDateTimePickerRange)}
           </p>
           {customerOrder.status === cancelled ? (
             <p>
               <strong>Ngày hủy:</strong>{' '}
-              {moment(customerOrder.closeDate, dateTimeConvert).format(
-                defaultDateTimePickerRange,
-              )}
+              {moment(customerOrder.closeDate, dateTimeConvert)
+                .add(7, 'hours')
+                .format(defaultDateTimePickerRange)}
             </p>
           ) : (
             <>
               <p>
                 <strong>Ngày dự kiến giao:</strong>{' '}
-                {moment(
-                  customerOrder.estimatedReceiveDate,
-                  dateTimeConvert,
-                ).format(defaultDateTimePickerRange) || 'Chưa xác nhận'}
+                {moment(customerOrder.estimatedReceiveDate, dateTimeConvert)
+                  .add(7, 'hours')
+                  .format(defaultDateTimePickerRange) || 'Chưa xác nhận'}
               </p>
               <p>
                 <strong>Ngày lấy hàng: </strong>{' '}
@@ -257,10 +256,12 @@ const OrderDetail = () => {
       key: 'name',
       render: (text, record) => {
         return (
-          <>
-            <Image width={100} src={record.product.medias[1].url} />
+          <div className="name-group">
+            <div className="product-img">
+              <Image src={record.product.medias[1].url} />
+            </div>
             <span className="mx-2">{record.product.name}</span>
-          </>
+          </div>
         );
       },
       width: 400,

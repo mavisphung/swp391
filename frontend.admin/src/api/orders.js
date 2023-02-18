@@ -46,7 +46,7 @@ export const getFilterCustomerOrderListData = async (
     if (response.status !== 200) {
       throw new Error('Filtered customer orders list has the problem');
     }
-    const data = await response.data;
+    const data = await response;
     console.log('api:', data);
     if (data) {
       return data;

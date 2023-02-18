@@ -76,7 +76,6 @@ const OrdersList = () => {
           const data = await getCustomerOrderListData(pageIndex);
           setOrders(data.data.map((order) => order));
           let paginationObj = JSON.parse(data.headers['x-pagination']);
-          console.log(paginationObj);
           setPageSize(paginationObj.PageSize);
           setTotalCount(paginationObj.TotalCount);
         } else {
@@ -85,9 +84,10 @@ const OrdersList = () => {
             orderStatus,
             searchOrderId,
           );
-          setOrders(data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          setOrders(data.data.map((order) => order));
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         }
         setLoading(false);
         setLoadingSearch(false);
