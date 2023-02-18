@@ -40,6 +40,7 @@ function CartDetails() {
                 id={e.id}
                 name={e.name}
                 img={img}
+                des={e.shortDescription}
                 price={e.price}
                 amount={e.amount}
                 isBuy={true}
