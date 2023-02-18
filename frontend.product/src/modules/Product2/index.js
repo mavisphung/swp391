@@ -1,28 +1,21 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-import "./ProductLayout.scss";
-import ProductCarousel from "../Home/ProductCarousel";
-import ImageSlider from "./widgets/ImageSlider";
-import ListComment from "./widgets/ListComment";
-import ProductInfo from "./widgets/ProductInfo";
-import ProductOrderPane from "./widgets/ProductOrderPane";
-import AppTrace from "~/components/AppTrace";
-import config from "~/config";
+import "./Product2Layout.scss";
 import api from "~/context/AppApi";
+import { des1 } from "~/data/Descriptions";
+import ProductCarousel from "../Home/ProductCarousel";
+import ImageSlider from "../Product/widgets/ImageSlider";
+import ProductOrderPane2 from "./widgets/ProductOrderPane2";
+import AppTrace from "~/components/AppTrace";
 
-function ProductDetails() {
+function BirdProductDetails() {
   const [searchParams] = useSearchParams();
   const productId = parseInt(searchParams.get("productId"));
 
   const [pro, setPro] = useState();
-  const [isLoading, setIsLoading] = useState(true);
   const [relate, setRelate] = useState();
-  const [others, setOthers] = useState();
-  const [count, setCount] = useState(1);
-
-  const location = useLocation();
-  const { categoryType } = location.state;
+  const [isLoading, setIsLoading] = useState(true);
 
   const getProductWithId = async (id) => {
     try {
@@ -42,7 +35,7 @@ function ProductDetails() {
     try {
       const response = await api.get("/product", {
         params: {
-          PageNumber: count,
+          PageNumber: 1,
           PageSize: 10,
         },
       });
@@ -50,18 +43,13 @@ function ProductDetails() {
       console.log("RES", response);
       console.log("RES.DATA", response.data);
       if (response.data) {
-        setCount(count + 1);
         const tmp1 = [];
-        const tmp2 = [];
         response.data.map((p) => {
-          if (p.categoryType === categoryType) {
+          if (p.categoryType === 1) {
             tmp1.push(p);
-          } else {
-            tmp2.push(p);
           }
         });
         setRelate(tmp1);
-        setOthers(tmp2);
       }
     } catch (error) {
       console.log("Get /product/ Error", error);
@@ -77,30 +65,47 @@ function ProductDetails() {
   if (!pro || isLoading) return <h1>Loading</h1>;
 
   return (
-    <div className="container">
+    <div className="container pro2-ly">
       <AppTrace />
       <div className="row">
         <div className="col-6">
           <ImageSlider imgs={pro.medias.filter((_, index) => index !== 0)} />
         </div>
         <div className="col-6">
-          <ProductOrderPane name={pro.name} price={pro.price} />
+          <ProductOrderPane2 bird={pro} />
         </div>
       </div>
-      <ProductInfo />
-      <div className="product-block">
-        <h5>Mọi người thường mua kèm với</h5>
-        <ProductCarousel list={others} />
-      </div>
-      <div className="product-block">
-        <div className="d-flex justify-content-between">
-          <h5>Đánh giá từ người dùng</h5>
-          <a href={config.routes.dashboard}>Xem thêm</a>
+      <div>
+        <h5>Mô tả sản phẩm</h5>
+        <div className="my-hr"></div>
+        <div
+          style={{
+            textAlign: "center",
+          }}
+        >
+          <iframe
+            title="chim chao mao"
+            width="540"
+            height="305"
+            allowFullScreen={true}
+            src="https://www.youtube.com/embed/OAnU9XPM5Ms"
+          ></iframe>
         </div>
-        <ListComment />
+        <div>
+          <h6>Thông tin chi tiết</h6>
+          {des1.map((e, index) => {
+            return (
+              <div key={index}>
+                <span className="pro2-title">{e.title}</span>
+                <p>{e.content}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <div className="product-block">
+      <div>
         <h5>Sản phẩm tương tự</h5>
+        <div className="my-hr"></div>
         <ProductCarousel list={relate} />
       </div>
       <div style={{ paddingBottom: "150px" }}></div>
@@ -108,4 +113,4 @@ function ProductDetails() {
   );
 }
 
-export default ProductDetails;
+export default BirdProductDetails;

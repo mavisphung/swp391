@@ -38,7 +38,7 @@ const CategoryCard = ({ cate }) => {
         height={170}
         alt="Chào mào"
         src={cate.imgUrl}
-        style={{ objectFit: "contain" }}
+        // style={{ objectFit: "contain" }}
       />
       <Figure.Caption>{cate.name}</Figure.Caption>
     </Figure>

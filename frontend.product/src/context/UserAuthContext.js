@@ -11,11 +11,6 @@ export const UserAuthContextProvider = ({ children }) => {
   const [user, setUser] = useState();
 
   async function loginWithEmail(email, password) {
-    console.log("why");
-    const jsonBody = JSON.stringify({
-      "Content-Type": "application/json",
-      signUpMethod: "local",
-    });
     try {
       const response = await api.post(
         "/auth/sign-en",
