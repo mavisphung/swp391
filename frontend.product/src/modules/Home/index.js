@@ -95,8 +95,8 @@ function HomePage() {
           <ProductCarousel list={foods} />
         </Row>
 
-        <button onClick={() => toast("Loading..")}>Show Toast</button>
-        <ToastContainer style={{ color: "blue" }} />
+        {/* <button onClick={() => toast("Loading..")}>Show Toast</button>
+        <ToastContainer style={{ color: "blue" }} /> */}
         <div style={{ paddingBottom: "150px" }}></div>
       </div>
     </div>
