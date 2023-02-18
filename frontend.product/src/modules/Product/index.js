@@ -84,7 +84,7 @@ function ProductDetails() {
           <ImageSlider imgs={pro.medias.filter((_, index) => index !== 0)} />
         </div>
         <div className="col-6">
-          <ProductOrderPane name={pro.name} price={pro.price} />
+          <ProductOrderPane pro={pro} />
         </div>
       </div>
       <ProductInfo />

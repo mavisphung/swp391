@@ -21,7 +21,7 @@ function HomePage() {
       const response = await api.get("/product", {
         params: {
           PageNumber: 1,
-          PageSize: 10,
+          PageSize: 50,
         },
       });
 
@@ -32,9 +32,9 @@ function HomePage() {
         const tmp2 = [];
         const tmp3 = [];
         response.data.map((p) => {
-          if (p.categoryType == 1) {
+          if (p.categoryType === 1) {
             tmp1.push(p);
-          } else if (p.categoryType == 2) {
+          } else if (p.categoryType === 2) {
             tmp2.push(p);
           } else {
             tmp3.push(p);
@@ -93,6 +93,12 @@ function HomePage() {
           </div>
           <ProductCarousel list={foods} />
         </Row>
+
+        {/* <Row>
+          <Card>
+            <Card.Img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"></Card.Img>
+          </Card>
+        </Row> */}
         <div style={{ paddingBottom: "150px" }}></div>
       </div>
     </div>
