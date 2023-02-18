@@ -32,6 +32,7 @@ namespace Backend.Service.Services
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
         {
+            Console.WriteLine($"Ascending: {filter.Ascending}");
             var predicate = PredicateBuilder.New<Order>(o => !o.IsDeleted);
             if (filter.OrderStatus != null)
             {
@@ -50,10 +51,13 @@ namespace Backend.Service.Services
 
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
+                orderBy: que => filter.Ascending == false
+                                    ? que.OrderByDescending(order => order.OrderDate)
+                                    : que.OrderBy(order => order.OrderDate),
                 includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
 
             return PagedList<OrderResponseModel>.ToPagedList(
-                query.AsQueryable().OrderBy(u => u.Id).Select(entity => new OrderResponseModel(entity)),
+                query.Select(entity => new OrderResponseModel(entity)).ToList(),
                 filter.PageNumber,
                 filter.PageSize);
         }

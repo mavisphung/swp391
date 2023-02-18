@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Backend.Service.Consts;
 
 namespace Backend.Service.Helper
@@ -9,6 +10,7 @@ namespace Backend.Service.Helper
 
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
+        public bool? Ascending { get; set; }
 
         public override string? ToString()
         {
