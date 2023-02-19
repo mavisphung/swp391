@@ -29,7 +29,14 @@ import {
 import CustomModal from '~/components/Modal';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import { disabledDateTime, disablePastDate } from '~/components/DateTime';
-import { MSG25, MSG26, MSG27, MSG28 } from '~/system/Messages/messages';
+import {
+  MSG25,
+  MSG26,
+  MSG27,
+  MSG28,
+  MSG43,
+  MSG44,
+} from '~/system/Messages/messages';
 import { getCustomerOrderDetailDataByOrderId, updateOrder } from '~/api/orders';
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
@@ -75,6 +82,22 @@ const orderDetailsData = {
   totalPrice: '3600000',
 };
 
+// Deny reason samples
+const reasonsList = [
+  {
+    id: 1,
+    name: 'Số lượng trong kho không đủ',
+  },
+  {
+    id: 2,
+    name: 'Hàng bị hư hại',
+  },
+  {
+    id: 3,
+    name: 'Không có nhân viên gói hàng',
+  },
+];
+
 const OrderDetail = () => {
   let navigate = useNavigate();
   const { orderId } = useParams();
@@ -90,8 +113,10 @@ const OrderDetail = () => {
   const [timeReceive, setTimeReceive] = useState('');
   const [showDeny, setShowDeny] = useState(false);
   const [reason, setReason] = useState('');
+  const [optionReason, setOptionReason] = useState('');
   const [errorDeny, setErrorDeny] = useState(false);
   const [enoughQuantity, setEnoughQuantity] = useState(true);
+  const [showFinish, setShowFinish] = useState(false);
 
   //Get current user
   const { getCurrentUser } = useUserAuth();
@@ -213,13 +238,15 @@ const OrderDetail = () => {
             <>
               <p>
                 <strong>Ngày dự kiến giao:</strong>{' '}
-                {moment(customerOrder.estimatedReceiveDate, dateTimeConvert)
-                  .add(7, 'hours')
-                  .format(defaultDateTimePickerRange) || 'Chưa xác nhận'}
+                {customerOrder.estimatedReceiveDate
+                  ? moment(customerOrder.estimatedReceiveDate, dateTimeConvert)
+                      .add(7, 'hours')
+                      .format(defaultDateTimePickerRange)
+                  : 'Chưa xác nhận'}
               </p>
               <p>
                 <strong>Ngày lấy hàng: </strong>{' '}
-                {customerOrder.receiveDate || 'Chưa lấy hàng'}
+                {customerOrder.closeDate || 'Chưa lấy hàng'}
               </p>
             </>
           )}
@@ -323,12 +350,12 @@ const OrderDetail = () => {
     setShowDeny(true);
   };
 
-  // Deny request
+  // Deny order
   const denyOrderById = async (orderId) => {
     try {
       const body = {
         orderStatus: cancelled,
-        reason,
+        reason: optionReason + ' ' + reason,
         staffAccountId: user.id,
       };
       console.log('Deny Body: ', body);
@@ -342,10 +369,10 @@ const OrderDetail = () => {
   };
 
   const handleDenyOrder = (orderId) => {
-    if (reason === '') {
+    if (reason === '' && optionReason === '') {
       setErrorDeny(true);
       return;
-    } else if (reason) {
+    } else if (reason || optionReason) {
       denyOrderById(orderId);
       toast.success(MSG28, { autoClose: 1500 });
       handleCloseDeny();
@@ -365,7 +392,7 @@ const OrderDetail = () => {
     }
   };
 
-  //Approve order
+  // Approve order
   const approveOrderById = async (orderId) => {
     try {
       var estimatedReceiveDate = dateReceive + 'T' + timeReceive + ':00';
@@ -412,6 +439,42 @@ const OrderDetail = () => {
     setShow(true);
   };
 
+  // Finish order modal
+  const handleCloseFinish = () => {
+    setShowFinish(false);
+    setDateReceive('');
+    setTimeReceive('');
+    setErrorApprove(false);
+  };
+
+  const handleShowFinish = () => {
+    setShowFinish(true);
+  };
+
+  // Manage finish order action
+  const finishOrderById = async (accountById) => {
+    try {
+      const body = {
+        orderStatus: finished,
+        staffAccountId: user.id,
+      };
+      console.log('Finish Body: ', body);
+      // call api finish
+      await updateOrder(orderId, body);
+      handleCloseFinish();
+      getOrderDataByOrderId(orderId);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleFinishOrder = (orderId) => {
+    finishOrderById(orderId);
+    toast.success(MSG44, { autoClose: 1500 });
+    setShow(false);
+  };
+
+  // Go back to orders list page
   const handleGoBack = () => {
     setTimeout(() => {
       navigate(-1);
@@ -505,6 +568,15 @@ const OrderDetail = () => {
               <>
                 {customerOrder.status === accepted ? (
                   <>
+                    <Col className="mx-2">
+                      <Button
+                        className="success-btn"
+                        type="primary"
+                        onClick={() => handleShowFinish(customerOrder.orderId)}
+                      >
+                        Hoàn thành
+                      </Button>
+                    </Col>
                     <Col>
                       <Button danger onClick={() => handleShowDeny()}>
                         Từ chối
@@ -605,6 +677,14 @@ const OrderDetail = () => {
           </Modal>
 
           <CustomModal
+            show={showFinish}
+            title="Hoàn thành đơn hàng"
+            body={MSG43}
+            handleClose={handleCloseFinish}
+            handleSubmit={() => handleFinishOrder(orderId)}
+          />
+
+          <CustomModal
             show={showDeny}
             title="Từ chối đơn hàng"
             body={
@@ -613,10 +693,26 @@ const OrderDetail = () => {
                 <br />
                 <br />
                 <Form.Group className="mb-3">
+                  <Form.Select
+                    value={optionReason}
+                    onChange={(e) => {
+                      setOptionReason(e.target.value);
+                      setErrorDeny(false);
+                    }}
+                    aria-label="Chọn lý do từ chối đơn"
+                    required
+                  >
+                    <option value="">Chọn lý do từ chối đơn</option>
+                    {reasonsList.map((reason, index) => (
+                      <option key={index} value={reason.name}>
+                        {reason.name}
+                      </option>
+                    ))}
+                  </Form.Select>
                   <Form.Control
                     as="textarea"
-                    placeholder="Lý do từ chối đơn"
-                    style={{ height: '100px' }}
+                    placeholder="Lý do khác"
+                    style={{ height: '100px', marginTop: 20 }}
                     value={reason}
                     maxLength={500}
                     onChange={(e) => {

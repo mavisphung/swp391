@@ -10,21 +10,24 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
+import { Admin } from '~/system/Constants/constants';
 
 import './Home.scss';
 
 function Home() {
   // Get current user
-  const { getCurrentUser } = useUserAuth();
+  const { getCurrentUser, logOut } = useUserAuth();
   const user = getCurrentUser();
 
   // Go to dashboard if not logout
   let navigate = useNavigate();
   useEffect(() => {
-    if (user) {
+    if (user && user.roleId === Admin) {
       navigate(`/dashboard`);
+    } else {
+      logOut();
     }
-  }, [user, navigate]);
+  }, [user, navigate, logOut]);
 
   return (
     <div className="home-container">

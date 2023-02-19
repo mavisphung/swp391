@@ -13,7 +13,6 @@ export const getCustomerOrderListData = async (page) => {
     if (response.status !== 200) {
       throw new Error('Customer order list has the problem');
     }
-    //console.log(JSON.parse(response.headers['x-pagination']));
     const data = await response;
     if (data) {
       return data;
@@ -41,13 +40,11 @@ export const getFilterCustomerOrderListData = async (
     }
 
     // Call api
-    console.log('Url:', url);
     const response = await api.get(`${url}`);
     if (response.status !== 200) {
       throw new Error('Filtered customer orders list has the problem');
     }
     const data = await response;
-    console.log('api:', data);
     if (data) {
       return data;
     }

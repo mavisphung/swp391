@@ -14,3 +14,11 @@
   height: 50px;
   overflow: hidden;
 }
+
+.ant-btn.success-btn {
+  background-color: #198754;
+
+  &:hover {
+    background-color: #146c43;
+  }
+}
