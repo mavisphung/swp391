@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { getAccountDetailsById } from '~/api/accounts';
 import {
+  active,
   Customer,
   emailCommonPattern,
   fullNamePattern,
-  inactive,
   phonePattern,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
@@ -73,7 +74,7 @@ const AddEditAccountForm = () => {
   // Get account by id
   const getAccountById = useCallback(async (accountId) => {
     try {
-      const data = userAccount;
+      const data = await getAccountDetailsById(accountId);
       setAccount(data);
     } catch (e) {
       console.log(e);
@@ -391,7 +392,7 @@ const AddEditAccountForm = () => {
             </Row>
 
             <div className="text-end">
-              {account.status === inactive ? (
+              {account.isDeleted === active ? (
                 <></>
               ) : accountId ? (
                 account.roleId === Customer ? (

@@ -20,3 +20,20 @@ export const getAccountsListData = async (page) => {
     console.log(e);
   }
 };
+
+// Get account details by id
+export const getAccountDetailsById = async (accountId) => {
+  try {
+    const response = await api.get(`/${accountUrl}/${accountId}`);
+    if (response.status !== 200) {
+      throw new Error('Account details by id has the problem');
+    }
+    const data = await response.data;
+    if (data) {
+      return data;
+    }
+    return false;
+  } catch (e) {
+    console.log(e);
+  }
+};
