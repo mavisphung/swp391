@@ -452,7 +452,7 @@ const OrderDetail = () => {
   };
 
   // Manage finish order action
-  const finishOrderById = async (accountById) => {
+  const finishOrderById = async (orderId) => {
     try {
       const body = {
         orderStatus: finished,

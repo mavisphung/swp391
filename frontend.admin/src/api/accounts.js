@@ -11,7 +11,7 @@ export const getAccountsListData = async (page) => {
     if (response.status !== 200) {
       throw new Error('Accounts list has the problem');
     }
-    const data = await response.data;
+    const data = await response;
     if (data) {
       return data;
     }
