@@ -9,7 +9,7 @@ namespace Backend.Service.Helper
 
         public DateTime? From { get; set; }
         public DateTime? To { get; set; }
-
+        public bool? Ascending { get; set; }
         public override string? ToString()
         {
             return JsonSerializer.Serialize(this);
