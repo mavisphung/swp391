@@ -28,6 +28,23 @@ export const addCategory = async (body) => {
 };
 
 // Update category
-export const updateCategory = async (categoryId, body) => {
+export const updateCategoryById = async (categoryId, body) => {
   await api.put(`/${categoryURL}/${categoryId}`, body);
+};
+
+// Get category by id
+export const getCategoryDataById = async (categoryId) => {
+  try {
+    const response = await api.get(`/${categoryURL}/${categoryId}`);
+    if (response.status !== 200) {
+      throw new Error('Category by id has the problem');
+    }
+    const data = await response.data;
+    if (data) {
+      return data;
+    }
+    return false;
+  } catch (e) {
+    console.log(e);
+  }
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
@@ -27,7 +27,12 @@ import moment from 'moment';
 import { categoriesTypesList } from '~/system/Data/types';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
-import { addCategory } from '~/api/categories';
+import {
+  addCategory,
+  getCategoriesListData,
+  getCategoryDataById,
+  updateCategoryById,
+} from '~/api/categories';
 import { toast } from 'react-toastify';
 
 const AddEditCategoryForm = () => {
@@ -43,6 +48,8 @@ const AddEditCategoryForm = () => {
   const [category, setCategory] = useState({});
   const [categoryImage, setCategoryImage] = useState(null);
   const [categoryImageURL, setCategoryImageURL] = useState('');
+  const [relativeCategories, setRelativeCategories] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
 
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
@@ -50,6 +57,56 @@ const AddEditCategoryForm = () => {
   const [validated, setValidated] = useState(false);
   const [show, setShow] = useState(false);
   const [checkEnableUpdateButton, setCheckEnableUpdateButton] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Get categories list
+  const getCategoriesList = useCallback(async () => {
+    try {
+      const data = await getCategoriesListData(1);
+      setCategoriesList(
+        data.data.map((category) => ({ id: category.id, name: category.name })),
+      );
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCategoriesList();
+  }, [getCategoriesList]);
+
+  // Get category by id
+  const getCategoryById = useCallback(async (categoryId) => {
+    try {
+      const data = await getCategoryDataById(categoryId);
+      setCategory(data);
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (categoryId) {
+      getCategoryById(categoryId);
+    }
+  }, [categoryId, getCategoryById]);
+
+  useEffect(() => {
+    if (category && categoryId) {
+      setCheckEnableUpdateButton(false);
+      setCategoryImageURL(category.image);
+      setCategoryName(category.name);
+      setCategoryType(category.categoryType);
+      setDescription(category.description);
+    } else if (!category || !categoryId) {
+      setCategoryImageURL('');
+      setCategoryName('');
+      setCategoryType('');
+      setDescription('');
+    }
+  }, [category, categoryId]);
 
   const changeTitle = categoryId ? 'Thông tin loại hàng' : 'Thêm loại hàng';
 
@@ -129,7 +186,7 @@ const AddEditCategoryForm = () => {
         // UpdatedBy: user.id,
       };
       // call update api and alert
-      updateCategory(categoryId, updateCategory);
+      updateCategoryById(categoryId, updateCategory);
       toast.success(MSG46, { autoClose: 1500 });
     } else {
       const newCategory = {
@@ -268,7 +325,7 @@ const AddEditCategoryForm = () => {
                 </Form.Group>
               </Col>
 
-              <Col md={12} className="mt-4">
+              <Col md={12}>
                 <Form.Group className="mb-3" controlId="validationDescription">
                   <Form.Label>Mô tả {redStart}</Form.Label>
                   <Form.Control
@@ -285,6 +342,35 @@ const AddEditCategoryForm = () => {
                   <Form.Control.Feedback type="invalid">
                     {checkFieldIsEmpty(description, MSG31)}
                   </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+
+              <Col md={12}>
+                <Form.Group className="mb-3" controlId="relativeCategories">
+                  <Form.Label>Loại hàng liên quan</Form.Label>
+                  <Form.Select
+                    multiple
+                    value={relativeCategories}
+                    type="select"
+                    onChange={(e) => {
+                      // Not finished yet
+                      if (
+                        relativeCategories.find((id) => id === e.target.value)
+                      ) {
+                        let index = relativeCategories.indexOf(e.target.value);
+                        relativeCategories.splice(index, 1);
+                      } else {
+                        relativeCategories.push(e.target.value);
+                      }
+                      console.log(relativeCategories);
+                    }}
+                  >
+                    {categoriesList.map((category) => (
+                      <option value={category.id} key={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>

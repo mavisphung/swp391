@@ -15,6 +15,7 @@ import {
 } from '~/system/Constants/constants';
 import { getCategoriesListData } from '~/api/categories';
 import { categoriesTypesList } from '~/system/Data/types';
+import { updateCategory } from '~/system/Constants/LinkURL';
 
 const CategoriesList = () => {
   const { pathname } = useLocation();
@@ -56,7 +57,7 @@ const CategoriesList = () => {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${updateCategory}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button className="mx-2" variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
