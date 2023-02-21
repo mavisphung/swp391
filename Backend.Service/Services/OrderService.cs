@@ -172,6 +172,11 @@ namespace Backend.Service.Services
                 found.CloseDate = DateTime.UtcNow;
             }
 
+            if (model.OrderStatus == OrderStatus.Finished)
+            {
+                found.CloseDate = DateTime.UtcNow;
+            }
+
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
             return found;
