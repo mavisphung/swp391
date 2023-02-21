@@ -71,7 +71,7 @@ const CategoriesList = () => {
     {
       title: 'Id',
       dataIndex: 'id',
-      key: 'd',
+      key: 'id',
     },
     {
       title: 'Ảnh',

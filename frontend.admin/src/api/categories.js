@@ -21,3 +21,13 @@ export const getCategoriesListData = async (page) => {
     console.log(e);
   }
 };
+
+// Add new category
+export const addCategory = async (body) => {
+  await api.post(`/${categoryURL}`, body);
+};
+
+// Update category
+export const updateCategory = async (categoryId, body) => {
+  await api.put(`/${categoryURL}/${categoryId}`, body);
+};
