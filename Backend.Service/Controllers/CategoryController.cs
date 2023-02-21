@@ -74,7 +74,7 @@ namespace Backend.Service.Controllers
         // PUT api/category/5
         [HttpPut("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> Put(int id, [FromBody] CreateCategoryModel model)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateCategoryModel model)
         {
             // Incompleted
             var data = await _categoryService.UpdateCategory(id, model);

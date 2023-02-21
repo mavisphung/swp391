@@ -21,6 +21,9 @@ namespace Backend.Service.Entities
 
         public virtual ICollection<Product> Products { get; set; }
 
+        [Column(TypeName = "jsonb")]
+        public ICollection<int>? RelativeCategories { get; set; } = new HashSet<int>();
+
         public NpgsqlTsVector SearchVector { get; set; }
     }
 }

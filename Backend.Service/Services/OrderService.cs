@@ -50,10 +50,13 @@ namespace Backend.Service.Services
 
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
+                orderBy: que => filter.Ascending == false
+                                    ? que.OrderByDescending(order => order.OrderDate)
+                                    : que.OrderBy(order => order.OrderDate),
                 includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
             // TODO: Sửa order theo Descending theo OrderDate
             return PagedList<OrderResponseModel>.ToPagedList(
-                query.AsQueryable().OrderBy(u => u.Id).Select(entity => new OrderResponseModel(entity)),
+                query.Select(entity => new OrderResponseModel(entity)).ToList(),
                 filter.PageNumber,
                 filter.PageSize);
         }
