@@ -42,6 +42,7 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateProductExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateBannerExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateAccountExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<LoginExample>();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateCategoryExample>();
 
 // Add services to the container.
 // Must enable XML comment to generate exactly what we want
