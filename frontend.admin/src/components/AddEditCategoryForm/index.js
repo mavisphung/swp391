@@ -34,6 +34,9 @@ import {
   updateCategoryById,
 } from '~/api/categories';
 import { toast } from 'react-toastify';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import CategoriesList from '~/pages/Categories/CategoriesList';
 
 const AddEditCategoryForm = () => {
   const { getCurrentUser } = useUserAuth();
@@ -50,6 +53,8 @@ const AddEditCategoryForm = () => {
   const [categoryImageURL, setCategoryImageURL] = useState('');
   const [relativeCategories, setRelativeCategories] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
+  const animatedComponent = makeAnimated();
+  const [selectedCategory, setSelectedCategory] = useState([]);
 
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
@@ -64,7 +69,10 @@ const AddEditCategoryForm = () => {
     try {
       const data = await getCategoriesListData(1);
       setCategoriesList(
-        data.data.map((category) => ({ id: category.id, name: category.name })),
+        data.data.map((category) => ({
+          value: category.id,
+          label: category.name,
+        })),
       );
       setLoading(false);
     } catch (e) {
@@ -100,11 +108,22 @@ const AddEditCategoryForm = () => {
       setCategoryName(category.name);
       setCategoryType(category.categoryType);
       setDescription(category.description);
+      // Load relative categories list
+      setRelativeCategories(category.relativeCategories);
+      relativeCategories?.forEach((element) => {
+        const category = categoriesList.find(
+          (category) => category.value === element,
+        );
+        if (category) {
+          selectedCategory.push(category);
+        }
+      });
     } else if (!category || !categoryId) {
       setCategoryImageURL('');
       setCategoryName('');
       setCategoryType('');
       setDescription('');
+      setSelectedCategory([]);
     }
   }, [category, categoryId]);
 
@@ -182,6 +201,7 @@ const AddEditCategoryForm = () => {
         description: description,
         categoryType: categoryType,
         image: categoryImageURL,
+        relativeCategories: selectedCategory.map((category) => category.value),
         // UpdatedDate: moment().format('YYYY-MM-DD'),
         // UpdatedBy: user.id,
       };
@@ -194,6 +214,7 @@ const AddEditCategoryForm = () => {
         description: description,
         categoryType: parseInt(categoryType),
         image: categoryImageURL,
+        relativeCategories: selectedCategory.map((category) => category.value),
         // AddedBy: user.id,
         // CreatedDate: moment().format('YYYY-MM-DD'),
       };
@@ -227,7 +248,9 @@ const AddEditCategoryForm = () => {
           >
             <Row>
               <Col className="align-items-center">
-                <h5>Chọn ảnh loại hàng {redStart}</h5>
+                <h5 style={{ marginBottom: 20 }}>
+                  Chọn ảnh loại hàng {redStart}
+                </h5>
               </Col>
             </Row>
             {categoryImageURL && (
@@ -345,33 +368,24 @@ const AddEditCategoryForm = () => {
                 </Form.Group>
               </Col>
 
-              <Col md={12}>
-                <Form.Group className="mb-3" controlId="relativeCategories">
-                  <Form.Label>Loại hàng liên quan</Form.Label>
-                  <Form.Select
-                    multiple
-                    value={relativeCategories}
-                    type="select"
-                    onChange={(e) => {
-                      // Not finished yet
-                      if (
-                        relativeCategories.find((id) => id === e.target.value)
-                      ) {
-                        let index = relativeCategories.indexOf(e.target.value);
-                        relativeCategories.splice(index, 1);
-                      } else {
-                        relativeCategories.push(e.target.value);
-                      }
-                      console.log(relativeCategories);
-                    }}
-                  >
-                    {categoriesList.map((category) => (
-                      <option value={category.id} key={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+              <Col md={12} style={{ marginBottom: 16 }}>
+                <div style={{ marginBottom: 8 }}>Loại hàng liên quan</div>
+                <Select
+                  isMulti
+                  value={selectedCategory}
+                  options={[
+                    { label: 'Select All', value: 'all' },
+                    ...categoriesList,
+                  ]}
+                  components={animatedComponent}
+                  isSearchable={true}
+                  closeMenuOnSelect={false}
+                  isClearable={true}
+                  onChange={(e) => {
+                    setSelectedCategory(e);
+                    setCheckEnableUpdateButton(true);
+                  }}
+                />
               </Col>
             </Row>
 
