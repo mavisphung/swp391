@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
+using Backend.Service.Extensions;
 using Backend.Service.Helper;
 using Backend.Service.Models.Category;
 using Backend.Service.Models.Validation;
@@ -32,7 +33,7 @@ namespace Backend.Service.Controllers
         /// <response code="200">Return data successfully</response>
         // GET: api/category
         [HttpGet]
-        public IActionResult GetAll([FromQuery] FilterParameter filter)
+        public IActionResult GetAll([FromQuery] CategoryFilterParameter filter)
         {
             var data = _categoryService.GetAll(filter);
             AddPaginationToHeader(data);
@@ -88,6 +89,21 @@ namespace Backend.Service.Controllers
         {
             _categoryService.Remove(id);
             return Accepted();
+        }
+
+        /// <summary>
+        /// Lấy những categories liên quan
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        /// <response code="200">Trả về những categories liên quan</response>
+        [HttpGet("{categoryId}/relatives")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetRelatives(int categoryId, [FromQuery] FilterParameter filter)
+        {
+            var data = await _categoryService.GetRelativeCategories(categoryId, filter);
+            return Ok(data);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Backend.Service.Models.Product;
 using Backend.Service.Models.Validation;
 using Backend.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -32,6 +33,7 @@ namespace Backend.Service.Controllers
         // GET: api/<ProductController>
         [HttpGet]
         [ProducesResponseType(200)]
+        [Authorize]
         public async Task<IActionResult> Get([FromQuery] ProductFilterParameter pagingParameter)
         {
             _logger.LogInformation("Get all product invoked...");
