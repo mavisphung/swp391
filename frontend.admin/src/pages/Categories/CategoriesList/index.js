@@ -30,17 +30,19 @@ const CategoriesList = () => {
 
   // Get all categories
   const getCategoriesList = useCallback(
-    async (pageIndex, searchCategoryType) => {
+    async (pageIndex, searchCategoryName) => {
       try {
-        if (searchCategoryType === '') {
-          const data = await getCategoriesListData(pageIndex);
-          setCategories(data.data.map((category) => category));
+        const data = await getCategoriesListData(
+          pageIndex,
+          10,
+          searchCategoryName,
+        );
+        setCategories(data.data.map((category) => category));
 
-          let paginationObj = JSON.parse(data.headers['x-pagination']);
-          setPageSize(paginationObj.PageSize);
-          setTotalCount(paginationObj.TotalCount);
-        } else {
-        }
+        let paginationObj = JSON.parse(data.headers['x-pagination']);
+        setPageSize(paginationObj.PageSize);
+        setTotalCount(paginationObj.TotalCount);
+
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -50,8 +52,11 @@ const CategoriesList = () => {
   );
 
   useEffect(() => {
-    getCategoriesList(pageIndex, searchCategoryType);
-  }, [getCategoriesList, pageIndex, searchCategoryType]);
+    const delayDebounceFn = setTimeout(() => {
+      getCategoriesList(pageIndex, searchCategoryName);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [getCategoriesList, pageIndex, searchCategoryName]);
 
   // Table record buttons group
   const cellButton = (record) => {
@@ -141,7 +146,7 @@ const CategoriesList = () => {
     setPageIndex(1);
     setSearchCategoryName(e.target.value);
     if (e.target.value === '') {
-      getCategoriesList();
+      getCategoriesList(pageIndex);
     }
   };
 

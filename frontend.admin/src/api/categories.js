@@ -1,14 +1,20 @@
 import api from './api';
 
 const categoryURL = 'category';
+const categoryName = 'Search';
 const id = 'categoryId';
 
 // Get all categories
-export const getCategoriesListData = async (page) => {
+export const getCategoriesListData = async (page, pageSize, name) => {
+  let url = `/${categoryURL}?PageNumber=${page}&PageSize=${pageSize}`;
   try {
-    const response = await api.get(
-      `/${categoryURL}?PageNumber=${page}&PageSize=10`,
-    );
+    // Create url
+    if (name) {
+      url = `${url}&${categoryName}=${name}`;
+    }
+
+    // Call api
+    const response = await api.get(`${url}`);
     if (response.status !== 200) {
       throw new Error('Categories list has the problem');
     }

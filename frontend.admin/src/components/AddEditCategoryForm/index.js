@@ -9,6 +9,11 @@ import {
   ProgressBar,
   Row,
 } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+
+import CustomSpinner from '~/ui/CustomSpinner';
 import CustomModal from '../Modal';
 import { checkFieldIsEmpty } from '../Validation';
 import {
@@ -21,7 +26,7 @@ import {
   MSG45,
   MSG46,
 } from '~/system/Messages/messages';
-import { dashboard, viewCategoriesList } from '~/system/Constants/LinkURL';
+import { viewCategoriesList } from '~/system/Constants/LinkURL';
 import { useUserAuth } from '~/context/UserAuthContext';
 import moment from 'moment';
 import { categoriesTypesList } from '~/system/Data/types';
@@ -33,10 +38,6 @@ import {
   getCategoryDataById,
   updateCategoryById,
 } from '~/api/categories';
-import { toast } from 'react-toastify';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
-import CategoriesList from '~/pages/Categories/CategoriesList';
 
 const AddEditCategoryForm = () => {
   const { getCurrentUser } = useUserAuth();
@@ -67,7 +68,7 @@ const AddEditCategoryForm = () => {
   // Get categories list
   const getCategoriesList = useCallback(async () => {
     try {
-      const data = await getCategoriesListData(1);
+      const data = await getCategoriesListData(1, 100);
       setCategoriesList(
         data.data.map((category) => ({
           value: category.id,
@@ -98,6 +99,8 @@ const AddEditCategoryForm = () => {
   useEffect(() => {
     if (categoryId) {
       getCategoryById(categoryId);
+    } else {
+      setLoading(false);
     }
   }, [categoryId, getCategoryById]);
 
@@ -125,7 +128,7 @@ const AddEditCategoryForm = () => {
       setDescription('');
       setSelectedCategory([]);
     }
-  }, [category, categoryId]);
+  }, [category, categoryId, categoriesList, relativeCategories]);
 
   const changeTitle = categoryId ? 'Thông tin loại hàng' : 'Thêm loại hàng';
 
@@ -235,188 +238,234 @@ const AddEditCategoryForm = () => {
     setIsEntering(false);
   };
 
+  // Go back to categories list page
+  const handleGoBack = () => {
+    setTimeout(() => {
+      navigate(-1);
+    }, 200);
+  };
+
   return (
     <>
-      <h2 style={{ textAlign: 'center' }}>{changeTitle}</h2>
-      <Col lg={10} className="mt-4">
-        <Card className="border-0 p-4 rounded shadow">
-          <Form
-            noValidate
-            validated={validated}
-            onFocus={handleFormFocused}
-            onSubmit={handleSubmit}
-          >
-            <Row>
-              <Col className="align-items-center">
-                <h5 style={{ marginBottom: 20 }}>
-                  Chọn ảnh loại hàng {redStart}
-                </h5>
-              </Col>
-            </Row>
-            {categoryImageURL && (
-              <Row>
-                <Col className="align-items-center">
-                  <Image
-                    className="product-image-file"
-                    src={categoryImageURL}
-                    alt={categoryName}
-                  />
-                </Col>
-              </Row>
-            )}
-
-            <Row className="justify-content-center">
-              <Col md={3}>
-                {showProgress && (
-                  <ProgressBar variant="info" now={progress} max={100} />
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <h2 style={{ textAlign: 'center' }}>{changeTitle}</h2>
+          <Col lg={10} className="mt-4">
+            <Card className="border-0 p-4 rounded shadow">
+              <Form
+                noValidate
+                validated={validated}
+                onFocus={handleFormFocused}
+                onSubmit={handleSubmit}
+              >
+                <Row>
+                  <Col className="align-items-center">
+                    <h5 style={{ marginBottom: 20 }}>
+                      Chọn ảnh loại hàng {redStart}
+                    </h5>
+                  </Col>
+                </Row>
+                {categoryImageURL && (
+                  <Row>
+                    <Col className="align-items-center">
+                      <Image
+                        className="product-image-file"
+                        src={categoryImageURL}
+                        alt={categoryName}
+                      />
+                    </Col>
+                  </Row>
                 )}
-              </Col>
-            </Row>
 
-            <Form.Group controlId="validationImage">
-              <Row className="align-items-center">
-                <Col className="product-image-file-content">
-                  <Form.Control
-                    width={50}
-                    type="file"
-                    onChange={handleChangeCategoryImage}
-                    accept="image/*"
-                    className="product-image-file-input"
-                    required={categoryId ? false : true}
-                  />
-                  <Button
-                    variant="primary"
-                    onClick={handleUploadImage}
-                    disabled={categoryImage ? false : true}
-                  >
-                    Tải ảnh lên
-                  </Button>
-                  <Form.Control.Feedback
-                    type="invalid"
-                    className="product-image-invalid"
-                  >
-                    {MSG39}
-                  </Form.Control.Feedback>
-                </Col>
-              </Row>
-            </Form.Group>
+                <Row className="justify-content-center">
+                  <Col md={3}>
+                    {showProgress && (
+                      <ProgressBar variant="info" now={progress} max={100} />
+                    )}
+                  </Col>
+                </Row>
 
-            <hr />
-
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationName">
-                  <Form.Label>Tên loại hàng {redStart}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={categoryName || ''}
-                    maxLength={100}
-                    onChange={(e) => {
-                      setCategoryName(e.target.value);
-                      setCheckEnableUpdateButton(true);
-                    }}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkFieldIsEmpty(categoryName, MSG29)}
-                  </Form.Control.Feedback>
+                <Form.Group controlId="validationImage">
+                  <Row className="align-items-center">
+                    <Col className="product-image-file-content">
+                      <Form.Control
+                        width={50}
+                        type="file"
+                        onChange={handleChangeCategoryImage}
+                        accept="image/*"
+                        className="product-image-file-input"
+                        required={categoryId ? false : true}
+                      />
+                      <Button
+                        variant="primary"
+                        onClick={handleUploadImage}
+                        disabled={categoryImage ? false : true}
+                      >
+                        Tải ảnh lên
+                      </Button>
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="product-image-invalid"
+                      >
+                        {MSG39}
+                      </Form.Control.Feedback>
+                    </Col>
+                  </Row>
                 </Form.Group>
-              </Col>
 
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationCategoryType">
-                  <Form.Label>Phân loại {redStart}</Form.Label>
-                  <Form.Select
-                    value={categoryType}
-                    onChange={(e) => {
-                      setCategoryType(e.target.value);
-                      setCheckEnableUpdateButton(true);
+                <hr />
+
+                <Row>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="validationName">
+                      <Form.Label>Tên loại hàng {redStart}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={categoryName || ''}
+                        maxLength={100}
+                        onChange={(e) => {
+                          setCategoryName(e.target.value);
+                          setCheckEnableUpdateButton(true);
+                        }}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkFieldIsEmpty(categoryName, MSG29)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={6}>
+                    <Form.Group
+                      className="mb-3"
+                      controlId="validationCategoryType"
+                    >
+                      <Form.Label>Phân loại {redStart}</Form.Label>
+                      <Form.Select
+                        value={categoryType}
+                        onChange={(e) => {
+                          setCategoryType(e.target.value);
+                          setCheckEnableUpdateButton(true);
+                        }}
+                        aria-label="Chọn phân loại"
+                        required
+                      >
+                        <option value="">Chọn phân loại</option>
+                        {categoriesTypesList.map((type, index) => (
+                          <option key={index} value={type.id}>
+                            {type.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {MSG30}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={12}>
+                    <Form.Group
+                      className="mb-3"
+                      controlId="validationDescription"
+                    >
+                      <Form.Label>Mô tả {redStart}</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        maxLength={1000}
+                        style={{ height: '150px' }}
+                        value={description}
+                        onChange={(e) => {
+                          setDescription(e.target.value);
+                          setCheckEnableUpdateButton(true);
+                        }}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkFieldIsEmpty(description, MSG31)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={12} style={{ marginBottom: 16 }}>
+                    <div style={{ marginBottom: 8 }}>Loại hàng liên quan</div>
+                    <Select
+                      isMulti
+                      value={selectedCategory}
+                      placeholder="Chọn loại hàng liên quan"
+                      options={[
+                        { label: 'Select All', value: 'all' },
+                        ...categoriesList,
+                      ]}
+                      components={animatedComponent}
+                      isSearchable={true}
+                      closeMenuOnSelect={false}
+                      isClearable={true}
+                      onChange={(e) => {
+                        setSelectedCategory(e);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                    />
+                  </Col>
+                </Row>
+
+                <div className="text-end">
+                  {category.isDeleted === true ? (
+                    <></>
+                  ) : categoryId ? (
+                    <Button
+                      variant="primary"
+                      className="px-4 mx-2"
+                      type="submit"
+                      disabled={checkEnableUpdateButton === true ? false : true}
+                    >
+                      Thay đổi
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      className="px-4 mx-2"
+                      type="submit"
+                    >
+                      Thêm
+                    </Button>
+                  )}
+                </div>
+              </Form>
+
+              {categoryId ? (
+                <Row>
+                  <Col
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
                     }}
-                    aria-label="Chọn phân loại"
-                    required
                   >
-                    <option value="">Chọn phân loại</option>
-                    {categoriesTypesList.map((type, index) => (
-                      <option key={index} value={type.id}>
-                        {type.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {MSG30}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-
-              <Col md={12}>
-                <Form.Group className="mb-3" controlId="validationDescription">
-                  <Form.Label>Mô tả {redStart}</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    maxLength={1000}
-                    style={{ height: '150px' }}
-                    value={description}
-                    onChange={(e) => {
-                      setDescription(e.target.value);
-                      setCheckEnableUpdateButton(true);
-                    }}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkFieldIsEmpty(description, MSG31)}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-
-              <Col md={12} style={{ marginBottom: 16 }}>
-                <div style={{ marginBottom: 8 }}>Loại hàng liên quan</div>
-                <Select
-                  isMulti
-                  value={selectedCategory}
-                  options={[
-                    { label: 'Select All', value: 'all' },
-                    ...categoriesList,
-                  ]}
-                  components={animatedComponent}
-                  isSearchable={true}
-                  closeMenuOnSelect={false}
-                  isClearable={true}
-                  onChange={(e) => {
-                    setSelectedCategory(e);
-                    setCheckEnableUpdateButton(true);
-                  }}
-                />
-              </Col>
-            </Row>
-
-            <div className="text-end">
-              {category.isDeleted === true ? (
-                <></>
-              ) : categoryId ? (
-                <Button
-                  variant="primary"
-                  className="px-4 mx-2"
-                  type="submit"
-                  disabled={checkEnableUpdateButton === true ? false : true}
-                >
-                  Thay đổi
-                </Button>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleGoBack}
+                      style={{ fontSize: '0.8rem' }}
+                    >
+                      <strong>{`<< Quay lại danh sách loại hàng`}</strong>
+                    </Button>
+                  </Col>
+                </Row>
               ) : (
-                <Button variant="primary" className="px-4 mx-2" type="submit">
-                  Thêm
-                </Button>
+                <></>
               )}
-            </div>
-          </Form>
-          <CustomModal
-            show={show}
-            title={changeTitle}
-            body={changeContentModal}
-            handleClose={handleClose}
-            handleSubmit={handleSubmitSuccess}
-          />
-        </Card>
-      </Col>
+
+              <CustomModal
+                show={show}
+                title={changeTitle}
+                body={changeContentModal}
+                handleClose={handleClose}
+                handleSubmit={handleSubmitSuccess}
+              />
+            </Card>
+          </Col>
+        </>
+      )}
     </>
   );
 };
