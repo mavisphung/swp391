@@ -47,7 +47,8 @@ namespace Backend.Service.Services
                 Name = model.Name,
                 Description = model.Description,
                 CategoryType = model.CategoryType,
-                Image = model.Image
+                Image = model.Image,
+                RelativeCategories = model.RelativeCategories,
             };
             await _cateRepository.AddAsync(category);
             await _cateRepository.SaveDbChangeAsync();
@@ -69,15 +70,12 @@ namespace Backend.Service.Services
             _cateRepository.SaveDbChange();
         }
 
-        public async Task<CategoryResponseModel> UpdateCategory(int id, CreateCategoryModel model)
+        public async Task<CategoryResponseModel> UpdateCategory(int id, UpdateCategoryModel model)
         {
             var found = await _cateRepository.GetAsync(id);
             if (found == null)
                 throw new NotFoundException();
 
-            //found.Name = found.Name.Equals(model.Name) ? found.Name : model.Name;
-            //found.Description = model.Description ?? found.Description;
-            //found.CategoryType = found.CategoryType == model.CategoryType ? found.CategoryType : model.CategoryType;
             Type updateModel = model.GetType();
             IEnumerable<PropertyInfo> props = new List<PropertyInfo>(updateModel.GetProperties());
 
@@ -86,7 +84,7 @@ namespace Backend.Service.Services
                 object? value = prop.GetValue(model);
                 bool isMatched = found.GetType().GetProperties().Where(pi => pi.Name == prop.Name).Any();
 
-                if (!isMatched || value == null || (decimal)value == 0) continue;
+                if (!isMatched || value == null) continue;
 
                 found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
             }
@@ -94,6 +92,22 @@ namespace Backend.Service.Services
             _cateRepository.Update(found);
             _cateRepository.SaveDbChange();
             return new CategoryResponseModel(found);
+        }
+
+        internal async IAsyncEnumerable<CategoryResponseModel> GetAllAsync(FilterParameter filter)
+        {
+            var predicate = PredicateBuilder.New<Category>().And(cat => !cat.IsDeleted);
+
+            if (!string.IsNullOrEmpty(filter.Search))
+            {
+                predicate = predicate.And(cat => cat.SearchVector.Matches(filter.Search));
+            }
+
+            var data = await _cateRepository.GetAllAsync(predicate);
+            foreach (var item in data)
+            {
+                yield return new CategoryResponseModel(item);
+            }
         }
     }
 }

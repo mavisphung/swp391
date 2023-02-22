@@ -41,3 +41,5 @@ export const MSG39 = 'Hình ảnh chưa được chọn';
 export const MSG40 = 'Loại sản phẩm chưa được chọn';
 export const MSG41 = 'Mô tả không được để trống';
 export const MSG42 = 'Vô hiệu hóa tài khoản thành công';
+export const MSG43 = 'Xác nhận hoàn tất đơn hàng';
+export const MSG44 = 'Hoàn tất đơn hàng thành công';

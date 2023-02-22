@@ -4,11 +4,11 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Backend.Service.Examples
 {
-    public class CategoryExample : IExamplesProvider<CreateCategoryModel>
+    public class UpdateCategoryExample : IExamplesProvider<UpdateCategoryModel>
     {
-        public CreateCategoryModel GetExamples()
+        public UpdateCategoryModel GetExamples()
         {
-            return new CreateCategoryModel()
+            return new UpdateCategoryModel()
             {
                 Name = "Chim chào mào Trung Nam",
                 Description = "Loại chim hót hay nhất trong vùng nam bộ",
