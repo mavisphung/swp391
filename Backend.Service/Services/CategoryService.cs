@@ -120,11 +120,10 @@ namespace Backend.Service.Services
         internal async Task<PagedList<CategoryResponseModel>> GetRelativeCategories(int categoryId, FilterParameter filter)
         {
             Category found = await _cateRepository.GetAsync(categoryId);
-            Console.WriteLine($"Count: {JsonSerializer.Serialize(found.RelativeCategories)}");
-            IEnumerable<Category> relatives = await _cateRepository.GetAllAsync(cate => found.RelativeCategories!.Distinct().Contains(cate.Id));
+            var relativesSet = found.RelativeCategories?.ToHashSet() ?? new HashSet<int>();
+            IEnumerable<Category> relatives = await _cateRepository.GetAllAsync(cate => relativesSet.Contains(cate.Id));
             return PagedList<CategoryResponseModel>.ToPagedList(
                 relatives.Select(cate => new CategoryResponseModel(cate)).ToList(),
-                //new List<CategoryResponseModel>(),
                 filter.PageNumber, 
                 filter.PageSize);
         }
