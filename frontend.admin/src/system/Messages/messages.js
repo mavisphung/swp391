@@ -43,3 +43,5 @@ export const MSG41 = 'Mô tả không được để trống';
 export const MSG42 = 'Vô hiệu hóa tài khoản thành công';
 export const MSG43 = 'Xác nhận hoàn tất đơn hàng';
 export const MSG44 = 'Hoàn tất đơn hàng thành công';
+export const MSG45 = 'Thêm mới loại hàng thành công';
+export const MSG46 = 'Cập nhật thông tin loại hàng thành công';
