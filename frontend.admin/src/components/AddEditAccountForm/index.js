@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { getAccountDetailsById } from '~/api/accounts';
 import {
+  active,
   Customer,
   emailCommonPattern,
   fullNamePattern,
-  inactive,
   phonePattern,
   templateEmailPlaceholder,
 } from '~/system/Constants/constants';
@@ -19,6 +20,7 @@ import {
   MSG19,
   MSG20,
 } from '~/system/Messages/messages';
+import CustomSpinner from '~/ui/CustomSpinner';
 import CustomModal from '../Modal';
 import {
   checkEmailMessage,
@@ -68,13 +70,15 @@ const AddEditAccountForm = () => {
   const [show, setShow] = useState(false);
   const [account, setAccount] = useState({});
   const [emailIsExisted, setEmailIsExisted] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [checkEnableUpdateButton, setCheckEnableUpdateButton] = useState(false);
 
   // Get account by id
   const getAccountById = useCallback(async (accountId) => {
     try {
-      const data = userAccount;
+      const data = await getAccountDetailsById(accountId);
       setAccount(data);
+      setLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -83,6 +87,8 @@ const AddEditAccountForm = () => {
   useEffect(() => {
     if (accountId) {
       getAccountById(accountId);
+    } else {
+      setLoading(false);
     }
   }, [accountId, getAccountById]);
 
@@ -188,240 +194,252 @@ const AddEditAccountForm = () => {
 
   return (
     <>
-      <h2 style={{ textAlign: 'center' }}>{changeTitle}</h2>
-      <Col lg={12} className="mt-4">
-        {/* <Prompt when={isEntered} message={MSG09} /> */}
-        <Card className="border-0 p-4 rounded shadow">
-          <Form
-            noValidate
-            validated={validated}
-            onFocus={handleFormFocused}
-            onSubmit={handleSubmit}
-          >
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationEmail">
-                  <Form.Label>Email {redStart}</Form.Label>
-                  <Form.Control
-                    type="email"
-                    value={email || ''}
-                    placeholder={templateEmailPlaceholder}
-                    onChange={(e) => setEmail(e.target.value)}
-                    isInvalid={
-                      email &&
-                      (!emailCommonPattern.test(email) || emailIsExisted)
-                    }
-                    onKeyUp={handleSetAutoDomain}
-                    autoComplete="username"
-                    maxLength={50}
-                    readOnly={checkAccountIdHad}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkEmailMessage(email, emailIsExisted)}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-              <hr />
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <h2 style={{ textAlign: 'center' }}>{changeTitle}</h2>
+          <Col lg={12} className="mt-4">
+            {/* <Prompt when={isEntered} message={MSG09} /> */}
+            <Card className="border-0 p-4 rounded shadow">
+              <Form
+                noValidate
+                validated={validated}
+                onFocus={handleFormFocused}
+                onSubmit={handleSubmit}
+              >
+                <Row>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="validationEmail">
+                      <Form.Label>Email {redStart}</Form.Label>
+                      <Form.Control
+                        type="email"
+                        value={email || ''}
+                        placeholder={templateEmailPlaceholder}
+                        onChange={(e) => setEmail(e.target.value)}
+                        isInvalid={
+                          email &&
+                          (!emailCommonPattern.test(email) || emailIsExisted)
+                        }
+                        onKeyUp={handleSetAutoDomain}
+                        autoComplete="username"
+                        maxLength={50}
+                        readOnly={checkAccountIdHad}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkEmailMessage(email, emailIsExisted)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  <hr />
 
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationFullName">
-                  <Form.Label>Họ và tên {redStart}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={fullName || ''}
-                    maxLength={50}
-                    onChange={(e) => setFullName(e.target.value)}
-                    isInvalid={fullName && !fullNamePattern.test(fullName)}
-                    readOnly={checkAccountIdHad}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkFullNameMessage(fullName)}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="validationFullName">
+                      <Form.Label>Họ và tên {redStart}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={fullName || ''}
+                        maxLength={50}
+                        onChange={(e) => setFullName(e.target.value)}
+                        isInvalid={fullName && !fullNamePattern.test(fullName)}
+                        readOnly={checkAccountIdHad}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkFullNameMessage(fullName)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
 
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationDob">
-                  <Form.Label>Ngày sinh {redStart}</Form.Label>
-                  <Form.Control
-                    type="date"
-                    value={dob || ''}
-                    min="1960-01-01"
-                    max="2000-12-31"
-                    onChange={(e) => setDob(e.target.value)}
-                    readOnly={accountId ? true : false}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkFieldIsEmpty(dob, MSG14)}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="validationDob">
+                      <Form.Label>Ngày sinh {redStart}</Form.Label>
+                      <Form.Control
+                        type="date"
+                        value={dob || ''}
+                        min="1960-01-01"
+                        max="2000-12-31"
+                        onChange={(e) => setDob(e.target.value)}
+                        readOnly={accountId ? true : false}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkFieldIsEmpty(dob, MSG14)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
 
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationGender">
-                  <Form.Label>Giới tính {redStart}</Form.Label>
-                  <Form.Select
-                    aria-label="Chọn giới tính"
-                    value={gender || ''}
-                    onChange={(e) => setGender(e.target.value)}
-                    disabled={checkAccountIdHad}
-                    required
-                  >
-                    <option value="">Chọn giới tính</option>
-                    <option value="0">Nam</option>
-                    <option value="1">Nữ</option>
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {MSG15}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="validationGender">
+                      <Form.Label>Giới tính {redStart}</Form.Label>
+                      <Form.Select
+                        aria-label="Chọn giới tính"
+                        value={gender || ''}
+                        onChange={(e) => setGender(e.target.value)}
+                        disabled={checkAccountIdHad}
+                        required
+                      >
+                        <option value="">Chọn giới tính</option>
+                        <option value="0">Nam</option>
+                        <option value="1">Nữ</option>
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {MSG15}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
 
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationPhone">
-                  <Form.Label>Số điện thoại {redStart}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    maxLength={10}
-                    value={phone || ''}
-                    onChange={(e) => setPhone(e.target.value)}
-                    isInvalid={phone && !phonePattern.test(phone)}
-                    readOnly={checkAccountIdHad}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkPhoneNumber(phone)}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
-            <hr />
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="validationPhone">
+                      <Form.Label>Số điện thoại {redStart}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        maxLength={10}
+                        value={phone || ''}
+                        onChange={(e) => setPhone(e.target.value)}
+                        isInvalid={phone && !phonePattern.test(phone)}
+                        readOnly={checkAccountIdHad}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkPhoneNumber(phone)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <hr />
 
-            <Row>
-              <Col md={12}>
-                <Form.Group className="mb-3" controlId="validationAddress">
-                  <Form.Label>Số nhà, tên đường {redStart}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={address || ''}
-                    maxLength={100}
-                    onChange={(e) => setAddress(e.target.value)}
-                    readOnly={checkAccountIdHad}
-                    required
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {checkFieldIsEmpty(address, MSG16)}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
+                <Row>
+                  <Col md={12}>
+                    <Form.Group className="mb-3" controlId="validationAddress">
+                      <Form.Label>Số nhà, tên đường {redStart}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={address || ''}
+                        maxLength={100}
+                        onChange={(e) => setAddress(e.target.value)}
+                        readOnly={checkAccountIdHad}
+                        required
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {checkFieldIsEmpty(address, MSG16)}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                </Row>
 
-            <Row>
-              <Col md={4}>
-                <Form.Group className="mb-3" controlId="validationProvince">
-                  <Form.Label>Tỉnh, thành {redStart}</Form.Label>
-                  <Form.Select
-                    aria-label="Chọn tỉnh, thành"
-                    value={province || ''}
-                    onChange={(e) => setProvince(e.target.value)}
-                    disabled={checkAccountIdHad}
-                    required
-                  >
-                    <option value="">Chọn tỉnh, thành</option>
-                    {listProvince.map((province, index) => (
-                      <option key={index} value={province.idProvince}>
-                        {province.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {MSG18}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+                <Row>
+                  <Col md={4}>
+                    <Form.Group className="mb-3" controlId="validationProvince">
+                      <Form.Label>Tỉnh, thành {redStart}</Form.Label>
+                      <Form.Select
+                        aria-label="Chọn tỉnh, thành"
+                        value={province || ''}
+                        onChange={(e) => setProvince(e.target.value)}
+                        disabled={checkAccountIdHad}
+                        required
+                      >
+                        <option value="">Chọn tỉnh, thành</option>
+                        {listProvince.map((province, index) => (
+                          <option key={index} value={province.idProvince}>
+                            {province.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {MSG18}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
 
-              <Col md={4}>
-                <Form.Group className="mb-3" controlId="validationDistrict">
-                  <Form.Label>Quận, huyện {redStart}</Form.Label>
-                  <Form.Select
-                    aria-label="Chọn quận, huyện"
-                    value={district || ''}
-                    onChange={(e) => setDistrict(e.target.value)}
-                    disabled={checkAccountIdHad}
-                    required
-                  >
-                    <option value="">Chọn quận, huyện</option>
-                    {listDistrict.map((district, index) => (
-                      <option key={index} value={district.idDistrict}>
-                        {district.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {MSG18}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
+                  <Col md={4}>
+                    <Form.Group className="mb-3" controlId="validationDistrict">
+                      <Form.Label>Quận, huyện {redStart}</Form.Label>
+                      <Form.Select
+                        aria-label="Chọn quận, huyện"
+                        value={district || ''}
+                        onChange={(e) => setDistrict(e.target.value)}
+                        disabled={checkAccountIdHad}
+                        required
+                      >
+                        <option value="">Chọn quận, huyện</option>
+                        {listDistrict.map((district, index) => (
+                          <option key={index} value={district.idDistrict}>
+                            {district.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {MSG18}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
 
-              <Col md={4}>
-                <Form.Group className="mb-3" controlId="validationWard">
-                  <Form.Label>Phường, xã {redStart}</Form.Label>
-                  <Form.Select
-                    aria-label="Chọn phường, xã"
-                    value={ward || ''}
-                    onChange={(e) => setWard(e.target.value)}
-                    disabled={checkAccountIdHad}
-                    required
-                  >
-                    <option value="">Chọn phường, xã</option>
-                    {listCommune.map((commune, index) => (
-                      <option key={index} value={commune.idCommune}>
-                        {commune.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {MSG17}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
+                  <Col md={4}>
+                    <Form.Group className="mb-3" controlId="validationWard">
+                      <Form.Label>Phường, xã {redStart}</Form.Label>
+                      <Form.Select
+                        aria-label="Chọn phường, xã"
+                        value={ward || ''}
+                        onChange={(e) => setWard(e.target.value)}
+                        disabled={checkAccountIdHad}
+                        required
+                      >
+                        <option value="">Chọn phường, xã</option>
+                        {listCommune.map((commune, index) => (
+                          <option key={index} value={commune.idCommune}>
+                            {commune.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {MSG17}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                </Row>
 
-            <div className="text-end">
-              {account.status === inactive ? (
-                <></>
-              ) : accountId ? (
-                account.roleId === Customer ? (
-                  <></>
-                ) : (
-                  <Button
-                    variant="primary"
-                    className="px-4 mx-2"
-                    type="submit"
-                    disabled={checkEnableUpdateButton === true ? false : true}
-                  >
-                    Thay đổi
-                  </Button>
-                )
-              ) : (
-                <Button variant="primary" className="px-4 mx-2" type="submit">
-                  Thêm
-                </Button>
-              )}
-            </div>
-          </Form>
-          <CustomModal
-            show={show}
-            title={changeTitle}
-            body={changeContentModal}
-            handleClose={handleClose}
-            handleSubmit={handleSubmitSuccess}
-          />
-        </Card>
-      </Col>
+                <div className="text-end">
+                  {account.isDeleted === active ? (
+                    <></>
+                  ) : accountId ? (
+                    account.roleId === Customer ? (
+                      <></>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        className="px-4 mx-2"
+                        type="submit"
+                        disabled={
+                          checkEnableUpdateButton === true ? false : true
+                        }
+                      >
+                        Thay đổi
+                      </Button>
+                    )
+                  ) : (
+                    <Button
+                      variant="primary"
+                      className="px-4 mx-2"
+                      type="submit"
+                    >
+                      Thêm
+                    </Button>
+                  )}
+                </div>
+              </Form>
+              <CustomModal
+                show={show}
+                title={changeTitle}
+                body={changeContentModal}
+                handleClose={handleClose}
+                handleSubmit={handleSubmitSuccess}
+              />
+            </Card>
+          </Col>
+        </>
+      )}
     </>
   );
 };
