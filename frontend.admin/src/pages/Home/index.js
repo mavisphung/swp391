@@ -15,16 +15,19 @@ import './Home.scss';
 
 function Home() {
   // Get current user
-  const { getCurrentUser } = useUserAuth();
+  const { getCurrentUser, logOut } = useUserAuth();
   const user = getCurrentUser();
 
   // Go to dashboard if not logout
   let navigate = useNavigate();
   useEffect(() => {
-    if (user) {
+    if (user && user.roleId === 1) {
       navigate(`/dashboard`);
+    } else {
+      logOut();
     }
-  }, [user, navigate]);
+
+  }, [user, navigate, logOut]);
 
   return (
     <div className="home-container">
