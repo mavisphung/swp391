@@ -10,7 +10,7 @@ import {
 
 import "./ComfirmLoginLayout.scss";
 import config from "~/config";
-import { getCart } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 function ConfirmLogin() {
   const [name, setName] = useState("");
@@ -25,7 +25,8 @@ function ConfirmLogin() {
 
   const navigate = useNavigate();
 
-  const cartList = getCart();
+  const { cart } = useUserCart();
+  const cartList = cart;
 
   const handleSubmit1 = (e) => {
     e.preventDefault();

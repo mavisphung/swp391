@@ -4,9 +4,11 @@ import { createSearchParams, useNavigate } from "react-router-dom";
 import "./BirdCardLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
-import { addToCart } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 const BirdCard = (props) => {
+  const { dispatch } = useUserCart();
+
   const navigate = useNavigate();
   const params = {
     productId: props.bird.id,
@@ -79,7 +81,10 @@ const BirdCard = (props) => {
               className="btn-add-cart"
               onClick={(e) => {
                 e.preventDefault();
-                addToCart(props.bird);
+                dispatch({
+                  type: "ADD_TO_CART",
+                  payload: props.bird,
+                });
               }}
             >
               Thêm giỏ hàng

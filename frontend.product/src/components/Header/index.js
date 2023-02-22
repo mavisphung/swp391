@@ -6,11 +6,12 @@ import { Link } from "react-router-dom";
 import "./HeaderLayout.scss";
 import config from "~/config";
 import AppIcons from "~/assets/icons";
-import { getCartAmount } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Header() {
+  const { cartAmount } = useUserCart();
   return (
     <div>
       <Container>
@@ -49,7 +50,7 @@ function Header() {
               </Nav>
               <div className="d-flex header-link">
                 <Link to={config.routes.cart} className="pl-2">
-                  <BsCartFill color="#ee3e6a" /> ({getCartAmount()})
+                  <BsCartFill color="#ee3e6a" /> ({cartAmount})
                 </Link>
                 <Link to={config.routes.login} className="px-2">
                   Đăng nhập

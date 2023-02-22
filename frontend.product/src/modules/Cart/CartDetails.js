@@ -1,16 +1,17 @@
 import { useNavigate, Link } from "react-router-dom";
 
 import "./CartLayout.scss";
+import CartItem from "./widgets/CartItem";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
-import { getCart } from "~/common/LocalStorageUtil";
-import CartItem from "./widgets/CartItem";
+import { useUserCart } from "~/context/UserCartContext";
 
 function CartDetails() {
   // const [nextTimeList, setNextTimeList] = useState([]);
   let total = 0;
 
-  const cartList = getCart();
+  const { cart } = useUserCart();
+  const cartList = cart;
 
   const navigate = useNavigate();
 
