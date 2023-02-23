@@ -54,7 +54,7 @@ const CategoriesList = () => {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       getCategoriesList(pageIndex, searchCategoryName);
-    }, 500);
+    }, 400);
     return () => clearTimeout(delayDebounceFn);
   }, [getCategoriesList, pageIndex, searchCategoryName]);
 
