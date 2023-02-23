@@ -33,7 +33,6 @@ namespace Backend.Service.Controllers
         // GET: api/<ProductController>
         [HttpGet]
         [ProducesResponseType(200)]
-        [Authorize]
         public async Task<IActionResult> Get([FromQuery] ProductFilterParameter pagingParameter)
         {
             _logger.LogInformation("Get all product invoked...");
