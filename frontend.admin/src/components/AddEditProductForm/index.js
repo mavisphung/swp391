@@ -22,6 +22,8 @@ import { checkFieldIsEmpty } from '../Validation';
 import CustomModal from '../Modal';
 
 import '../AddEditAccountForm/AddEditAccountForm.scss';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { storage } from '~/firebase';
 
 const categoriesListData = [
   {
@@ -86,19 +88,24 @@ const AddEditProductForm = () => {
   const [product, setProduct] = useState({});
   const [productImage, setProductImage] = useState(null);
   const [productImageURL, setProductImageURL] = useState('');
+  const [productVideo, setProductVideo] = useState(null);
+  const [productVideoURL, setProductVideoURL] = useState('');
   const [productName, setProductName] = useState('');
   const [productCategories, setProductCategories] = useState([]);
   const [productCategory, setProductCategory] = useState('1');
   const [shortDescriptionList, setShortDescriptionList] = useState([]);
   const [shortDescription, setShortDescription] = useState('');
   const [description, setDescription] = useState('');
+  const [gender, setGender] = useState('');
   const [gendersList, setGendersList] = useState([]);
+  const [sellMethod, setSellMethod] = useState('');
 
   const [isEntered, setIsEntering] = useState(false);
   const [validated, setValidated] = useState(false);
   const [show, setShow] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
+  const [showVideoProgress, setShowVideoProgress] = useState(false);
   const [checkEnableUpdateButton, setCheckEnableUpdateButton] = useState(false);
 
   // Get product categories list
@@ -150,8 +157,48 @@ const AddEditProductForm = () => {
     : 'Thêm sản phẩm';
   const changeContentModal = productId ? MSG37 : MSG35;
 
-  const handleChangeProductImage = () => {};
-  const handleUploadImage = () => {};
+  // Manage upload image action
+  const handleChangeProductImage = (e) => {
+    if (e.target.files[0]) {
+      setProductImage(e.target.files[0]);
+    }
+    setCheckEnableUpdateButton(true);
+  };
+
+  const handleUploadImage = () => {
+    const storageRef = ref(storage, `productImages/${productImage.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, productImage);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+        );
+        setProgress(progress);
+        setShowProgress(true);
+
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is pause');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+          default:
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setProductImageURL(downloadURL);
+        });
+        setShowProgress(false);
+      },
+    );
+  };
 
   // Manage Modal
   const handleClose = () => setShow(false);
@@ -194,7 +241,7 @@ const AddEditProductForm = () => {
           </Form.Group>
         </Col>
 
-        <Col md={6}>
+        <Col md={3}>
           <Form.Group
             className="mb-3"
             controlId="validationProductShortDescription"
@@ -217,6 +264,40 @@ const AddEditProductForm = () => {
           </Form.Group>
         </Col>
 
+        <Col md={3}>
+          <Form.Group className="mb-3" controlId="validationProductSellMethod">
+            <Form.Label>Cách bán {redStart}</Form.Label>
+            <Form.Select
+              value={sellMethod}
+              onChange={(e) => {
+                setSellMethod(e.target.value);
+                setCheckEnableUpdateButton(true);
+              }}
+              aria-label="Chọn cách bán"
+              required
+            >
+              <option value="">Chọn cách bán</option>
+              <option value="1">Chim tuyển</option>
+              <option value="2">Bắt lồng</option>
+            </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {MSG40}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        {gender !== '' || sellMethod === '1' ? (
+          <RenderFieldBySellMethod />
+        ) : (
+          <></>
+        )}
+      </Row>
+    );
+  };
+
+  const RenderFieldBySellMethod = () => {
+    return (
+      <>
         <Col md={4}>
           <Form.Group
             className="mb-3"
@@ -291,7 +372,7 @@ const AddEditProductForm = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-      </Row>
+      </>
     );
   };
 
@@ -307,58 +388,116 @@ const AddEditProductForm = () => {
             onSubmit={handleSubmit}
           >
             <Row>
-              <Col className="align-items-center">
-                <h5>Chọn ảnh sản phẩm {redStart}</h5>
-              </Col>
-            </Row>
-            {productImageURL && (
-              <Row>
-                <Col className="align-items-center">
-                  <Image
-                    className="product-image-file"
-                    src={productImageURL}
-                    alt={productName}
-                    roundedCircle={true}
-                  />
-                </Col>
-              </Row>
-            )}
-
-            <Row className="justify-content-center">
-              <Col md={3}>
-                {showProgress && (
-                  <ProgressBar variant="info" now={progress} max={100} />
+              <Col md={6}>
+                <Row>
+                  <Col className="align-items-center">
+                    <h5>Chọn ảnh sản phẩm {redStart}</h5>
+                  </Col>
+                </Row>
+                {productImageURL && (
+                  <Row>
+                    <Col className="align-items-center">
+                      <Image
+                        className="product-image-file"
+                        src={productImageURL}
+                        alt={productName}
+                      />
+                    </Col>
+                  </Row>
                 )}
+
+                <Row className="justify-content-center">
+                  <Col md={3}>
+                    {showProgress && (
+                      <ProgressBar variant="info" now={progress} max={100} />
+                    )}
+                  </Col>
+                </Row>
+
+                <Form.Group controlId="validationImage">
+                  <Row className="align-items-center">
+                    <Col className="product-image-file-content">
+                      <Form.Control
+                        width={50}
+                        type="file"
+                        onChange={handleChangeProductImage}
+                        accept="image/*"
+                        className="product-image-file-input"
+                        required={productId ? false : true}
+                      />
+                      <Button
+                        variant="primary"
+                        onClick={handleUploadImage}
+                        disabled={productImage ? false : true}
+                      >
+                        Tải ảnh lên
+                      </Button>
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="product-image-invalid"
+                      >
+                        {MSG39}
+                      </Form.Control.Feedback>
+                    </Col>
+                  </Row>
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Row>
+                  <Col className="align-items-center">
+                    <h5>Chọn video giới thiệu {redStart}</h5>
+                  </Col>
+                </Row>
+                {productVideoURL && (
+                  <Row>
+                    <Col className="align-items-center">
+                      <Image
+                        className="product-image-file"
+                        src={productVideoURL}
+                        alt={productName}
+                      />
+                    </Col>
+                  </Row>
+                )}
+
+                <Row className="justify-content-center">
+                  <Col md={3}>
+                    {showVideoProgress && (
+                      <ProgressBar variant="info" now={progress} max={100} />
+                    )}
+                  </Col>
+                </Row>
+
+                <Form.Group controlId="validationVideo">
+                  <Row className="align-items-center">
+                    <Col className="product-image-file-content">
+                      <Form.Control
+                        width={50}
+                        type="file"
+                        onChange={handleChangeProductImage}
+                        accept="image/*"
+                        className="product-image-file-input"
+                        required={productId ? false : true}
+                      />
+                      <Button
+                        variant="primary"
+                        onClick={handleUploadImage}
+                        disabled={productVideo ? false : true}
+                      >
+                        Tải video lên
+                      </Button>
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="product-image-invalid"
+                      >
+                        {MSG39}
+                      </Form.Control.Feedback>
+                    </Col>
+                  </Row>
+                </Form.Group>
               </Col>
             </Row>
-
-            <Form.Group controlId="validationImage">
-              <Row className="align-items-center">
-                <Col className="product-image-file-content">
-                  <Form.Control
-                    width={50}
-                    type="file"
-                    onChange={handleChangeProductImage}
-                    accept="image/*"
-                    className="product-image-file-input"
-                    required={productId ? false : true}
-                  />
-                  <Button
-                    variant="primary"
-                    onClick={handleUploadImage}
-                    disabled={productImage ? false : true}
-                  >
-                    Tải ảnh lên
-                  </Button>
-                  <Form.Control.Feedback
-                    type="invalid"
-                    className="product-image-invalid"
-                  >
-                    {MSG39}
-                  </Form.Control.Feedback>
-                </Col>
-              </Row>
-            </Form.Group>
             <hr />
 
             <Col md={3}>
