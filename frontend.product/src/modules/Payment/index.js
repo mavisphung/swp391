@@ -12,13 +12,17 @@ import config from "~/config";
 
 function PaymentPage() {
   const location = useLocation();
-  const { name, tel, email, address, cart } = location.state;
+  const { name, tel, email, address, commune, district, province, cart } =
+    location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
 
   console.log("NAME", name);
   console.log("TEL", tel);
   console.log("EMAIL", email);
+  console.log("COMMUNE", commune);
+  console.log("DISTRICT", district);
+  console.log("PROVINCE", province);
   console.log("ADDRESS", address);
   console.log("CART", cart);
 
@@ -81,8 +85,9 @@ function PaymentPage() {
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
       <Container className="d-flex p-0 pb-2">
         <Col className="pe-5" md>
-          {cart.map((c) => (
+          {cart.map((c, index) => (
             <CartItems
+              key={index}
               productName={c.name}
               productImage={c.medias[1].url}
               productType={c.categoryName}
