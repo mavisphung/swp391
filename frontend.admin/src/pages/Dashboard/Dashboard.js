@@ -22,11 +22,13 @@ import {
   addAccount,
   addCategory,
   addProduct,
+  categoryId,
   changePassword,
   login,
   orderId,
   productId,
   updateAccount,
+  updateCategory,
   viewAccountsList,
   viewCategoriesList,
   viewOrderDetail,
@@ -94,6 +96,10 @@ function Dashboard() {
             <Route
               path={`${viewCategoriesList}`}
               element={<CategoriesList />}
+            />
+            <Route
+              path={`${viewCategoriesList}/${updateCategory}/${categoryId}`}
+              element={<AddEditCategory />}
             />
             <Route path={`${addCategory}`} element={<AddEditCategory />} />
             <Route path={`${viewProductsList}`} element={<ProductsList />} />

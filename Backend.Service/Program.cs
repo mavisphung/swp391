@@ -133,6 +133,7 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DataSource"));
+    opt.EnableSensitiveDataLogging();
 });
 
 //--------------------------------------------------------------

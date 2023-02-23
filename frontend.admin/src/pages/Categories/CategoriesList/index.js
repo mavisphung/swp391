@@ -15,6 +15,7 @@ import {
 } from '~/system/Constants/constants';
 import { getCategoriesListData } from '~/api/categories';
 import { categoriesTypesList } from '~/system/Data/types';
+import { updateCategory } from '~/system/Constants/LinkURL';
 
 const CategoriesList = () => {
   const { pathname } = useLocation();
@@ -29,17 +30,19 @@ const CategoriesList = () => {
 
   // Get all categories
   const getCategoriesList = useCallback(
-    async (pageIndex, searchCategoryType) => {
+    async (pageIndex, searchCategoryName) => {
       try {
-        if (searchCategoryType === '') {
-          const data = await getCategoriesListData(pageIndex);
-          setCategories(data.data.map((category) => category));
+        const data = await getCategoriesListData(
+          pageIndex,
+          10,
+          searchCategoryName,
+        );
+        setCategories(data.data.map((category) => category));
 
-          let paginationObj = JSON.parse(data.headers['x-pagination']);
-          setPageSize(paginationObj.PageSize);
-          setTotalCount(paginationObj.TotalCount);
-        } else {
-        }
+        let paginationObj = JSON.parse(data.headers['x-pagination']);
+        setPageSize(paginationObj.PageSize);
+        setTotalCount(paginationObj.TotalCount);
+
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -49,14 +52,17 @@ const CategoriesList = () => {
   );
 
   useEffect(() => {
-    getCategoriesList(pageIndex, searchCategoryType);
-  }, [getCategoriesList, pageIndex, searchCategoryType]);
+    const delayDebounceFn = setTimeout(() => {
+      getCategoriesList(pageIndex, searchCategoryName);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [getCategoriesList, pageIndex, searchCategoryName]);
 
   // Table record buttons group
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${updateCategory}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button className="mx-2" variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
@@ -71,7 +77,7 @@ const CategoriesList = () => {
     {
       title: 'Id',
       dataIndex: 'id',
-      key: 'd',
+      key: 'id',
     },
     {
       title: 'Ảnh',
@@ -140,7 +146,7 @@ const CategoriesList = () => {
     setPageIndex(1);
     setSearchCategoryName(e.target.value);
     if (e.target.value === '') {
-      getCategoriesList();
+      getCategoriesList(pageIndex);
     }
   };
 
