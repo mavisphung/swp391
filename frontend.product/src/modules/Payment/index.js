@@ -26,6 +26,7 @@ function PaymentPage() {
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(1);
+  const [note, setNote] = useState("");
 
   console.log("NAME", name);
   console.log("TEL", tel);
@@ -55,7 +56,8 @@ function PaymentPage() {
     try {
       const order = {
         cartItems: items,
-        paymentMethod: 1,
+        paymentMethod: paymentMethod,
+        note: note,
         customer: {
           email: email,
           fullname: name,
@@ -79,9 +81,13 @@ function PaymentPage() {
     }
   };
 
-  function callPayment() {
+  const handleNoteChanged = (event) => {
+    setNote(event.target.value);
+    console.log(event.target.value);
+  };
+
+  function checkout() {
     notify();
-    // window.location.reload(false);
     postOrder();
   }
 
@@ -176,6 +182,8 @@ function PaymentPage() {
               rows="7"
               placeholder="Ghi chú nếu địa chỉ khó tìm"
               required
+              value={note}
+              onChange={handleNoteChanged}
             ></textarea>
           </Row>
         </Col>
@@ -189,7 +197,10 @@ function PaymentPage() {
                 id="vnPayRadio"
                 label="Bằng VNPay"
                 // checked={payAdvanced === "VNPay"}
-                onClick={() => setPayAdvanced(false)}
+                onClick={() => {
+                  setPayAdvanced(false);
+                  setPaymentMethod(1);
+                }}
               />
               <Form.Check
                 type={"radio"}
@@ -197,14 +208,20 @@ function PaymentPage() {
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
                 // checked={payAdvanced === "CashPay"}
-                onClick={() => setPayAdvanced(false)}
+                onClick={() => {
+                  setPayAdvanced(false);
+                  setPaymentMethod(2);
+                }}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="payInAdvanceRadio"
                 label="Đặt cọc trước 50%"
-                onClick={() => setPayAdvanced(true)}
+                onClick={() => {
+                  setPayAdvanced(true);
+                  setPaymentMethod(3);
+                }}
               />
               <Form.Check
                 type={"radio"}
@@ -212,7 +229,10 @@ function PaymentPage() {
                 id="shippingPayRadio"
                 label="Thanh toán trực tiếp cho nhân viên giao hàng"
                 // checked={payAdvanced === "ShippingPay"}
-                onClick={() => setPayAdvanced(false)}
+                onClick={() => {
+                  setPayAdvanced(false);
+                  setPaymentMethod(4);
+                }}
               />
             </Form>
           </Row>
@@ -220,7 +240,7 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={callPayment}
+              onClick={checkout}
             >
               Thanh toán
             </Button>
