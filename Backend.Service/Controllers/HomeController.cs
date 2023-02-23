@@ -20,6 +20,7 @@ namespace Backend.Service.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get([FromQuery] ProductFilterParameter filter)
         {
             var data = await _productRepository.GetAllAsync(p => p.Gender == null && p.Age == null);

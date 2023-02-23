@@ -1,5 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.Json;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
@@ -21,7 +23,7 @@ namespace Backend.Service.Services
             _cateRepository = cateRepository;
         }
 
-        public PagedList<CategoryResponseModel> GetAll(FilterParameter filter)
+        public PagedList<CategoryResponseModel> GetAll(CategoryFilterParameter filter)
         {
             //var removeDiacritics = filter.Search.RemoveDiacritics();
             //Console.WriteLine($"Sau khi bỏ dấu: {removeDiacritics}");
@@ -30,6 +32,11 @@ namespace Backend.Service.Services
             if (!string.IsNullOrEmpty(filter.Search))
             {
                 predicate = predicate.And(cat => cat.SearchVector.Matches(filter.Search));
+            }
+
+            if (filter.CategoryType != null) 
+            {
+                predicate = predicate.And(cat => cat.CategoryType == filter.CategoryType);
             }
 
             IEnumerable<Category> categories = _cateRepository.GetAll(predicate);
@@ -108,6 +115,17 @@ namespace Backend.Service.Services
             {
                 yield return new CategoryResponseModel(item);
             }
+        }
+
+        internal async Task<PagedList<CategoryResponseModel>> GetRelativeCategories(int categoryId, FilterParameter filter)
+        {
+            Category found = await _cateRepository.GetAsync(categoryId);
+            var relativesSet = found.RelativeCategories?.ToHashSet() ?? new HashSet<int>();
+            IEnumerable<Category> relatives = await _cateRepository.GetAllAsync(cate => relativesSet.Contains(cate.Id));
+            return PagedList<CategoryResponseModel>.ToPagedList(
+                relatives.Select(cate => new CategoryResponseModel(cate)).ToList(),
+                filter.PageNumber, 
+                filter.PageSize);
         }
     }
 }
