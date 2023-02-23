@@ -14,7 +14,7 @@ function HomePage() {
   const [foods, setFoods] = useState([]);
   const [popular, setPopular] = useState([]);
   const [others, setOthers] = useState([]);
-  // const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const getProducts = async () => {
     try {
@@ -25,7 +25,7 @@ function HomePage() {
         },
       });
 
-      console.log("RES", response);
+      // console.log("RES", response);
       console.log("RES.DATA", response.data);
       if (response.data) {
         const tmp1 = [];
@@ -51,7 +51,23 @@ function HomePage() {
     }
   };
 
+  const getCategory = async () => {
+    try {
+      const response = await api.get("/category", {
+        params: {
+          PageNumber: 2,
+          PageSize: 9,
+        },
+      });
+      setCategories(response.data);
+      console.log(categories);
+    } catch (e) {
+      console.log(`Fail to load category: ${e}`);
+    }
+  };
+
   useEffect(() => {
+    getCategory();
     getProducts();
   }, []);
 
@@ -64,9 +80,10 @@ function HomePage() {
         </div>
         <Row>
           <Col md>
-            {cateList.map((cate) => (
+            {categories.map((cate) => (
               <CategoryCard key={cate.id} cate={cate} />
             ))}
+            <CategoryCard cate={cateList[7]} />
           </Col>
         </Row>
         <Row>

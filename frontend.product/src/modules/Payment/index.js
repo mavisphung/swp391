@@ -16,13 +16,16 @@ import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import config from "~/config";
+import { emptyCart, getCart } from "~/common/LocalStorageUtil";
 
 function PaymentPage() {
   const location = useLocation();
   const { name, tel, email, address, cart } = location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(1);
 
   console.log("NAME", name);
   console.log("TEL", tel);
@@ -37,6 +40,10 @@ function PaymentPage() {
   cart.map((c) => {
     sum = sum + c.price;
   });
+
+  const notify = () => {
+    toast("Đặt hàng thành công!");
+  };
 
   let items = cart.map((c) => {
     return {
@@ -61,14 +68,22 @@ function PaymentPage() {
         "https://localhost:7179/api/order/unauth",
         order
       );
-      toast("Successfully!!!");
+      // toast("Successfully!!!");
       console.log(request.data);
+      emptyCart();
+      // window.location.reload(false);
       navigate(config.routes.home);
     } catch (e) {
-      toast("Error!!!");
+      // toast("Error!!!");
       console.log(e);
     }
   };
+
+  function callPayment() {
+    notify();
+    // window.location.reload(false);
+    postOrder();
+  }
 
   return (
     <Container>
@@ -86,7 +101,27 @@ function PaymentPage() {
           </Breadcrumb.Item>
         </Breadcrumb>
       </div>
+
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
+      <Col className="pb-3">
+        <Container className="square rounded border border-2 border-dark">
+          <Container className="d-flex py-2 mx-2 fs-5">
+            <Col>
+              <Row className="fw-bold">Thông tin tài khoản</Row>
+              <Row>{`Tên khách hàng: ${name}`}</Row>
+              <Row>{`Email: ${email}`}</Row>
+              <Row>{`Số điện thoại: ${tel}`}</Row>
+            </Col>
+            <Col>
+              <Row className="fw-bold">Địa chỉ giao hàng</Row>
+              <Row>{`Tên khách hàng: ${name}`}</Row>
+              <Row>{`Email: ${email}`}</Row>
+              <Row>{`Số điện thoại: ${tel}`}</Row>
+              <Row>{`Địa chỉ: ${address}`}</Row>
+            </Col>
+          </Container>
+        </Container>
+      </Col>
       <Container className="d-flex p-0 pb-2">
         <Col className="pe-5" md>
           {cart.map((c) => (
@@ -95,6 +130,7 @@ function PaymentPage() {
               productImage={c.medias[1].url}
               productType={c.categoryName}
               productPrice={formatPrice(c.price)}
+              productAmount={c.amount}
             />
           ))}
 
@@ -181,10 +217,15 @@ function PaymentPage() {
             </Form>
           </Row>
           <Row>
-            {" "}
-            <Button className="btn-pay mt-3" onClick={postOrder}>
+            <Button
+              variant="primary"
+              className="btn-pay mt-3"
+              onClick={callPayment}
+            >
               Thanh toán
             </Button>
+            {/* <Button onClick={notify}>Toast</Button> */}
+            <ToastContainer />
           </Row>
         </Col>
       </Container>

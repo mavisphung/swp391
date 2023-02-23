@@ -58,6 +58,7 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
             onClick={(e) => {
               e.preventDefault();
               removeFromCart(id);
+              window.location.reload(false);
             }}
           >
             Xóa?
