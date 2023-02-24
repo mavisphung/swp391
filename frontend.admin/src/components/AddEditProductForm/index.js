@@ -24,6 +24,8 @@ import CustomModal from '../Modal';
 import '../AddEditAccountForm/AddEditAccountForm.scss';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
+import { Carousel } from 'antd';
+import { toast } from 'react-toastify';
 
 const categoriesListData = [
   {
@@ -82,13 +84,22 @@ const birdGendersData = [
   },
 ];
 
+const contentStyle = {
+  color: '#fff',
+  textAlign: 'center',
+  height: 300,
+  background: '#364d79',
+};
+
 const AddEditProductForm = () => {
   let navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState({});
   const [productImage, setProductImage] = useState(null);
+  const [productImages, setProductImages] = useState([]);
+  const [imagesList, setImagesList] = useState([]);
+  const [urls, setUrls] = useState([]);
   const [productImageURL, setProductImageURL] = useState('');
-  const [productVideo, setProductVideo] = useState(null);
   const [productVideoURL, setProductVideoURL] = useState('');
   const [productName, setProductName] = useState('');
   const [productCategories, setProductCategories] = useState([]);
@@ -105,7 +116,6 @@ const AddEditProductForm = () => {
   const [show, setShow] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
-  const [showVideoProgress, setShowVideoProgress] = useState(false);
   const [checkEnableUpdateButton, setCheckEnableUpdateButton] = useState(false);
 
   // Get product categories list
@@ -159,45 +169,48 @@ const AddEditProductForm = () => {
 
   // Manage upload image action
   const handleChangeProductImage = (e) => {
-    if (e.target.files[0]) {
-      setProductImage(e.target.files[0]);
+    for (let i = 0; i < e.target.files.length; i++) {
+      if (e.target.files[i]) {
+        setProductImages((prevState) => [...prevState, e.target.files[i]]);
+      }
     }
-    setCheckEnableUpdateButton(true);
   };
 
   const handleUploadImage = () => {
-    const storageRef = ref(storage, `productImages/${productImage.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, productImage);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-        );
-        setProgress(progress);
-        setShowProgress(true);
+    const promises = [];
+    productImages.map((image) => {
+      const storageRef = ref(storage, `productImages/${image.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+      promises.push(uploadTask);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+          );
+          setProgress(progress);
+        },
+        (error) => {
+          console.log(error);
+        },
+        async () => {
+          await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setUrls((prevState) => [...prevState, downloadURL]);
+          });
+          setProgress(false);
+        },
+      );
+    });
 
-        switch (snapshot.state) {
-          case 'paused':
-            console.log('Upload is pause');
-            break;
-          case 'running':
-            console.log('Upload is running');
-            break;
-          default:
-            break;
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setProductImageURL(downloadURL);
-        });
-        setShowProgress(false);
-      },
-    );
+    Promise.all(promises)
+      .then(() => toast.success('Hình ảnh đã dược tải lên', { autoClose: 500 }))
+      .catch((err) => console.log(err));
+  };
+
+  // Manage upload video
+  const handleChangeProductVideo = (e) => {
+    var url = e.target.value.replace('watch?v=', 'embed/');
+    setProductVideoURL(url);
   };
 
   // Manage Modal
@@ -217,7 +230,116 @@ const AddEditProductForm = () => {
     }
   };
 
-  const handleSubmitSuccess = () => {};
+  const handleSubmitSuccess = () => {
+    for (let i = 0; i < productImages.length; i++) {
+      if (urls[i] && productImages[i]) {
+        let imageItem = {
+          url: urls[i],
+          type: handleProcessImageType(
+            productImages[i]?.type.replace('image/', ''),
+          ),
+        };
+        imagesList.push(imageItem);
+      }
+    }
+
+    const createData = {
+      name: 'Chim',
+      medias: getUnique(imagesList, 'url'),
+    };
+    console.log('createData', createData);
+  };
+
+  // Xóa giá trị trùng lặp
+  function getUnique(arr, comp) {
+    const unique = arr
+      .map((e) => e[comp])
+      // store the indexes of the unique objects
+      .map((e, i, final) => final.indexOf(e) === i && i)
+      // eliminate the false indexes & return unique objects
+      .filter((e) => arr[e])
+      .map((e) => arr[e]);
+
+    return unique;
+  }
+
+  // Chuyển kiểu media sang id
+  const handleProcessImageType = (type) => {
+    if (type === 'png') {
+      return 0;
+    } else if (type === 'jpeg') {
+      return 1;
+    } else if (type === 'jpg') {
+      return 2;
+    }
+  };
+
+  const RenderProductFields = () => {
+    return (
+      <Row>
+        <Col md={6}>
+          <Form.Group className="mb-3" controlId="validationProductName">
+            <Form.Label>Tên sản phẩm {redStart}</Form.Label>
+            <Form.Control
+              type="text"
+              maxLength={100}
+              value={productName}
+              onChange={(e) => {
+                setProductName(e.target.value);
+                setCheckEnableUpdateButton(true);
+              }}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              {checkFieldIsEmpty(productName, MSG29)}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        <Col md={6}>
+          <Form.Group
+            className="mb-3"
+            controlId="validationProductShortDescription"
+          >
+            <Form.Label>Phân loại {redStart}</Form.Label>
+            <Form.Select
+              value={shortDescription}
+              onChange={(e) => {
+                setShortDescription(e.target.value);
+                setCheckEnableUpdateButton(true);
+              }}
+              aria-label="Chọn loại chim"
+              required
+            >
+              <option value="">Chọn loại sản phẩm</option>
+            </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              {MSG40}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        <Col md={12}>
+          <Form.Group className="mb-3" controlId="validationProductName">
+            <Form.Label>Mô tả ngắn {redStart}</Form.Label>
+            <Form.Control
+              type="text"
+              maxLength={100}
+              value={productName}
+              onChange={(e) => {
+                setProductName(e.target.value);
+                setCheckEnableUpdateButton(true);
+              }}
+              required
+            />
+            <Form.Control.Feedback type="invalid">
+              {checkFieldIsEmpty(productName, MSG29)}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+      </Row>
+    );
+  };
 
   const RenderBirdFields = () => {
     return (
@@ -257,6 +379,7 @@ const AddEditProductForm = () => {
               required
             >
               <option value="">Chọn loại chim</option>
+              <option value="1">Sample</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               {MSG40}
@@ -394,17 +517,28 @@ const AddEditProductForm = () => {
                     <h5>Chọn ảnh sản phẩm {redStart}</h5>
                   </Col>
                 </Row>
-                {productImageURL && (
-                  <Row>
-                    <Col className="align-items-center">
-                      <Image
-                        className="product-image-file"
-                        src={productImageURL}
-                        alt={productName}
-                      />
-                    </Col>
-                  </Row>
-                )}
+
+                <Row>
+                  <Col>
+                    <Carousel autoplay>
+                      {urls
+                        ? urls.map((imageUrl, index) => {
+                            return (
+                              <div key={index}>
+                                <h3 style={contentStyle}>
+                                  <Image
+                                    src={imageUrl}
+                                    style={{ width: '100%', height: 'auto' }}
+                                    alt="Ảnh"
+                                  />
+                                </h3>
+                              </div>
+                            );
+                          })
+                        : ''}
+                    </Carousel>
+                  </Col>
+                </Row>
 
                 <Row className="justify-content-center">
                   <Col md={3}>
@@ -420,6 +554,7 @@ const AddEditProductForm = () => {
                       <Form.Control
                         width={50}
                         type="file"
+                        multiple={true}
                         onChange={handleChangeProductImage}
                         accept="image/*"
                         className="product-image-file-input"
@@ -428,7 +563,7 @@ const AddEditProductForm = () => {
                       <Button
                         variant="primary"
                         onClick={handleUploadImage}
-                        disabled={productImage ? false : true}
+                        disabled={productImages ? false : true}
                       >
                         Tải ảnh lên
                       </Button>
@@ -443,6 +578,7 @@ const AddEditProductForm = () => {
                 </Form.Group>
               </Col>
 
+              {/* Chọn video cho sản phẩm */}
               <Col md={6}>
                 <Row>
                   <Col className="align-items-center">
@@ -452,41 +588,34 @@ const AddEditProductForm = () => {
                 {productVideoURL && (
                   <Row>
                     <Col className="align-items-center">
-                      <Image
-                        className="product-image-file"
-                        src={productVideoURL}
-                        alt={productName}
-                      />
+                      <div
+                        style={{
+                          textAlign: 'center',
+                        }}
+                      >
+                        <iframe
+                          title="chim chao mao"
+                          width="500"
+                          height="300"
+                          allowFullScreen={true}
+                          src={productVideoURL}
+                        ></iframe>
+                      </div>
                     </Col>
                   </Row>
                 )}
-
-                <Row className="justify-content-center">
-                  <Col md={3}>
-                    {showVideoProgress && (
-                      <ProgressBar variant="info" now={progress} max={100} />
-                    )}
-                  </Col>
-                </Row>
 
                 <Form.Group controlId="validationVideo">
                   <Row className="align-items-center">
                     <Col className="product-image-file-content">
                       <Form.Control
-                        width={50}
-                        type="file"
-                        onChange={handleChangeProductImage}
+                        width={200}
+                        type="text"
+                        placeholder="Thêm link video giới thiệu"
+                        onChange={handleChangeProductVideo}
                         accept="image/*"
-                        className="product-image-file-input"
                         required={productId ? false : true}
                       />
-                      <Button
-                        variant="primary"
-                        onClick={handleUploadImage}
-                        disabled={productVideo ? false : true}
-                      >
-                        Tải video lên
-                      </Button>
                       <Form.Control.Feedback
                         type="invalid"
                         className="product-image-invalid"
@@ -527,7 +656,11 @@ const AddEditProductForm = () => {
               </Form.Group>
             </Col>
 
-            {productCategory === '1' ? <RenderBirdFields /> : <p>Khác</p>}
+            {productCategory === '1' ? (
+              <RenderBirdFields />
+            ) : (
+              <RenderProductFields />
+            )}
 
             <Row>
               <Col md={12}>

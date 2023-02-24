@@ -5,13 +5,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { getBannersListData } from '~/api/banners';
 import { viewBannersList } from '~/system/Constants/LinkURL';
 import CustomSpinner from '~/ui/CustomSpinner';
-import CustomTooltip from '~/ui/CustomTooltip';
 import CustomWrapper from '~/ui/CustomWrapper';
 
 const contentStyle = {
   color: '#fff',
   textAlign: 'center',
-  height: 200,
+  height: 300,
   background: '#364d79',
 };
 
@@ -78,11 +77,9 @@ function Store() {
             </Row>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Link to={`${pathname}/${viewBannersList}`}>
-                <CustomTooltip title="Danh sách banner" color="#014B92">
-                  <Button variant="outline-info" size="xs">
-                    {'To banners List >>>'}
-                  </Button>
-                </CustomTooltip>
+                <Button variant="outline-info" size="xs">
+                  {'Đến danh sách banner >>>'}
+                </Button>
               </Link>
             </div>
           </CustomWrapper>
