@@ -74,7 +74,7 @@ namespace Backend.Service.Services
                 Medias = model.Medias ?? new List<Media>(),
                 CategoryId = category.Id,
                 Category = category,
-                Gender = model.Gender,
+                Gender = model.Gender ?? true,
                 Age = model.Age
             };
 

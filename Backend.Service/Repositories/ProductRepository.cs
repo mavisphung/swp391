@@ -22,11 +22,11 @@ namespace Backend.Service.Repositories
             _logger = logger;
         }
 
-        public Task<Product> GetAsync(int id)
+        public async Task<Product> GetAsync(int id)
         {
             try
             {
-                return _dbSet.Where(p => !p.IsDeleted && p.Id == id).Include("Category").FirstAsync();
+                return await _dbSet.Where(p => !p.IsDeleted && p.Id == id).Include("Category").FirstAsync();
             } catch (Exception ex)
             {
                 Console.WriteLine($"ProductRepository.GetAsync : {ex.Message}");
