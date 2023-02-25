@@ -71,7 +71,7 @@ namespace Backend.Service.Helper.Authentication
                 new Claim("id", claims["user_id"].ToString()),
                 new Claim("name", claims["name"].ToString()),
                 new Claim("email", claims["email"].ToString()),
-
+                new Claim(ClaimTypes.Role, claims[ClaimTypes.Role].ToString())
             };
         }
     }
