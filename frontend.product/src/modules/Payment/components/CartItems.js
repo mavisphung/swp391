@@ -1,7 +1,13 @@
 import React from "react";
 import { Col, Image, Row } from "react-bootstrap";
 
-function CartItems({ productImage, productName, productType, productPrice }) {
+function CartItems({
+  productImage,
+  productName,
+  productType,
+  productPrice,
+  productAmount,
+}) {
   return (
     <Row className="pb-2">
       <Row>
@@ -24,7 +30,7 @@ function CartItems({ productImage, productName, productType, productPrice }) {
             <Col className="">
               <div className="form-outline w-25 h-25">
                 <input
-                  defaultValue={"1"}
+                  defaultValue={productAmount}
                   type="text"
                   id="input1"
                   className="form-control p-0 text-center"

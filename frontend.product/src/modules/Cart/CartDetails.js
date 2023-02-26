@@ -33,7 +33,7 @@ function CartDetails() {
           <h5>Hiện đang có {cartList.length} sản phẩm trong giỏ hàng</h5>
           <hr />
           {cartList.map((e) => {
-            total += e.price * 1;
+            total += e.price * e.amount;
             const img = e.medias[1].url;
             return (
               <CartItem
