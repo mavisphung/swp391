@@ -244,8 +244,7 @@ function PaymentPage() {
             >
               Thanh toán
             </Button>
-            {/* <Button onClick={notify}>Toast</Button> */}
-            <ToastContainer />
+            <Button onClick={notify}>Toast</Button>
           </Row>
         </Col>
       </Container>

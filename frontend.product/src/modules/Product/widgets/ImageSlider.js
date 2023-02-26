@@ -15,15 +15,11 @@ function ImageSlider({ imgs }) {
 
   return (
     <ImageGallery
-      // ref={this.imageSliderRef}
       items={images}
       infinite={true}
       lazyLoad={true}
       autoPlay={false}
       slideDuration={1000}
-      // onSlide={() => this.onEventTrigger("onSlide")}
-      // onClick={() => this.onEventTrigger("onClick")}
-      // onTouchMove={() => this.onEventTrigger("onTouchMove")}
       renderLeftNav={(_, __) => <span></span>}
       renderRightNav={(_, __) => <span></span>}
       showPlayButton={false}
