@@ -18,10 +18,10 @@ function ProductOrderPane2({ bird }) {
     <div id="order-pane">
       <h4 style={{ fontWeight: 400 }}>{bird.name}</h4>
       <span>Mã chuồng: </span>
-      <span>{bird.productCode.substring(0, 7)}</span>
+      <span>{bird.productCode.substring(0, 6)}</span>
       <br />
       <span>Ngày đăng: </span>
-      <span>{bird.createdDate}</span>
+      <span>{bird.createdDate.substring(0, 10)}</span>
       <br />
       <span>Tuổi: </span>
       <span></span>

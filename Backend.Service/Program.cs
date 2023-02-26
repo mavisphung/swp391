@@ -31,7 +31,8 @@ builder.Services.AddCors(options =>
                           builder.WithOrigins("*")
                                 .AllowAnyOrigin()
                                 .AllowAnyMethod()
-                                .AllowAnyHeader();
+                                .AllowAnyHeader()
+                                .WithExposedHeaders("X-Pagination");
                       });
 });
 
@@ -41,6 +42,7 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateProductExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateBannerExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateAccountExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<LoginExample>();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateCategoryExample>();
 
 // Add services to the container.
 // Must enable XML comment to generate exactly what we want
@@ -131,6 +133,7 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DataSource"));
+    opt.EnableSensitiveDataLogging();
 });
 
 //--------------------------------------------------------------

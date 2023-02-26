@@ -7,6 +7,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment/moment';
 
 import CustomTooltip from '~/ui/CustomTooltip';
+import CustomSpinner from '~/ui/CustomSpinner';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
@@ -22,35 +23,12 @@ import {
   getCustomerOrderListData,
   getFilterCustomerOrderListData,
 } from '~/api/orders';
+import { orderStatusList } from '~/system/Data/status';
 
 import '../../../styles/Component/label.scss';
 import './OrdersList.scss';
-import CustomSpinner from '~/ui/CustomSpinner';
 
 const { Search } = Input;
-
-const statusList = [
-  {
-    key: '',
-    tab: 'Tất cả',
-  },
-  {
-    key: 4,
-    tab: 'Chờ xác nhận',
-  },
-  {
-    key: 1,
-    tab: 'Đang xử lí',
-  },
-  {
-    key: 2,
-    tab: 'Thành công',
-  },
-  {
-    key: 3,
-    tab: 'Đã hủy',
-  },
-];
 
 const OrdersList = () => {
   const { pathname } = useLocation();
@@ -74,18 +52,20 @@ const OrdersList = () => {
       try {
         if (searchOrderId === '' && orderStatus === '') {
           const data = await getCustomerOrderListData(pageIndex);
-          setOrders(data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          setOrders(data.data.map((order) => order));
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         } else {
           const data = await getFilterCustomerOrderListData(
             pageIndex,
             orderStatus,
             searchOrderId,
           );
-          setOrders(data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          setOrders(data.data.map((order) => order));
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         }
         setLoading(false);
         setLoadingSearch(false);
@@ -207,7 +187,7 @@ const OrdersList = () => {
             <h2>Danh sách đơn đặt hàng</h2>
           </div>
           <Card
-            tabList={statusList}
+            tabList={orderStatusList}
             activeTabKey={orderStatus}
             onTabChange={(rowkey) => {
               onStatusChange(rowkey);

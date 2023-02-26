@@ -1,10 +1,11 @@
 import { Col, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 import "./HomeLayout.scss";
+import "react-toastify/dist/ReactToastify.css";
 import ProductCarousel from "./ProductCarousel";
 import CategoryCard from "./CategoryCard";
-// import api from "~/context/AppApi";
 import { cateList } from "~/data/Products";
 import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
 import api from "~/context/AppApi";
@@ -32,9 +33,9 @@ function HomePage() {
         const tmp2 = [];
         const tmp3 = [];
         response.data.map((p) => {
-          if (p.categoryType == 1) {
+          if (p.categoryType === 1) {
             tmp1.push(p);
-          } else if (p.categoryType == 2) {
+          } else if (p.categoryType === 2) {
             tmp2.push(p);
           } else {
             tmp3.push(p);
@@ -111,11 +112,8 @@ function HomePage() {
           <ProductCarousel list={foods} />
         </Row>
 
-        {/* <Row>
-          <Card>
-            <Card.Img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"></Card.Img>
-          </Card>
-        </Row> */}
+        {/* <button onClick={() => toast("Loading..")}>Show Toast</button>
+        <ToastContainer style={{ color: "blue" }} /> */}
         <div style={{ paddingBottom: "150px" }}></div>
       </div>
     </div>
