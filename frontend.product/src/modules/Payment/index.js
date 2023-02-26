@@ -93,7 +93,7 @@ function PaymentPage() {
 
   return (
     <Container>
-      <div>
+      {/* <div>
         <Breadcrumb separator={<RightOutlined />}>
           <Breadcrumb.Item href="">
             <HomeFilled />
@@ -106,7 +106,7 @@ function PaymentPage() {
             <span>Phương thức thanh toán</span>
           </Breadcrumb.Item>
         </Breadcrumb>
-      </div>
+      </div> */}
 
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
       <Col className="pb-3">
