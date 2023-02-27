@@ -1,12 +1,12 @@
 class Category {
   id;
   name;
-  imgUrl;
+  image;
 
-  constructor(id, name, imgUrl) {
+  constructor(id, name, image) {
     this.id = id;
     this.name = name;
-    this.imgUrl = imgUrl;
+    this.image = image;
   }
 }
 export default Category;

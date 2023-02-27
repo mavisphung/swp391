@@ -2,31 +2,30 @@ import { HomeFilled, RightOutlined } from "@ant-design/icons";
 import { Alert } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
-import {
-  Breadcrumb,
-  Button,
-  Col,
-  Container,
-  Form,
-  // Image,
-  Row,
-} from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Breadcrumb, Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import config from "~/config";
+import { emptyCart, getCart } from "~/common/LocalStorageUtil";
 
 function PaymentPage() {
   const location = useLocation();
-  const { name, tel, email, address, cart } = location.state;
+  const { name, tel, email, address, commune, district, province, cart } =
+    location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(1);
+  const [note, setNote] = useState("");
 
   console.log("NAME", name);
   console.log("TEL", tel);
   console.log("EMAIL", email);
+  console.log("COMMUNE", commune);
+  console.log("DISTRICT", district);
+  console.log("PROVINCE", province);
   console.log("ADDRESS", address);
   console.log("CART", cart);
 
@@ -38,6 +37,10 @@ function PaymentPage() {
     sum = sum + c.price;
   });
 
+  const notify = () => {
+    toast("Đặt hàng thành công!");
+  };
+
   let items = cart.map((c) => {
     return {
       productId: c.id,
@@ -48,7 +51,8 @@ function PaymentPage() {
     try {
       const order = {
         cartItems: items,
-        paymentMethod: 1,
+        paymentMethod: paymentMethod,
+        note: note,
         customer: {
           email: email,
           fullname: name,
@@ -61,14 +65,26 @@ function PaymentPage() {
         "https://localhost:7179/api/order/unauth",
         order
       );
-      toast("Successfully!!!");
+      // toast("Successfully!!!");
       console.log(request.data);
+      emptyCart();
+      // window.location.reload(false);
       navigate(config.routes.home);
     } catch (e) {
-      toast("Error!!!");
+      // toast("Error!!!");
       console.log(e);
     }
   };
+
+  const handleNoteChanged = (event) => {
+    setNote(event.target.value);
+    console.log(event.target.value);
+  };
+
+  function checkout() {
+    notify();
+    postOrder();
+  }
 
   return (
     <Container>
@@ -86,23 +102,49 @@ function PaymentPage() {
           </Breadcrumb.Item>
         </Breadcrumb>
       </div>
+
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
+      <Col className="pb-3">
+        <Container className="square rounded border border-2 border-dark">
+          <Container className="d-flex py-2 mx-2 fs-5">
+            <Col>
+              <Row className="fw-bold">Thông tin tài khoản</Row>
+              <Row>{`Tên khách hàng: ${name}`}</Row>
+              <Row>{`Email: ${email}`}</Row>
+              <Row>{`Số điện thoại: ${tel}`}</Row>
+            </Col>
+            <Col>
+              <Row className="fw-bold">Địa chỉ giao hàng</Row>
+              <Row>{`Tên khách hàng: ${name}`}</Row>
+              <Row>{`Email: ${email}`}</Row>
+              <Row>{`Số điện thoại: ${tel}`}</Row>
+              <Row>{`Địa chỉ: ${address}`}</Row>
+            </Col>
+          </Container>
+        </Container>
+      </Col>
       <Container className="d-flex p-0 pb-2">
         <Col className="pe-5" md>
-          {cart.map((c) => (
+          {cart.map((c, index) => (
             <CartItems
+              key={index}
               productName={c.name}
               productImage={c.medias[1].url}
               productType={c.categoryName}
               productPrice={formatPrice(c.price)}
+              productAmount={c.amount}
             />
           ))}
 
           <Row>
             <Col>
-              <a href="/" style={{ color: "#ee3e6a" }} className="h6">
+              <Link
+                to={config.routes.cart}
+                style={{ color: "#ee3e6a" }}
+                className="h6"
+              >
                 Thay đổi giỏ hàng
-              </a>
+              </Link>
             </Col>
             <Col className="d-flex justify-content-end align-items-center">
               Tổng cộng:{" "}
@@ -140,6 +182,8 @@ function PaymentPage() {
               rows="7"
               placeholder="Ghi chú nếu địa chỉ khó tìm"
               required
+              value={note}
+              onChange={handleNoteChanged}
             ></textarea>
           </Row>
         </Col>
@@ -153,7 +197,10 @@ function PaymentPage() {
                 id="vnPayRadio"
                 label="Bằng VNPay"
                 // checked={payAdvanced === "VNPay"}
-                onClick={() => setPayAdvanced(false)}
+                onClick={() => {
+                  setPayAdvanced(false);
+                  setPaymentMethod(1);
+                }}
               />
               <Form.Check
                 type={"radio"}
@@ -161,14 +208,20 @@ function PaymentPage() {
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
                 // checked={payAdvanced === "CashPay"}
-                onClick={() => setPayAdvanced(false)}
+                onClick={() => {
+                  setPayAdvanced(false);
+                  setPaymentMethod(2);
+                }}
               />
               <Form.Check
                 type={"radio"}
                 name="paymentGroup"
                 id="payInAdvanceRadio"
                 label="Đặt cọc trước 50%"
-                onClick={() => setPayAdvanced(true)}
+                onClick={() => {
+                  setPayAdvanced(true);
+                  setPaymentMethod(3);
+                }}
               />
               <Form.Check
                 type={"radio"}
@@ -176,15 +229,22 @@ function PaymentPage() {
                 id="shippingPayRadio"
                 label="Thanh toán trực tiếp cho nhân viên giao hàng"
                 // checked={payAdvanced === "ShippingPay"}
-                onClick={() => setPayAdvanced(false)}
+                onClick={() => {
+                  setPayAdvanced(false);
+                  setPaymentMethod(4);
+                }}
               />
             </Form>
           </Row>
           <Row>
-            {" "}
-            <Button className="btn-pay mt-3" onClick={postOrder}>
+            <Button
+              variant="primary"
+              className="btn-pay mt-3"
+              onClick={checkout}
+            >
               Thanh toán
             </Button>
+            <Button onClick={notify}>Toast</Button>
           </Row>
         </Col>
       </Container>

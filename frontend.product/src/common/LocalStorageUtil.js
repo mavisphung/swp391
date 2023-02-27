@@ -42,3 +42,12 @@ export function getCartAmount() {
   if (!cart) cart = [];
   return cart.length;
 }
+
+export function emptyCart() {
+  const jsonCart = localStorage.getItem("CART");
+  let cart = JSON.parse(jsonCart);
+  // console.log(`current cart: ${cart}`);
+  if (cart != null) cart = [];
+  // console.log(`current cart: ${cart}`);
+  localStorage.setItem("CART", JSON.stringify(cart));
+}
