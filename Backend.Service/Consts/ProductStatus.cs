@@ -2,7 +2,7 @@
 {
     public enum ProductStatus
     {
-        OutOfStock, // 0
+        OutOfStock = 1, // 0
         Available   // 1
     }
 }

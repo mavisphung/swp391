@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import "../ProductLayout.scss";
 import config from "~/config";
-import { addToCart } from "~/common/LocalStorageUtil";
 import { formatPrice } from "~/common/Helper";
+import { useUserCart } from "~/context/UserCartContext";
 
 function ProductOrderPane({ pro }) {
   // name = name ? name : "Lồng kỹ chào mào";
@@ -17,11 +17,15 @@ function ProductOrderPane({ pro }) {
   // price = price ? price : 950000;
   // cate = cate ? cate : ["64 nan", "72 nan", "90 nan"];
 
+  const { dispatch } = useUserCart();
   const navigate = useNavigate();
 
   const handleBuyClick = (e) => {
     e.preventDefault();
-    addToCart(pro);
+    dispatch({
+      type: "ADD_TO_CART",
+      payload: pro,
+    });
     navigate(config.routes.cart);
   };
 
@@ -55,7 +59,10 @@ function ProductOrderPane({ pro }) {
           className="btn-add-cart"
           onClick={(e) => {
             e.preventDefault();
-            addToCart(pro);
+            dispatch({
+              type: "ADD_TO_CART",
+              payload: pro,
+            });
           }}
         >
           Thêm giỏ hàng

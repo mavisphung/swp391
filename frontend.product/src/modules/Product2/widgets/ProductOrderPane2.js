@@ -3,14 +3,18 @@ import { useNavigate } from "react-router-dom";
 
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
-import { addToCart } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 function ProductOrderPane2({ bird }) {
+  const { dispatch } = useUserCart();
   const navigate = useNavigate();
 
   const handleBuyClick = (e) => {
     e.preventDefault();
-    addToCart(bird);
+    dispatch({
+      type: "ADD_TO_CART",
+      payload: bird,
+    });
     navigate(config.routes.cart);
   };
 
@@ -36,7 +40,10 @@ function ProductOrderPane2({ bird }) {
           className="btn-add-cart"
           onClick={(e) => {
             e.preventDefault();
-            addToCart(bird);
+            dispatch({
+              type: "ADD_TO_CART",
+              payload: bird,
+            });
           }}
         >
           Thêm giỏ hàng

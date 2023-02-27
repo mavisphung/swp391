@@ -13,9 +13,10 @@ function getHistory(breadcrumb, index) {
 function AppTrace() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { breadcrumb } = location.state;
-
-  console.log(breadcrumb);
+  let breadcrumb;
+  if (location.state) {
+    breadcrumb = location.state.breadcrumb;
+  }
 
   return (
     <Breadcrumb
@@ -51,7 +52,7 @@ function AppTrace() {
           </Breadcrumb.Item>
         ))
       ) : (
-        <span></span>
+        <Breadcrumb.Item></Breadcrumb.Item>
       )}
     </Breadcrumb>
   );
