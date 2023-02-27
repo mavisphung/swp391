@@ -24,11 +24,11 @@ import CustomSpinner from '~/ui/CustomSpinner';
 
 const productStatus = [
   {
-    id: 1,
+    id: 2,
     name: 'Có sẵn',
   },
   {
-    id: 0,
+    id: 1,
     name: 'Hết hàng',
   },
 ];
@@ -49,15 +49,22 @@ const ProductsList = () => {
 
   // Get all products
   const getProductsList = useCallback(
-    async (pageIndex, searchProductName, searchProductType) => {
+    async (
+      pageIndex,
+      searchProductName,
+      searchProductType,
+      searchProductStatus,
+    ) => {
       const data = await getProductListData(
         pageIndex,
         searchProductName,
         searchProductType,
+        searchProductStatus,
       );
       setProducts(data.data.map((product) => product));
 
       let paginationObj = JSON.parse(data.headers['x-pagination']);
+      setPageIndex(paginationObj.CurrentPage);
       setPageSize(paginationObj.PageSize);
       setTotalCount(paginationObj.TotalCount);
       setLoading(false);
@@ -67,10 +74,21 @@ const ProductsList = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      getProductsList(pageIndex, searchProductName, searchProductType);
+      getProductsList(
+        pageIndex,
+        searchProductName,
+        searchProductType,
+        searchProductStatus,
+      );
     }, 400);
     return () => clearTimeout(delayDebounceFn);
-  }, [getProductsList, pageIndex, searchProductName, searchProductType]);
+  }, [
+    getProductsList,
+    pageIndex,
+    searchProductName,
+    searchProductType,
+    searchProductStatus,
+  ]);
 
   // Manage table
   const columns = [
@@ -283,7 +301,7 @@ const ProductsList = () => {
               >
                 <option value="">Chọn trạng thái</option>
                 {productStatus.map((status, index) => (
-                  <option key={index} value={status.status}>
+                  <option key={index} value={status.id}>
                     {status.name}
                   </option>
                 ))}

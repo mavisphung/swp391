@@ -14,6 +14,7 @@ import {
   MSG15,
   MSG29,
   MSG35,
+  MSG36,
   MSG37,
   MSG39,
   MSG40,
@@ -38,6 +39,9 @@ import { Carousel } from 'antd';
 import { toast } from 'react-toastify';
 import { categoriesTypesList } from '~/system/Data/types';
 import { birdAgePattern } from '~/system/Constants/constants';
+import { getCategoriesListData } from '~/api/categories';
+import { addNewProduct } from '~/api/products';
+import { viewProductsList } from '~/system/Constants/LinkURL';
 
 const shortDescriptionListData = [
   {
@@ -86,6 +90,7 @@ const AddEditProductForm = () => {
   const [productVideoURL, setProductVideoURL] = useState('');
   const [productName, setProductName] = useState('');
   const [productCategories, setProductCategories] = useState([]);
+  const [productSubCategories, setProductSubCategories] = useState([]);
   const [productCategory, setProductCategory] = useState('1'); // Main category
   const [productCategoryId, setProductCategoryId] = useState(''); // Sub Category
   const [shortDescriptionList, setShortDescriptionList] = useState([]);
@@ -118,6 +123,25 @@ const AddEditProductForm = () => {
   useEffect(() => {
     getProductCategories();
   }, [getProductCategories]);
+
+  // Get product sub categories list
+  const getSubProductCategories = useCallback(async (productCategory) => {
+    try {
+      const data = await getCategoriesListData(
+        1,
+        100,
+        '',
+        parseInt(productCategory),
+      );
+      setProductSubCategories(data.data.map((category) => category));
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  useEffect(() => {
+    getSubProductCategories(productCategory);
+  }, [getSubProductCategories, productCategory]);
 
   // Get product short description list
   const getProductShortDescription = useCallback(async () => {
@@ -197,7 +221,9 @@ const AddEditProductForm = () => {
 
   // Manage upload video
   const handleChangeProductVideo = (e) => {
-    var url = e.target.value.replace('watch?v=', 'embed/');
+    if (e.target.value.includes('youtube')) {
+      var url = e.target.value.replace('watch?v=', 'embed/');
+    }
     setProductVideoURL(url);
   };
 
@@ -219,33 +245,48 @@ const AddEditProductForm = () => {
   };
 
   const handleSubmitSuccess = () => {
-    for (let i = 0; i < productImages.length; i++) {
-      if (urls[i] && productImages[i]) {
-        let imageItem = {
-          url: urls[i],
-          type: handleProcessImageType(
-            productImages[i]?.type.replace('image/', ''),
-          ),
-        };
-        imagesList.push(imageItem);
+    if (productId) {
+      console.log('Update action');
+    } else {
+      for (let i = 0; i < productImages.length; i++) {
+        if (urls[i] && productImages[i]) {
+          let imageItem = {
+            url: urls[i],
+            type: handleProcessImageType(
+              productImages[i]?.type.replace('image/', ''),
+            ),
+          };
+          imagesList.push(imageItem);
+        }
       }
+
+      const createData = {
+        name: productName,
+        medias: [{ url: productVideoURL, type: 5 }].concat(
+          getUnique(imagesList, 'url'),
+        ),
+        description: description,
+        price: parseInt(productPrice),
+        quantity: parseInt(quantity),
+        gender: gender === '' ? null : gender === 'true' ? true : false,
+        shortDescription: shortDescription,
+        age: age,
+        categoryId: parseInt(productCategoryId),
+        // categoryType: productCategory,
+      };
+      console.log('createData', createData);
+      // Call api
+      addNewProduct(createData);
+      toast.success(MSG36, { autoClose: 1500 });
     }
 
-    const createData = {
-      name: productName,
-      medias: [{ url: productVideoURL, type: 5 }].concat(
-        getUnique(imagesList, 'url'),
-      ),
-      description: description,
-      price: productPrice,
-      quantity: quantity,
-      gender: gender === '' ? '' : gender === 'true' ? true : false,
-      shortDescription: shortDescription,
-      age: age,
-      categoryId: productCategoryId,
-      categoryType: productCategory,
-    };
-    console.log('createData', createData);
+    setTimeout(
+      () =>
+        navigate({
+          pathname: `/dashboard/${viewProductsList}`,
+        }),
+      800,
+    );
   };
 
   // Xóa giá trị trùng lặp
@@ -429,6 +470,7 @@ const AddEditProductForm = () => {
                     setCheckEnableUpdateButton(true);
                   }}
                   aria-label="Chọn loại sản phẩm"
+                  disabled={productId ? true : false}
                   required
                 >
                   {productCategories.map((category, index) => (
@@ -481,7 +523,11 @@ const AddEditProductForm = () => {
                       required
                     >
                       <option value="">Chọn loại chim</option>
-                      <option value="1">Sample</option>
+                      {productSubCategories.map((type, index) => (
+                        <option key={index} value={type.id}>
+                          {type.name}
+                        </option>
+                      ))}
                     </Form.Select>
                     <Form.Control.Feedback type="invalid">
                       {MSG40}
@@ -639,11 +685,15 @@ const AddEditProductForm = () => {
                         setProductCategoryId(e.target.value);
                         setCheckEnableUpdateButton(true);
                       }}
-                      aria-label="Chọn loại chim"
+                      aria-label="Chọn loại sản phẩm"
                       required
                     >
                       <option value="">Chọn loại sản phẩm</option>
-                      <option value="1">Sample</option>
+                      {productSubCategories.map((type, index) => (
+                        <option key={index} value={type.id}>
+                          {type.name}
+                        </option>
+                      ))}
                     </Form.Select>
                     <Form.Control.Feedback type="invalid">
                       {MSG40}

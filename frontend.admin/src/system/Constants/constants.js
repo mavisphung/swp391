@@ -24,8 +24,8 @@ export const cancelled = 3;
 export const pending = 4;
 
 // Status of product
-export const outOfStock = 0;
-export const available = 1;
+export const outOfStock = 1;
+export const available = 2;
 
 // Date format
 export const defaultDBDateFormatter = 'DD-MM-YYYY HH:mm';
