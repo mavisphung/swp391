@@ -95,6 +95,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IBannerRepository, BannerRepository>();
+builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 
 // Add services
 builder.Services.AddTransient<UserService, UserService>();
@@ -103,7 +104,10 @@ builder.Services.AddTransient<CategoryService, CategoryService>();
 builder.Services.AddTransient<ProductService, ProductService>();
 builder.Services.AddTransient<BannerService, BannerService>();
 builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
+builder.Services.AddTransient<VNPayConst, VNPayConst>();
+builder.Services.AddTransient<PaymentService, PaymentService>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
+
 
 // Add Exception handler
 builder.Services.AddTransient<ExceptionHandler, ExceptionHandler>();

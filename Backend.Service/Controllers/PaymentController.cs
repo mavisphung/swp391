@@ -18,16 +18,42 @@ namespace Backend.Service.Controllers
     public class PaymentController : PagedController
     {
         private readonly PaymentService _paymentService;
-        public PaymentController(PaymentService paymentService)
+        private readonly ILogger<PaymentController> _logger;
+        public PaymentController(PaymentService paymentService, ILogger<PaymentController> logger)
         {
             _paymentService = paymentService;
+            _logger = logger;        }
+
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestModel paymentRequestModel)
+        {
+            var data = await _paymentService.CreatePayment(paymentRequestModel);
+            return Ok(data);
         }
 
-
-        public async Task<IActionResult> CreatePayment(PaymentRequestModel paymentRequestModel)
+        [HttpGet]
+        public async Task<IActionResult> GetPaymentByFilter([FromQuery]PaymentFilterParameter payload)
         {
-            _paymentService.CreatePayment(paymentRequestModel);
-            return Ok();
+            _logger.LogInformation("Get all product invoked...");
+            var data = await _paymentService.GetAllAsync(payload);
+            return Ok(data);
+        }
+
+        [HttpGet("config")]
+        public async Task<IActionResult> GetVnPayConfiguration()
+        {
+            _logger.LogInformation("Get vnpay configuration");
+            var data = _paymentService.GetVnPayConfig();
+            return Ok(data);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            _logger.LogInformation($"Get product with id {id}...");
+            var response = await _paymentService.GetPaymentById(id);
+            return Ok(response);
         }
     }
 }

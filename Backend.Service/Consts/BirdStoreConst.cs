@@ -18,20 +18,10 @@
             return _configuration.GetSection("AppSettings:Token").Value;
         }
 
-        public string getVNPayUrl()
+        public string GetUTC7TimeZone()
         {
-            return _configuration.GetSection("AppSettings:VNPay:Url").Value;
-        }
-
-        public string getVNPayTmnCode()
-        {
-            return _configuration.GetSection("AppSettings:VNPay:TmnCode").Value;
-        }
-
-        public string getHashSecret()
-        {
-            return _configuration.GetSection("AppSettings:VNPay:HashSecret").Value;
-        }
+            return _configuration["AppSettings:TimeZoneId"];
+        }        
     }
 }
 

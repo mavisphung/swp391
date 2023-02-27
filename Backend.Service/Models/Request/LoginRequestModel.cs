@@ -8,9 +8,9 @@ namespace Backend.Service.Models.Request
 {
     public class LoginRequestModel
     {
-        [AttributeNotBlank(ErrorCode = 900, ErrorMessage = "Email is not empty")]
+        [AttributeNotBlank(ErrorMessage = "Email is not empty")]
         public string Email { get; set; }
-        [AttributeNotBlank(ErrorCode = 901, ErrorMessage = "Password is not empty")]
+        [AttributeNotBlank(ErrorMessage = "Password is not empty")]
         public string Password { get; set; }
     }
 }

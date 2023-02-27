@@ -31,6 +31,8 @@ namespace Backend.Service.Consts
         CATEGORY_NOT_FOUND,
         PRODUCT_NOT_FOUND,
         BANNER_NOT_FOUND,
+        [Description("Not existed in database")]
+        DATA_NOT_FOUND
     }
 
     public static class EnumStringMessage

@@ -4,7 +4,6 @@
     {
         Vnpay,             // 0
         AtStore,           // 1
-        PayInAdvance50,    // 2
-        Cod,               // 3
+        Cod,               // 2
     }
 }

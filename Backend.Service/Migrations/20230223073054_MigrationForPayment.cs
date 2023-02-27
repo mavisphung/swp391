@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Backend.Service.Migrations
 {
-    public partial class AddPayment : Migration
+    public partial class MigrationForPayment : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,6 +22,7 @@ namespace Backend.Service.Migrations
                     PaymentType = table.Column<int>(type: "integer", nullable: false),
                     PaidDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsSuccess = table.Column<bool>(type: "boolean", nullable: false),
+                    OrderId = table.Column<int>(type: "integer", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedBy = table.Column<string>(type: "text", nullable: false),
                     AddedBy = table.Column<string>(type: "text", nullable: false),
@@ -46,7 +47,7 @@ namespace Backend.Service.Migrations
                 principalTable: "Orders",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
-            }
+        }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {

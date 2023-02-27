@@ -13,8 +13,13 @@ namespace Backend.Service.Entities
         // Giá tiền
         public int Amount { get; set; }
         public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Vnpay;
+        public PaymentType PaymentType { get; set; } = PaymentType.Full;
         public DateTime PaidDate { get; set; } = DateTime.UtcNow;
+        public bool IsSuccess { get; set; }
 
         // Order foreign key
+        public int OrderId { get; set; }
+        public Order Order { get; set; }
+     
     }
 }

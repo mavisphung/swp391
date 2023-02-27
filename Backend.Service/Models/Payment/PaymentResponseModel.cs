@@ -1,26 +1,24 @@
 ﻿namespace Backend.Service.Models.Payment
 {
-    public class PaymentResponseModel
+    public class PaymentResponseModel : BaseModel<Entities.Payment>
     {
-        //  Được cấp bởi VNPAY
-        public string MerchantId { get; set; }
-        // 	Tên Website Merchant    
-        public string MerchantName { get; set; }
-        // 	Mã GD của website merchant
-        public string MerchantTransactionReference { get; set; }
-        // 	Thông tin mô tả từ website merchant
-        public string TransactionInfo { get; set; }
-        // 	Số tiền được thanh toán
-        public double Ammount { get; set; }
-        // 	Đơn vị tiền tệ được thanh toán
-        public string CurrentCode { get; set; }
-        // 	Trạng thái GD
-        public bool TransactionResponseCode { get; set; }
-        // 	Thông báo từ cổng thanh toán
-        public string Message { get; set; }
-        // 	Mã GD trên cổng thanh toán
-        public string TransactionNumber { get; set; }
-        //  Ngân hàng GD
-        public string Bank { get; set; }
+        public int ? Id { get; set; }
+        public Guid PaymentCode { get; set; }
+        public int OrderId { get; set; }
+        public DateTime OrderDate { get; set; }
+        public bool IsSuccess { get; set; }
+        public int PaymentMethod { get; set; }
+        public int PaymentType { get; set; }
+
+        public PaymentResponseModel(Entities.Payment entity) : base(entity)
+        {
+            Id = entity.Id;
+            PaymentCode = entity.PaymentCode;
+            OrderId = entity.OrderId;
+            OrderDate = entity.PaidDate;
+            IsSuccess = entity.IsSuccess;
+            PaymentMethod = (int) entity.PaymentMethod;
+            PaymentType = (int) entity.PaymentType;
+        }
     }
 }

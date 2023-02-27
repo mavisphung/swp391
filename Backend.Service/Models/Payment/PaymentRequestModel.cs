@@ -1,13 +1,19 @@
-﻿using Backend.Service.Consts;
+﻿using Backend.Service.Annotations;
+using Backend.Service.Consts;
 
 namespace Backend.Service.Models.Payment
 {
     public class PaymentRequestModel
     {
-        public Guid PaymentCode { get; set; }
-
+        [AttributeNotBlank(ErrorMessage = "Amount is not empty")]
         public int Amount { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
-        public DateTime PaidDate { get; set; } = DateTime.UtcNow;
+        [AttributeNotBlank(ErrorMessage = "Payment Method is not empty")]
+        public int PaymentMethod { get; set; }
+        [AttributeNotBlank(ErrorMessage = "Order Id is not empty")]
+        public int OrderId { get; set; }
+        [AttributeNotBlank(ErrorMessage = "Payment Type is not empty")]
+        public int PaymentType { get; set; }
+        [AttributeNotBlank(ErrorMessage = "Is Success is not empty")]
+        public bool IsSuccess { get; set; }
     }
 }

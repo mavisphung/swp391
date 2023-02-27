@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
+using System.Text;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Helper;
-using Backend.Service.Helper.VNPay;
 using Backend.Service.Models.Payment;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
@@ -16,44 +16,121 @@ namespace Backend.Service.Services
     public class PaymentService
     {
         private readonly IPaymentRepository _paymentRepository;
-        private readonly BirdStoreConst _birdStoreConst;
-        public PaymentService(IPaymentRepository paymentRepository, BirdStoreConst birdStoreConst)
+        private readonly VNPayConst _vnPayConst;
+        public PaymentService(IPaymentRepository paymentRepository, VNPayConst vnPayConst)
         {
             _paymentRepository = paymentRepository;
-            _birdStoreConst = birdStoreConst;
+            _vnPayConst = vnPayConst;
         }
 
-        public PaymentResponseModel CreatePayment(PaymentRequestModel paymentRequestModel)
+        public async Task<PaymentResponseModel> CreatePayment(PaymentRequestModel paymentRequestModel)
         {
-            PaymentResponseModel response = new PaymentResponseModel();
-            switch (paymentRequestModel.PaymentMethod)
+
+            DateTime orderDate = DateTime.UtcNow;
+
+            Guid guid = this.ToGuid(paymentRequestModel, orderDate);
+
+            var newPayment = new Payment
             {
-                case Consts.PaymentMethod.AtStore:
-                    
-                    break;
-                case Consts.PaymentMethod.Vnpay:
-                    string url = _birdStoreConst.getVNPayUrl();
-                    string tmnCode = _birdStoreConst.getVNPayTmnCode();
-                    string hashSecret = _birdStoreConst.getHashSecret();
-                    PayLib pay = new PayLib();
-                    pay.AddRequestData("vnp_Version", "2.1.0"); //Phiên bản api mà merchant kết nối. Phiên bản hiện tại là 2.1.0
-                    pay.AddRequestData("vnp_Command", "pay"); //Mã API sử dụng, mã cho giao dịch thanh toán là 'pay'
-                    pay.AddRequestData("vnp_TmnCode", tmnCode); //Mã website của merchant trên hệ thống của VNPAY (khi đăng ký tài khoản sẽ có trong mail VNPAY gửi về)
-                    pay.AddRequestData("vnp_Amount", "1000000"); //số tiền cần thanh toán, công thức: số tiền * 100 - ví dụ 10.000 (mười nghìn đồng) --> 1000000
-                    pay.AddRequestData("vnp_BankCode", ""); //Mã Ngân hàng thanh toán (tham khảo: https://sandbox.vnpayment.vn/apis/danh-sach-ngan-hang/), có thể để trống, người dùng có thể chọn trên cổng thanh toán VNPAY
-                    pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss")); //ngày thanh toán theo định dạng yyyyMMddHHmmss
-                    pay.AddRequestData("vnp_CurrCode", "VND"); //Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ VND
-                    pay.AddRequestData("vnp_IpAddr", Util.GetIpAddress()); //Địa chỉ IP của khách hàng thực hiện giao dịch
-                    pay.AddRequestData("vnp_Locale", "vn"); //Ngôn ngữ giao diện hiển thị - Tiếng Việt (vn), Tiếng Anh (en)
-                    pay.AddRequestData("vnp_OrderInfo", "Thanh toan don hang"); //Thông tin mô tả nội dung thanh toán
-                    pay.AddRequestData("vnp_OrderType", "other"); //topup: Nạp tiền điện thoại - billpayment: Thanh toán hóa đơn - fashion: Thời trang - other: Thanh toán trực tuyến
-                    pay.AddRequestData("vnp_ReturnUrl", ""); //URL thông báo kết quả giao dịch khi Khách hàng kết thúc thanh toán
-                    pay.AddRequestData("vnp_TxnRef", DateTime.Now.Ticks.ToString()); //mã hóa đơn
-                    break;
-                default:
-                    break;
+                PaymentCode = guid,
+                Amount = paymentRequestModel.Amount,
+                PaymentMethod = (PaymentMethod)paymentRequestModel.PaymentMethod,
+                PaymentType = (PaymentType)paymentRequestModel.PaymentType,
+                PaidDate = orderDate,
+                OrderId = paymentRequestModel.OrderId,
+                IsSuccess = paymentRequestModel.IsSuccess
+            };
+            try
+            {
+                await _paymentRepository.AddAsync(newPayment);
+                await _paymentRepository.SaveDbChangeAsync();
+                return new PaymentResponseModel(newPayment);
             }
+            catch (Exception ex)
+            {
+                throw new BaseException(ex.Message);
+            }
+        }
+
+        public Guid ToGuid(PaymentRequestModel paymentRequestModel, DateTime now)
+        {
+            List<byte> byteList = new List<byte>();
+            byte[] nowByte = BitConverter.GetBytes(now.Ticks);
+            byte[] amountBytes = Encoding.ASCII.GetBytes(paymentRequestModel.Amount + "");
+            byte[] orderIdByte = Encoding.ASCII.GetBytes(paymentRequestModel.OrderId + "");
+
+            byteList.AddRange(nowByte);
+            byteList.Add(Convert.ToByte(paymentRequestModel.PaymentMethod));
+            byteList.Add(Convert.ToByte(paymentRequestModel.PaymentType));
+            byteList.AddRange(amountBytes);
+            byteList.AddRange(orderIdByte);
+            byteList.Add(Convert.ToByte(paymentRequestModel.IsSuccess));
+
+            var bytes = byteList.ToArray();
+            Array.Resize(ref bytes, 16);
+            return new Guid(bytes);
+        }
+
+        public async Task<PagedList<PaymentResponseModel>> GetAllAsync(PaymentFilterParameter filter)
+        {
+            var predicate = PredicateBuilder.New<Payment>().And(payment => !payment.IsDeleted);
+
+            if (filter.OrderId.GetValueOrDefault() != 0)
+            {
+                predicate = predicate.And(payment => payment.OrderId == filter.OrderId);
+            }
+
+            if (filter.PaymentCode != null)
+            {
+                predicate = predicate.And(payment => payment.PaymentCode.Equals(filter.PaymentCode));
+            }
+
+            if (filter.Date != null)
+            {
+                predicate = predicate.And(payment => payment.PaidDate == filter.Date);
+            }
+
+            if (filter.UserId.GetValueOrDefault() != 0)
+            {
+                predicate = predicate.And(payment => payment.Order.UserId == filter.UserId);
+            }
+
+            IEnumerable<Payment> query = await _paymentRepository.GetAllAsync(
+                filter: predicate,
+                includeProperties: "Order");
+
+            return PagedList<PaymentResponseModel>.ToPagedList(
+                query.AsQueryable().OrderBy(u => u.Id).Select(entity => new PaymentResponseModel(entity)),
+                filter.PageNumber,
+                filter.PageSize);
+        }
+
+        public VnPayConfigResponseModel GetVnPayConfig()
+        {
+            var response = new VnPayConfigResponseModel
+            {
+                BaseURL = _vnPayConst.GetBaseURL(),
+                Command = _vnPayConst.GetCommand(),
+                CurrCode = _vnPayConst.GetCurrCode(),
+                HashSecret = _vnPayConst.GetHashSecret(),
+                Locale = _vnPayConst.GetLocale(),
+                TmnCode = _vnPayConst.GetTmnCode(),
+                Version = _vnPayConst.GetVersion()
+            };
             return response;
+        }
+
+        public async Task<PaymentResponseModel> GetPaymentById(int id)
+        {
+            var found = new Payment();
+            try
+            {
+                found = await _paymentRepository.GetAsync(id);
+            } catch (Exception ex)
+            {
+                throw new BaseException(ex.Message);
+            }
+            return new PaymentResponseModel(found);
         }
     }
 }
