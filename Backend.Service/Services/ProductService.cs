@@ -49,6 +49,21 @@ namespace Backend.Service.Services
                 predicate = predicate.And(product => product.Category.CategoryType == filter.CategoryType.Value);
             }
 
+            if (filter.Status.HasValue)
+            {
+                predicate = predicate.And(product => product.Status == filter.Status.Value);
+            }
+
+            if (filter.FromPrice.HasValue)
+            {
+                predicate = predicate.And(product => product.Price >= filter.FromPrice.Value);
+            }
+
+            if (filter.ToPrice.HasValue)
+            {
+                predicate = predicate.And(product => product.Price <= filter.ToPrice.Value);
+            }
+
             IEnumerable<Product> query = await _productRepository.GetAllAsync(
                 filter: predicate,
                 includeProperties: "Category");
