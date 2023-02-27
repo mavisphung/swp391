@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useLocation } from "react-router-dom";
-import { ArrowLeftOutlined, SearchOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { BiSearchAlt } from "react-icons/bi";
 import { Checkbox, Slider } from "antd";
 
 import "./CategoryDetailLayout.scss";
 import api from "~/context/AppApi";
 import AppTrace from "~/components/AppTrace";
 import BirdCard from "../Home/BirdCard";
-import { formatPrice } from "../../common/Helper";
+import { formatPrice } from "~/common/Helper";
 
 function CategoryPage() {
   const [searchParams] = useSearchParams();
@@ -15,11 +16,12 @@ function CategoryPage() {
   const [productList, setProductList] = useState();
 
   const [searchKey, setSearchKey] = useState("");
-  const [inStock, setInStock] = useState(true);
+  const [queryKey, setQueryKey] = useState("");
+  const [inStock, setInStock] = useState(2);
   const [minDate, setMinDate] = useState("");
   const [maxDate, setMaxDate] = useState("");
   const [isAscending, setIsAscending] = useState(true);
-  const [minValue, setMinValue] = useState(10000);
+  const [minValue, setMinValue] = useState(10000); // format date: 2023-02-27
   const [maxValue, setMaxValue] = useState(20010000);
 
   const location = useLocation();
@@ -37,16 +39,35 @@ function CategoryPage() {
     modal.style.visibility = "hidden";
   };
 
+  const sortProductList = () => {
+    if (productList && productList.length > 1) {
+      console.log("SORT", isAscending);
+      const newProductList = [...productList].reverse();
+      setProductList(newProductList);
+    }
+  };
+
   const getProductsWithCategoryId = async (id) => {
     try {
+      console.log("MINDATE", minDate);
+      console.log("MAXDATE", maxDate);
       const response = await api.get("/product", {
         params: {
+          CategoryId: id,
           PageNumber: 1,
           PageSize: 10,
+          Status: inStock,
+          FromPrice: minValue,
+          ToPrice: 300000000,
+          // ToPrice: maxValue,
+          FromDate: minDate,
+          ToDate: maxDate,
+          Search: queryKey,
         },
       });
 
       if (response.data) {
+        response.data.sort((a, b) => a.price - b.price);
         setProductList(response.data);
       }
     } catch (error) {
@@ -56,7 +77,11 @@ function CategoryPage() {
 
   useEffect(() => {
     getProductsWithCategoryId(categoryId);
-  }, []);
+  }, [categoryId, inStock, minValue, maxValue, minDate, maxDate, queryKey]);
+
+  useEffect(() => {
+    sortProductList();
+  }, [isAscending]);
 
   return (
     <div className="container">
@@ -85,8 +110,11 @@ function CategoryPage() {
                   value={searchKey}
                   onChange={(e) => setSearchKey(e.target.value)}
                 />
-                <button className="btn-search">
-                  <SearchOutlined style={{ margin: "auto 0" }} />
+                <button
+                  className="btn-search"
+                  onClick={() => setQueryKey(searchKey)}
+                >
+                  <BiSearchAlt style={{ fontSize: "20px" }} />
                 </button>
               </div>
             </div>
@@ -97,10 +125,10 @@ function CategoryPage() {
                 value={inStock}
                 onChange={(e) => setInStock(e.target.value)}
               >
-                <option key={0} value={true}>
+                <option key={2} value={2}>
                   Còn hàng
                 </option>
-                <option key={1} value={false}>
+                <option key={1} value={1}>
                   Hết hàng
                 </option>
               </select>
