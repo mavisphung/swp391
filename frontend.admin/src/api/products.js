@@ -30,3 +30,20 @@ export const getProductListData = async (page, name, category) => {
     console.log(e);
   }
 };
+
+// Get product details by id
+export const getProductDetailsById = async (productId) => {
+  try {
+    const response = await api.get(`/${productURL}/${productId}`);
+    if (response.status !== 200) {
+      throw new Error('Product details by id has the problem');
+    }
+    const data = await response.data;
+    if (data) {
+      return data;
+    }
+    return false;
+  } catch (e) {
+    console.log(e);
+  }
+};

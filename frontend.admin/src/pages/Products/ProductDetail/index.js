@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Carousel, Rate } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, CardGroup, Col, Image, Row } from 'react-bootstrap';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { getProductDetailsById } from '~/api/products';
 import { jpeg, jpg, png } from '~/system/Constants/constants';
+import { updateProduct } from '~/system/Constants/LinkURL';
 import CustomTooltip from '~/ui/CustomTooltip';
 
 import CustomWrapper from '~/ui/CustomWrapper';
-import productData from './productData.json';
 
 const contentStyle = {
   color: '#fff',
@@ -20,6 +21,7 @@ const desc = ['rất tệ', 'tệ', 'bình thường', 'tốt', 'tuyệt vời']
 
 function ProductDetail() {
   const { productId } = useParams();
+  const { pathname } = useLocation();
   const [product, setProduct] = useState({});
   const [images, setImages] = useState([]);
   const [relativeProducts, setRelativeProducts] = useState([]);
@@ -29,7 +31,7 @@ function ProductDetail() {
   const getProductById = useCallback(
     async (productId) => {
       try {
-        const data = productData;
+        const data = await getProductDetailsById(productId);
         setProduct(data);
         setImages(
           product?.medias?.filter(
@@ -46,8 +48,8 @@ function ProductDetail() {
   );
 
   useEffect(() => {
-    getProductById();
-  }, [getProductById]);
+    getProductById(productId);
+  }, [getProductById, productId]);
 
   return (
     <>
@@ -65,8 +67,13 @@ function ProductDetail() {
                             <h3 style={contentStyle}>
                               <Image
                                 src={image.url}
-                                style={{ width: '100%', height: 'auto' }}
+                                style={{
+                                  width: '100%',
+                                  height: 'auto',
+                                  maxHeight: '400px',
+                                }}
                                 alt={product?.name}
+                                fluid
                               />
                             </h3>
                           </div>
@@ -87,7 +94,7 @@ function ProductDetail() {
                   </Col>
                   <Col md={2}>
                     <div className="text-end">
-                      <Link to={``}>
+                      <Link to={`${pathname}/${updateProduct}`}>
                         <CustomTooltip
                           title="Chỉnh sửa sản phẩm"
                           color="#0d6efd"

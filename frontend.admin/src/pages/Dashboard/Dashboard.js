@@ -30,6 +30,7 @@ import {
   productId,
   updateAccount,
   updateCategory,
+  updateProduct,
   viewAccountsList,
   viewBannersList,
   viewCategoriesList,
@@ -111,6 +112,10 @@ function Dashboard() {
               element={<ProductDetail />}
             />
             <Route path={`${addProduct}`} element={<AddEditProduct />} />
+            <Route
+              path={`${viewProductsList}/${viewProductDetail}/${productId}/${updateProduct}`}
+              element={<AddEditProduct />}
+            />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />

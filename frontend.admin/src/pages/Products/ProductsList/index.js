@@ -66,7 +66,10 @@ const ProductsList = () => {
   );
 
   useEffect(() => {
-    getProductsList(pageIndex, searchProductName, searchProductType);
+    const delayDebounceFn = setTimeout(() => {
+      getProductsList(pageIndex, searchProductName, searchProductType);
+    }, 400);
+    return () => clearTimeout(delayDebounceFn);
   }, [getProductsList, pageIndex, searchProductName, searchProductType]);
 
   // Manage table
@@ -140,7 +143,7 @@ const ProductsList = () => {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={`${pathname}/${viewProductDetail}/${record.ProductCode}`}>
+        <Link to={`${pathname}/${viewProductDetail}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
