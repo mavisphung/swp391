@@ -20,5 +20,9 @@ namespace Backend.Service.Helper
         
         [Range(0, double.MaxValue)]
         public double? ToPrice { get; set; }
+
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+
     }
 }
