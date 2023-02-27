@@ -1,4 +1,5 @@
 import {
+  birdAgePattern,
   emailPattern,
   fullNamePattern,
   phonePattern,
@@ -17,6 +18,13 @@ import {
   MSG21,
   MSG22,
   MSG23,
+  MSG52,
+  MSG53,
+  MSG54,
+  MSG55,
+  MSG56,
+  MSG57,
+  MSG58,
 } from '~/system/Messages/messages';
 
 export const checkFieldIsEmpty = (value, message) => {
@@ -81,5 +89,31 @@ export const checkPhoneNumber = (phone) => {
     return MSG12;
   } else if (!phonePattern.test(phone)) {
     return MSG13;
+  }
+};
+
+export const checkProductQuantity = (quantity) => {
+  if (quantity.length === 0) {
+    return MSG52;
+  } else if (parseInt(quantity) <= 0) {
+    return MSG53;
+  }
+};
+
+export const checkProductPrice = (price) => {
+  if (price.length === 0) {
+    return MSG54;
+  } else if (parseInt(price) <= 0) {
+    return MSG55;
+  } else if (parseInt(price) <= 1000) {
+    return MSG56;
+  }
+};
+
+export const checkBirdAge = (age) => {
+  if (age === '' || !age) {
+    return MSG57;
+  } else if (!birdAgePattern.test(age)) {
+    return MSG58;
   }
 };

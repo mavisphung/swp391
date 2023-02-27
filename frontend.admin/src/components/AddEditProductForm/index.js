@@ -11,14 +11,24 @@ import {
 } from 'react-bootstrap';
 
 import {
+  MSG15,
   MSG29,
   MSG35,
   MSG37,
   MSG39,
   MSG40,
   MSG41,
+  MSG49,
+  MSG50,
+  MSG51,
+  MSG57,
 } from '~/system/Messages/messages';
-import { checkFieldIsEmpty } from '../Validation';
+import {
+  checkBirdAge,
+  checkFieldIsEmpty,
+  checkProductPrice,
+  checkProductQuantity,
+} from '../Validation';
 import CustomModal from '../Modal';
 
 import '../AddEditAccountForm/AddEditAccountForm.scss';
@@ -26,29 +36,8 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
 import { Carousel } from 'antd';
 import { toast } from 'react-toastify';
-
-const categoriesListData = [
-  {
-    id: 1,
-    name: 'Chim',
-  },
-  {
-    id: 2,
-    name: 'Thức ăn',
-  },
-  {
-    id: 3,
-    name: 'Lồng chim',
-  },
-  {
-    id: 4,
-    name: 'Phụ kiện',
-  },
-  {
-    id: 0,
-    name: 'Khác',
-  },
-];
+import { categoriesTypesList } from '~/system/Data/types';
+import { birdAgePattern } from '~/system/Constants/constants';
 
 const shortDescriptionListData = [
   {
@@ -71,16 +60,12 @@ const shortDescriptionListData = [
 
 const birdGendersData = [
   {
-    id: 1,
+    id: true,
     name: 'Chim trống',
   },
   {
-    id: 2,
+    id: false,
     name: 'Chim mái',
-  },
-  {
-    id: 0,
-    name: 'Khác',
   },
 ];
 
@@ -95,21 +80,23 @@ const AddEditProductForm = () => {
   let navigate = useNavigate();
   const { productId } = useParams();
   const [product, setProduct] = useState({});
-  const [productImage, setProductImage] = useState(null);
   const [productImages, setProductImages] = useState([]);
   const [imagesList, setImagesList] = useState([]);
   const [urls, setUrls] = useState([]);
-  const [productImageURL, setProductImageURL] = useState('');
   const [productVideoURL, setProductVideoURL] = useState('');
   const [productName, setProductName] = useState('');
   const [productCategories, setProductCategories] = useState([]);
-  const [productCategory, setProductCategory] = useState('1');
+  const [productCategory, setProductCategory] = useState('1'); // Main category
+  const [productCategoryId, setProductCategoryId] = useState(''); // Sub Category
   const [shortDescriptionList, setShortDescriptionList] = useState([]);
   const [shortDescription, setShortDescription] = useState('');
   const [description, setDescription] = useState('');
+  const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [gendersList, setGendersList] = useState([]);
   const [sellMethod, setSellMethod] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [quantity, setQuantity] = useState('');
 
   const [isEntered, setIsEntering] = useState(false);
   const [validated, setValidated] = useState(false);
@@ -121,7 +108,7 @@ const AddEditProductForm = () => {
   // Get product categories list
   const getProductCategories = useCallback(async () => {
     try {
-      const data = categoriesListData;
+      const data = categoriesTypesList;
       setProductCategories(data);
     } catch (e) {
       console.log(e);
@@ -200,6 +187,7 @@ const AddEditProductForm = () => {
           setProgress(false);
         },
       );
+      return urls;
     });
 
     Promise.all(promises)
@@ -244,8 +232,18 @@ const AddEditProductForm = () => {
     }
 
     const createData = {
-      name: 'Chim',
-      medias: getUnique(imagesList, 'url'),
+      name: productName,
+      medias: [{ url: productVideoURL, type: 5 }].concat(
+        getUnique(imagesList, 'url'),
+      ),
+      description: description,
+      price: productPrice,
+      quantity: quantity,
+      gender: gender === '' ? '' : gender === 'true' ? true : false,
+      shortDescription: shortDescription,
+      age: age,
+      categoryId: productCategoryId,
+      categoryType: productCategory,
     };
     console.log('createData', createData);
   };
@@ -274,229 +272,17 @@ const AddEditProductForm = () => {
     }
   };
 
-  const RenderProductFields = () => {
-    return (
-      <Row>
-        <Col md={6}>
-          <Form.Group className="mb-3" controlId="validationProductName">
-            <Form.Label>Tên sản phẩm {redStart}</Form.Label>
-            <Form.Control
-              type="text"
-              maxLength={100}
-              value={productName}
-              onChange={(e) => {
-                setProductName(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              {checkFieldIsEmpty(productName, MSG29)}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        <Col md={6}>
-          <Form.Group
-            className="mb-3"
-            controlId="validationProductShortDescription"
-          >
-            <Form.Label>Phân loại {redStart}</Form.Label>
-            <Form.Select
-              value={shortDescription}
-              onChange={(e) => {
-                setShortDescription(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              aria-label="Chọn loại chim"
-              required
-            >
-              <option value="">Chọn loại sản phẩm</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {MSG40}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        <Col md={12}>
-          <Form.Group className="mb-3" controlId="validationProductName">
-            <Form.Label>Mô tả ngắn {redStart}</Form.Label>
-            <Form.Control
-              type="text"
-              maxLength={100}
-              value={productName}
-              onChange={(e) => {
-                setProductName(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              {checkFieldIsEmpty(productName, MSG29)}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-      </Row>
-    );
-  };
-
-  const RenderBirdFields = () => {
-    return (
-      <Row>
-        <Col md={6}>
-          <Form.Group className="mb-3" controlId="validationProductName">
-            <Form.Label>Tên sản phẩm {redStart}</Form.Label>
-            <Form.Control
-              type="text"
-              maxLength={100}
-              value={productName}
-              onChange={(e) => {
-                setProductName(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              {checkFieldIsEmpty(productName, MSG29)}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        <Col md={3}>
-          <Form.Group
-            className="mb-3"
-            controlId="validationProductShortDescription"
-          >
-            <Form.Label>Loại chim {redStart}</Form.Label>
-            <Form.Select
-              value={shortDescription}
-              onChange={(e) => {
-                setShortDescription(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              aria-label="Chọn loại chim"
-              required
-            >
-              <option value="">Chọn loại chim</option>
-              <option value="1">Sample</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {MSG40}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        <Col md={3}>
-          <Form.Group className="mb-3" controlId="validationProductSellMethod">
-            <Form.Label>Cách bán {redStart}</Form.Label>
-            <Form.Select
-              value={sellMethod}
-              onChange={(e) => {
-                setSellMethod(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              aria-label="Chọn cách bán"
-              required
-            >
-              <option value="">Chọn cách bán</option>
-              <option value="1">Chim tuyển</option>
-              <option value="2">Bắt lồng</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {MSG40}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        {gender !== '' || sellMethod === '1' ? (
-          <RenderFieldBySellMethod />
-        ) : (
-          <></>
-        )}
-      </Row>
-    );
-  };
-
-  const RenderFieldBySellMethod = () => {
-    return (
-      <>
-        <Col md={4}>
-          <Form.Group
-            className="mb-3"
-            controlId="validationProductShortDescription"
-          >
-            <Form.Label>Giới tính {redStart}</Form.Label>
-            <Form.Select
-              value={shortDescription}
-              onChange={(e) => {
-                setShortDescription(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              aria-label="Chọn giới tính"
-              required
-            >
-              <option value="">Chọn giới tính</option>
-              {gendersList.map((gender, index) => (
-                <option key={index} value={gender.id}>
-                  {gender.name}
-                </option>
-              ))}
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {MSG40}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        <Col md={4}>
-          <Form.Group className="mb-3" controlId="validationProductName">
-            <Form.Label>Tuổi {redStart}</Form.Label>
-            <Form.Control
-              type="text"
-              maxLength={100}
-              value={productName}
-              onChange={(e) => {
-                setProductName(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              {checkFieldIsEmpty(productName, MSG29)}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-
-        <Col md={4}>
-          <Form.Group
-            className="mb-3"
-            controlId="validationProductShortDescription"
-          >
-            <Form.Label>Kiểu chim {redStart}</Form.Label>
-            <Form.Select
-              value={shortDescription}
-              onChange={(e) => {
-                setShortDescription(e.target.value);
-                setCheckEnableUpdateButton(true);
-              }}
-              aria-label="Chọn kiểu chim"
-              required
-            >
-              <option value="">Chọn kiểu chim</option>
-              {shortDescriptionList.map((shortDescription, index) => (
-                <option key={index} value={shortDescription.id}>
-                  {shortDescription.name}
-                </option>
-              ))}
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {MSG40}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-      </>
-    );
+  // Reset tất cả field khi đổi phân loại chính
+  const handleResetField = () => {
+    setProductName('');
+    setProductCategoryId('');
+    setSellMethod('');
+    setGender('');
+    setAge('');
+    setShortDescription('');
+    setDescription('');
+    setQuantity('');
+    setProductPrice('');
   };
 
   return (
@@ -610,17 +396,17 @@ const AddEditProductForm = () => {
                     <Col className="product-image-file-content">
                       <Form.Control
                         width={200}
-                        type="text"
+                        type="url"
                         placeholder="Thêm link video giới thiệu"
                         onChange={handleChangeProductVideo}
-                        accept="image/*"
+                        accept="video/*"
                         required={productId ? false : true}
                       />
                       <Form.Control.Feedback
                         type="invalid"
                         className="product-image-invalid"
                       >
-                        {MSG39}
+                        {MSG49}
                       </Form.Control.Feedback>
                     </Col>
                   </Row>
@@ -639,6 +425,7 @@ const AddEditProductForm = () => {
                   value={productCategory}
                   onChange={(e) => {
                     setProductCategory(e.target.value);
+                    handleResetField();
                     setCheckEnableUpdateButton(true);
                   }}
                   aria-label="Chọn loại sản phẩm"
@@ -650,16 +437,242 @@ const AddEditProductForm = () => {
                     </option>
                   ))}
                 </Form.Select>
-                <Form.Control.Feedback type="invalid">
-                  {MSG40}
-                </Form.Control.Feedback>
               </Form.Group>
             </Col>
 
             {productCategory === '1' ? (
-              <RenderBirdFields />
+              // <RenderBirdFields />
+              <Row>
+                <Col md={6}>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="validationProductName"
+                  >
+                    <Form.Label>Tên sản phẩm {redStart}</Form.Label>
+                    <Form.Control
+                      type="text"
+                      maxLength={100}
+                      value={productName}
+                      onChange={(e) => {
+                        setProductName(e.target.value);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                      required
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {checkFieldIsEmpty(productName, MSG29)}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+
+                <Col md={3}>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="validationProductSubCategory"
+                  >
+                    <Form.Label>Loại chim {redStart}</Form.Label>
+                    <Form.Select
+                      value={productCategoryId}
+                      onChange={(e) => {
+                        setProductCategoryId(e.target.value);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                      aria-label="Chọn loại chim"
+                      required
+                    >
+                      <option value="">Chọn loại chim</option>
+                      <option value="1">Sample</option>
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                      {MSG40}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+
+                <Col md={3}>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="validationProductSellMethod"
+                  >
+                    <Form.Label>Cách bán {redStart}</Form.Label>
+                    <Form.Select
+                      value={sellMethod}
+                      onChange={(e) => {
+                        setSellMethod(e.target.value);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                      aria-label="Chọn cách bán"
+                      required
+                    >
+                      <option value="">Chọn cách bán</option>
+                      <option value="1">Chim tuyển</option>
+                      <option value="2">Bắt lồng</option>
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                      {MSG50}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+
+                {gender !== '' || sellMethod === '1' ? (
+                  // <RenderFieldBySellMethod />
+                  <>
+                    <Col md={4}>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="validationProductGender"
+                      >
+                        <Form.Label>Giới tính {redStart}</Form.Label>
+                        <Form.Select
+                          value={gender}
+                          onChange={(e) => {
+                            setGender(e.target.value);
+                            setCheckEnableUpdateButton(true);
+                          }}
+                          aria-label="Chọn giới tính"
+                          required
+                        >
+                          <option value="">Chọn giới tính</option>
+                          {gendersList.map((gender, index) => (
+                            <option key={index} value={gender.id}>
+                              {gender.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          {MSG15}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="validationProductAge"
+                      >
+                        <Form.Label>Tuổi {redStart}</Form.Label>
+                        <Form.Control
+                          type="text"
+                          maxLength={100}
+                          value={age}
+                          isInvalid={age && !birdAgePattern.test(age)}
+                          onChange={(e) => {
+                            setAge(e.target.value);
+                            setCheckEnableUpdateButton(true);
+                          }}
+                          required
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {checkBirdAge(age)}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group
+                        className="mb-3"
+                        controlId="validationProductShortDescription"
+                      >
+                        <Form.Label>Kiểu chim {redStart}</Form.Label>
+                        <Form.Select
+                          value={shortDescription}
+                          onChange={(e) => {
+                            setShortDescription(e.target.value);
+                            setCheckEnableUpdateButton(true);
+                          }}
+                          aria-label="Chọn kiểu chim"
+                          required
+                        >
+                          <option value="">Chọn kiểu chim</option>
+                          {shortDescriptionList.map(
+                            (shortDescription, index) => (
+                              <option key={index} value={shortDescription.name}>
+                                {shortDescription.name}
+                              </option>
+                            ),
+                          )}
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          {MSG51}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </Row>
             ) : (
-              <RenderProductFields />
+              // <RenderProductFields />
+              <Row>
+                <Col md={6}>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="validationProductName"
+                  >
+                    <Form.Label>Tên sản phẩm {redStart}</Form.Label>
+                    <Form.Control
+                      type="text"
+                      maxLength={100}
+                      value={productName}
+                      onChange={(e) => {
+                        setProductName(e.target.value);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                      required
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {checkFieldIsEmpty(productName, MSG29)}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="validationProductShortDescription"
+                  >
+                    <Form.Label>Phân loại {redStart}</Form.Label>
+                    <Form.Select
+                      value={productCategoryId}
+                      onChange={(e) => {
+                        setProductCategoryId(e.target.value);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                      aria-label="Chọn loại chim"
+                      required
+                    >
+                      <option value="">Chọn loại sản phẩm</option>
+                      <option value="1">Sample</option>
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                      {MSG40}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+
+                <Col md={12}>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="validationOtherProductShortDescription"
+                  >
+                    <Form.Label>Mô tả ngắn {redStart}</Form.Label>
+                    <Form.Control
+                      type="text"
+                      maxLength={100}
+                      value={shortDescription}
+                      onChange={(e) => {
+                        setShortDescription(e.target.value);
+                        setCheckEnableUpdateButton(true);
+                      }}
+                      required
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {checkFieldIsEmpty(shortDescription, MSG29)}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
             )}
 
             <Row>
@@ -684,39 +697,44 @@ const AddEditProductForm = () => {
               </Col>
 
               <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationProductName">
+                <Form.Group
+                  className="mb-3"
+                  controlId="validationProductQuantity"
+                >
                   <Form.Label>Số lượng {redStart}</Form.Label>
                   <Form.Control
-                    type="text"
-                    maxLength={100}
-                    value={productName}
+                    type="number"
+                    value={quantity}
+                    isInvalid={quantity && parseInt(quantity) <= 0}
                     onChange={(e) => {
-                      setProductName(e.target.value);
+                      setQuantity(e.target.value);
                       setCheckEnableUpdateButton(true);
                     }}
                     required
                   />
                   <Form.Control.Feedback type="invalid">
-                    {checkFieldIsEmpty(productName, MSG29)}
+                    {checkProductQuantity(quantity)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
 
               <Col md={6}>
-                <Form.Group className="mb-3" controlId="validationProductName">
+                <Form.Group className="mb-3" controlId="validationProductPrice">
                   <Form.Label>Giá thành {redStart}</Form.Label>
                   <Form.Control
-                    type="text"
-                    maxLength={100}
-                    value={productName}
+                    type="number"
+                    min="0"
+                    step="1000"
+                    value={productPrice}
+                    isInvalid={productPrice && parseInt(productPrice) <= 0}
                     onChange={(e) => {
-                      setProductName(e.target.value);
+                      setProductPrice(e.target.value);
                       setCheckEnableUpdateButton(true);
                     }}
                     required
                   />
                   <Form.Control.Feedback type="invalid">
-                    {checkFieldIsEmpty(productName, MSG29)}
+                    {checkProductPrice(productPrice)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
