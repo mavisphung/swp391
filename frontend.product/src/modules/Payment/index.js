@@ -1,28 +1,18 @@
-import { HomeFilled, RightOutlined } from "@ant-design/icons";
-import { Alert } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
-import {
-  Breadcrumb,
-  Button,
-  Col,
-  Container,
-  Form,
-  // Image,
-  Row,
-} from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import config from "~/config";
-import { emptyCart, getCart } from "~/common/LocalStorageUtil";
+import { emptyCart } from "~/common/LocalStorageUtil";
 
 function PaymentPage() {
   const location = useLocation();
-  const { name, tel, email, address, cart } = location.state;
+  const { name, tel, email, address, commune, district, province, cart } =
+    location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(1);
@@ -31,6 +21,9 @@ function PaymentPage() {
   console.log("NAME", name);
   console.log("TEL", tel);
   console.log("EMAIL", email);
+  console.log("COMMUNE", commune);
+  console.log("DISTRICT", district);
+  console.log("PROVINCE", province);
   console.log("ADDRESS", address);
   console.log("CART", cart);
 
@@ -63,6 +56,9 @@ function PaymentPage() {
           fullname: name,
           phoneNumber: tel,
           address: address,
+          ward: commune,
+          district: district,
+          province: province,
         },
       };
 
@@ -91,6 +87,13 @@ function PaymentPage() {
     postOrder();
   }
 
+  // const onepayIntl = new OnePayInternational({
+  //   paymentGateway: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
+  //   merchant: "TESTONEPAY",
+  //   accessCode: "4KKAH0Z4",
+  //   secureSecret: "XGJLPDAXNSVTYJFOZDUUOSJTJAYEWNNK",
+  // });
+
   return (
     <Container>
       {/* <div>
@@ -110,7 +113,7 @@ function PaymentPage() {
 
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
       <Col className="pb-3">
-        <Container className="square rounded border border-2 border-dark">
+        <Container>
           <Container className="d-flex py-2 mx-2 fs-5">
             <Col>
               <Row className="fw-bold">Thông tin tài khoản</Row>
@@ -123,15 +126,16 @@ function PaymentPage() {
               <Row>{`Tên khách hàng: ${name}`}</Row>
               <Row>{`Email: ${email}`}</Row>
               <Row>{`Số điện thoại: ${tel}`}</Row>
-              <Row>{`Địa chỉ: ${address}`}</Row>
+              <Row>{`Địa chỉ: ${address}, ${commune}, ${district}, ${province}`}</Row>
             </Col>
           </Container>
         </Container>
       </Col>
       <Container className="d-flex p-0 pb-2">
         <Col className="pe-5" md>
-          {cart.map((c) => (
+          {cart.map((c, index) => (
             <CartItems
+              key={index}
               productName={c.name}
               productImage={c.medias[1].url}
               productType={c.categoryName}
@@ -142,9 +146,13 @@ function PaymentPage() {
 
           <Row>
             <Col>
-              <a href="/" style={{ color: "#ee3e6a" }} className="h6">
+              <Link
+                to={config.routes.cart}
+                style={{ color: "#ee3e6a" }}
+                className="h6"
+              >
                 Thay đổi giỏ hàng
-              </a>
+              </Link>
             </Col>
             <Col className="d-flex justify-content-end align-items-center">
               Tổng cộng:{" "}
@@ -199,7 +207,7 @@ function PaymentPage() {
                 // checked={payAdvanced === "VNPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(1);
+                  setPaymentMethod(0);
                 }}
               />
               <Form.Check
@@ -207,10 +215,11 @@ function PaymentPage() {
                 name="paymentGroup"
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
+                defaultChecked={true}
                 // checked={payAdvanced === "CashPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(2);
+                  setPaymentMethod(1);
                 }}
               />
               <Form.Check
@@ -220,7 +229,7 @@ function PaymentPage() {
                 label="Đặt cọc trước 50%"
                 onClick={() => {
                   setPayAdvanced(true);
-                  setPaymentMethod(3);
+                  setPaymentMethod(2);
                 }}
               />
               <Form.Check
@@ -231,7 +240,7 @@ function PaymentPage() {
                 // checked={payAdvanced === "ShippingPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(4);
+                  setPaymentMethod(3);
                 }}
               />
             </Form>
@@ -246,6 +255,21 @@ function PaymentPage() {
             </Button>
             {/* <Button onClick={notify}>Toast</Button> */}
             <ToastContainer />
+          </Row>
+          <Row>
+            <Button
+              className="mt-5"
+              onClick={() => {
+                // var dateFormat = require("dateformat");
+                // var date = new Date();
+                // var createDate = dateFormat(date, "yyyymmddHHmmss");
+                // window.location.replace(
+                //   "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=1806000&vnp_Command=pay&vnp_CreateDate=20230227112801&vnp_CurrCode=VND&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=4KKAH0Z4&vnp_TxnRef=5&vnp_Version=2.1.0&vnp_SecureHash=XGJLPDAXNSVTYJFOZDUUOSJTJAYEWNNK"
+                // );
+              }}
+            >
+              test vnpay
+            </Button>
           </Row>
         </Col>
       </Container>
