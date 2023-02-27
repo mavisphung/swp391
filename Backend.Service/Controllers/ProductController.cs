@@ -2,6 +2,7 @@
 using Backend.Service.Models.Product;
 using Backend.Service.Models.Validation;
 using Backend.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,20 +25,22 @@ namespace Backend.Service.Controllers
         }
 
         /// <summary>
-        /// Lấy sản phẩm theo filter what da fukkkkkk
+        /// Lấy sản phẩm theo filter: CategoryType, CategoryId, FromPrice, ToPrice, Status
         /// </summary>
         /// <param name="pagingParameter"></param>
         /// <response code="200">Get data successfully</response>
         /// 
         // GET: api/<ProductController>
+        // TODO: Them filter CategoryType - CHECKED
+        // TODO: Them search theo product code
         [HttpGet]
         [ProducesResponseType(200)]
         public async Task<IActionResult> Get([FromQuery] ProductFilterParameter pagingParameter)
         {
             _logger.LogInformation("Get all product invoked...");
             var data = await _productService.GetAllAsync(pagingParameter);
+            AddPaginationToHeader(data);
             return Ok(data);
-
         }
 
         /// <summary>
@@ -108,5 +111,19 @@ namespace Backend.Service.Controllers
             await _productService.RemoveAsync(id);
             return NoContent();
         }
+
+
+        /// <summary>
+        /// Lấy các sản phẩm liên quan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{productId}/relatives")]
+        public async Task<IActionResult> GetRelativeProduct(int productId)
+        {
+            return Ok();
+        }
+
+        // TODO: Them API cho activate/deactivate product
     }
 }

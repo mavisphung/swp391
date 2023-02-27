@@ -17,16 +17,19 @@ namespace Backend.Service.Services
     public class ProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<ProductService> _logger;
         public ProductService(
-            IProductRepository productRepository, 
-            ILogger<ProductService> logger)
+            IProductRepository productRepository,
+            ILogger<ProductService> logger,
+            ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _logger = logger;
+            _categoryRepository = categoryRepository;
         }
 
-        public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
+        private Expression<Func<Product, bool>> _buildExpression(ProductFilterParameter filter)
         {
             var predicate = PredicateBuilder.New<Product>().And(product => !product.IsDeleted);
 
@@ -40,6 +43,43 @@ namespace Backend.Service.Services
                 predicate = predicate.And(product => product.SearchVector.Matches(filter.Search));
             }
 
+            if (filter.CategoryType.HasValue)
+            {
+                Console.WriteLine("CategoryType has value");
+                predicate = predicate.And(product => product.Category.CategoryType == filter.CategoryType.Value);
+            }
+
+            if (filter.Status.HasValue)
+            {
+                predicate = predicate.And(product => product.Status == filter.Status.Value);
+            }
+
+            if (filter.FromPrice.HasValue)
+            {
+                predicate = predicate.And(product => product.Price >= filter.FromPrice.Value);
+            }
+
+            if (filter.ToPrice.HasValue)
+            {
+                predicate = predicate.And(product => product.Price <= filter.ToPrice.Value);
+            }
+
+            if (filter.FromDate != null)
+            {
+                predicate = predicate.And(product => product.CreatedDate >= filter.FromDate.SetKindUtc());
+            }
+
+            if (filter.ToDate != null)
+            {
+                predicate = predicate.And(product => product.CreatedDate <= filter.ToDate.SetKindUtc());
+            }
+
+            return predicate;
+        }
+
+        public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
+        {
+            var predicate = _buildExpression(filter);
             IEnumerable<Product> query = await _productRepository.GetAllAsync(
                 filter: predicate,
                 includeProperties: "Category");
@@ -52,15 +92,21 @@ namespace Backend.Service.Services
 
         internal async Task<ProductResponseModel> AddAsync(CreateProductModel model)
         {
+            Category category = await _categoryRepository.GetAsync(model.CategoryId);
+
             var product = new Product()
             {
                 Name = model.Name,
                 Description = model.Description ?? string.Empty,
+                ShortDescription = model.ShortDescription ?? string.Empty,
                 Price = model.Price,
                 Quantity = model.Quantity,
                 ImportQuantity = model.Quantity,
                 Medias = model.Medias ?? new List<Media>(),
-                CategoryId = model.CategoryId,
+                CategoryId = category.Id,
+                Category = category,
+                Gender = model.Gender ?? true,
+                Age = model.Age
             };
 
             try
@@ -68,11 +114,14 @@ namespace Backend.Service.Services
                 _logger.LogInformation("ProductRepository: AddAsync invoked");
                 await _productRepository.AddAsync(product);
                 await _productRepository.SaveDbChangeAsync();
-            } catch(Exception _)
+            }
+            catch (Exception _)
             {
                 _logger.LogInformation("ProductRepository: AddAsync | Error while saving");
                 throw new NotFoundException(BaseError.CATEGORY_NOT_FOUND.ToString());
             }
+            _logger.LogInformation($"---------------------------------------------------------------");
+            _logger.LogInformation($"Product.Category: {product.Category}");
             return new ProductResponseModel(product);
         }
 
@@ -88,7 +137,6 @@ namespace Backend.Service.Services
             await _productRepository.SaveDbChangeAsync();
         }
 
-        [Transactional]
         internal async Task<ProductResponseModel> UpdateProduct(int id, UpdateProductModel model)
         {
             var found = await _productRepository.GetAsync(id);
@@ -99,19 +147,12 @@ namespace Backend.Service.Services
             {
                 object? value = prop.GetValue(model);
                 bool isMatched = found.GetType().GetProperties().Where(pi => pi.Name == prop.Name).Any();
-                
+
                 if (!isMatched || value == null) continue;
-                
-                if (prop.Name.Equals("Images"))
-                {
-                    found.GetType().GetProperty("Images")?.SetValue(found, StringExtension.ToImages((IEnumerable<string>)value));
-                }
-                else
-                {
-                    found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
-                }
+
+                found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
             }
-            
+
             //_productRepository.Update(found);
             //await _productRepository.SaveDbChangeAsync();
             _logger.LogInformation($"Updated product {id} successfully");

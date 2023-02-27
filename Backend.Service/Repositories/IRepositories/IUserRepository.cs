@@ -15,5 +15,11 @@ namespace Backend.Service.Repositories.IRepositories
 
         public User? GetUserById(int id);
         public Task<User?> GetUserByIdAsync(int id);
+
+        public User? GetUserByEmail(string email);
+        public Task<User?> GetUserByEmailAsync(string email);
+
+        public User? GetUserByPhone(string phone);
+        public Task<User?> GetUserByPhoneAsync(string phone);
     }
 }

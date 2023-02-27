@@ -2,7 +2,7 @@
 
 namespace Backend.Service.Models.Response.Users
 {
-    public class UserModel : BaseModel<User>
+    public class UserModel : BaseModel<Entities.User>
     {
         public string Fullname { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
@@ -12,7 +12,7 @@ namespace Backend.Service.Models.Response.Users
 
         //public UserModel() { }
 
-        public UserModel(User user) : base(user)
+        public UserModel(Entities.User user) : base(user)
         {
             Fullname = user.Fullname;
             Email = user.Email;

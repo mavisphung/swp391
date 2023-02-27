@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace Backend.Service.Entities
 {
@@ -9,11 +10,18 @@ namespace Backend.Service.Entities
         public double Price { get; set; }
         
         // foreign key
-        public int CustomerId { get; set; }
-        public User Customer { get; set; }
+        public int? CustomerId { get; set; }
+        public virtual User Customer { get; set; }
 
         public int ProductId { get; set; }
-        public Product Product { get; set; }
+        public virtual Product Product { get; set; }
 
+        public int OrderId { get; set; }
+        public virtual Order Order { get; set; }
+
+        public override string? ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

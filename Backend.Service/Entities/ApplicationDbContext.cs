@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Backend.Service.Consts;
 using Backend.Service.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -7,6 +8,7 @@ namespace Backend.Service.Entities
 {
     public partial class ApplicationDbContext : DbContext
     {
+        private readonly PasswordHasher _passwordHasher;
 
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -22,7 +24,16 @@ namespace Backend.Service.Entities
         public virtual DbSet<Feedback> FeedBacks { get; set; } = null!;
 
         // Needed for Add-Migration command
-        public ApplicationDbContext() { }
+        public ApplicationDbContext() 
+        {
+            // For seeding data
+            var path = System.AppContext.BaseDirectory;
+            var _configuration = new ConfigurationBuilder()
+                .SetBasePath(path)
+                .AddJsonFile("appsettings.json")
+                .Build();
+            _passwordHasher = new PasswordHasher(new BirdStoreConst(_configuration));
+        }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -41,7 +52,7 @@ namespace Backend.Service.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.GenerateRoles();
+            //modelBuilder.GenerateRoles(_passwordHasher);
 
             // FTS for category
             modelBuilder.Entity<Category>()
@@ -95,9 +106,9 @@ namespace Backend.Service.Entities
             return base.SaveChanges();
         }
 
-        private async Task<EntityEntry> UpdateEntitiesAsync(EntityEntry entityEntry)
+        private Task<EntityEntry> UpdateEntitiesAsync(EntityEntry entityEntry)
         {
-            return await Task.Run(() => 
+            return Task.Run(() => 
             {
                 ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.UtcNow;
 

@@ -1,27 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
-// import { Home } from './modules/home';
-import { Navigate } from './modules/navigate';
+import { ToastContainer } from "react-toastify";
+
+import "./App.scss";
+import CustomRoutes from "~/routes";
+import { UserAuthContextProvider } from "~/context/UserAuthContext";
+import { UserCartContextProvider } from "~/context/UserCartContext";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Product Application
-        </a>
-      </header>
-      <Navigate />
-    </div>
+    <UserAuthContextProvider>
+      <UserCartContextProvider>
+        <ToastContainer />
+        <CustomRoutes />
+      </UserCartContextProvider>
+    </UserAuthContextProvider>
   );
 }
 

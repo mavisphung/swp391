@@ -7,7 +7,12 @@ namespace Backend.Service.Entities
     public class Order : BaseEntity
     {
         public double TotalPrice { get; set; }
-        public string CancelledReason { get; set; }
+
+        [Column(TypeName = "text")]
+        public string? CancelledReason { get; set; } = string.Empty;
+
+        [Column(TypeName = "text")]
+        public string? Note { get; set; } = string.Empty;
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public DateTime? CloseDate { get; set; }
@@ -25,6 +30,8 @@ namespace Backend.Service.Entities
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
 
         public virtual ICollection<Feedback> Feedbacks { get; set; }
+
+        public virtual ICollection<Payment> Payments { get; set; }
         #endregion
     }
 }

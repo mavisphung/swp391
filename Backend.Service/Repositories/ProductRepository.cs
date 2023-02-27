@@ -29,6 +29,7 @@ namespace Backend.Service.Repositories
                 return await _dbSet.Where(p => !p.IsDeleted && p.Id == id).Include("Category").FirstAsync();
             } catch (Exception ex)
             {
+                Console.WriteLine($"ProductRepository.GetAsync : {ex.Message}");
                 throw new NotFoundException(BaseError.PRODUCT_NOT_FOUND.ToString());
             }
 

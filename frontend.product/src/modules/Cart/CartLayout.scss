@@ -1,0 +1,88 @@
+@import "/node_modules/bootstrap/scss/functions";
+@import "/node_modules/bootstrap/scss/variables";
+@import "/node_modules/bootstrap/scss/mixins";
+
+.cart-row {
+  margin-bottom: 18px;
+
+  img {
+    width: 170px;
+    height: 120px;
+    object-fit: cover;
+  }
+
+  h6 {
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  button {
+    color: #f2635f;
+    font-size: 14px;
+    background-color: white;
+    border: none;
+  }
+
+  button:hover,
+  button:active {
+    text-decoration: underline;
+  }
+
+  .mt15 {
+    margin-top: 15px;
+  }
+
+  input[type="number"] {
+    width: 45px;
+    border-radius: 5px;
+    margin-left: 9px;
+    text-align: center;
+    border-width: 1px;
+  }
+}
+
+.cart-detail {
+  h5 {
+    font-weight: 900;
+    font-size: 22px;
+    margin-bottom: 0px;
+  }
+
+  hr {
+    margin: 0 0 30px 0;
+  }
+
+  .cart-total {
+    a {
+      color: black;
+      font-size: 18px;
+    }
+
+    span:last-child {
+      margin-top: 10px !important;
+    }
+
+    button {
+      width: 100%;
+      height: 36px;
+      border-radius: 7px;
+      font-size: 16px;
+      margin-bottom: 21px;
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .cart-total {
+    margin-top: 37px;
+  }
+
+  .cart-total {
+    margin-top: 37px;
+
+    button {
+      width: 255px !important;
+    }
+  }
+}

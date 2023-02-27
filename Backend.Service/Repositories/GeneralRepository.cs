@@ -154,5 +154,28 @@ namespace Backend.Service.Repositories
         {
             await dbSet.AddAsync(entity);
         }
+
+        public DbSet<T> GetDbSet()
+        {
+            return dbSet;
+        }
+
+        public Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, string includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            return query.FirstOrDefaultAsync();
+        }
     }
 }
