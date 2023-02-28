@@ -46,6 +46,12 @@
   margin: 0 0 6px 0;
 }
 
+.fake-price {
+  font-size: 18px;
+  text-decoration: line-through !important;
+  margin-left: 5px;
+}
+
 .pro-card-ctr {
   display: flex;
   justify-content: space-between;
