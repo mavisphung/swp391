@@ -1,4 +1,5 @@
-﻿using Backend.Service.Consts;
+﻿using System.Net;
+using Backend.Service.Consts;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
@@ -121,12 +122,24 @@ namespace Backend.Service.Services
             IEnumerable<Product> products = await _productRepository.GetAllAsync(
                 p => !p.IsDeleted 
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
+            products = products.ToList(); //cached
 
             // TODO: trừ số lượng sản phẩm trong product
-
+            // Kiểm tra xem tất cả product có cái nào có quantity <= 0 không
+            bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
+            if (isInsufficientQuantity)
+            {
+                throw new BaseException(
+                    errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
+                    statusCode: StatusCodes.Status409Conflict,
+                    httpStatus: HttpStatusCode.Conflict
+                );
+            }
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
+                foundProd.Quantity -= ci.Quantity.GetValueOrDefault();
+                _productRepository.Update(foundProd);
                 return new OrderDetail()
                 {
                     ProductId = ci.ProductId.GetValueOrDefault(),
@@ -147,9 +160,15 @@ namespace Backend.Service.Services
                 // Cập nhật order vào shipping address
                 _addressRepository.Update(shippingAddress);
             }
-            await _addressRepository.SaveDbChangeAsync();
+            if (user != null)
+                shippingAddress.Receiver = user;
+
+            await _addressRepository.SaveDbChangeAsync(); // Cập nhật hoặc thêm mới địa chỉ ship
+            await _productRepository.SaveDbChangeAsync(); // Cập nhật lại số lượng sản phẩm
 
             // TODO: Thêm payment vào version sau
+            // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
+
 
             return new OrderResponseModel(newOrder);
         }
