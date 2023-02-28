@@ -7,14 +7,13 @@ import BirdCard from "./BirdCard";
 
 function ProductCarousel({ list, type = 0 }) {
   let slider = useRef();
-  const slides = list.length >= 3 ? 3 : list.length;
   return (
     <div>
       <Carousel
         className="my-carousel"
         dots={false}
         slidesToScroll={3}
-        slidesToShow={slides}
+        slidesToShow={3}
         ref={(ref) => {
           slider.current = ref;
         }}
