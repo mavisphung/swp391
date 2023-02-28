@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, CardGroup, Col, Image, Row } from 'react-bootstrap';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getProductDetailsById } from '~/api/products';
-import { jpeg, jpg, png } from '~/system/Constants/constants';
+import { jpeg, jpg, png, mp4, mov } from '~/system/Constants/constants';
 import { updateProduct } from '~/system/Constants/LinkURL';
 import CustomTooltip from '~/ui/CustomTooltip';
 
@@ -24,6 +24,7 @@ function ProductDetail() {
   const { pathname } = useLocation();
   const [product, setProduct] = useState({});
   const [images, setImages] = useState([]);
+  const [video, setVideo] = useState('');
   const [relativeProducts, setRelativeProducts] = useState([]);
   const [value, setValue] = useState(3.5);
 
@@ -37,6 +38,11 @@ function ProductDetail() {
           product?.medias?.filter(
             (media) =>
               media.type === png || media.type === jpeg || media.type === jpg,
+          ),
+        );
+        setVideo(
+          product?.medias?.find(
+            (media) => media.type === mp4 || media.type === mov,
           ),
         );
         setRelativeProducts(product?.relativeProducts);
@@ -70,7 +76,7 @@ function ProductDetail() {
                                 style={{
                                   width: '100%',
                                   height: 'auto',
-                                  maxHeight: '400px',
+                                  maxHeight: '500px',
                                 }}
                                 alt={product?.name}
                                 fluid
@@ -111,38 +117,53 @@ function ProductDetail() {
 
               <Card.Body style={{ fontSize: '1.2rem' }}>
                 <Row>
-                  <Col md={4}>
+                  <Col md={12}>
                     <Card.Text>
-                      <strong>Mã sản phẩm: &nbsp;</strong>
+                      <strong>Mã sản phẩm: &nbsp; </strong>
+                      {product.productCode}
                     </Card.Text>
                     <Card.Text>
                       <strong>Loại sản phẩm: &nbsp;</strong>
+                      {product?.shortDescription}, {product?.categoryId}
+                    </Card.Text>
+                    {product.gender && (
+                      <Card.Text>
+                        <strong>Giới tính: &nbsp;</strong>{' '}
+                        {product.gender === true ? 'trống' : 'mái'}
+                      </Card.Text>
+                    )}
+                    {product.age && (
+                      <Card.Text>
+                        <strong>Tuổi: &nbsp; </strong> {product.age || 'tuổi'}
+                      </Card.Text>
+                    )}
+                    <Card.Text>
+                      <strong>Số lượng tồn: &nbsp; </strong>
+                      {product.quantity}{' '}
+                      {product.categoryType === 1 ? 'con' : 'sản phẩm'}
                     </Card.Text>
                     <Card.Text>
-                      <strong>Giới tính: &nbsp;</strong>
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Tuổi: &nbsp;</strong>
+                      <strong>Giá thành: &nbsp; </strong>
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(product.price)}
                     </Card.Text>
                   </Col>
-                  <Col md={8}>
+                  {/* <Col md={8}>
                     <Card.Text>{product.productCode}</Card.Text>
                     <Card.Text>
                       {product?.shortDescription}, {product?.categoryId}
                     </Card.Text>
                     <Card.Text>{product.gender || 'giới tính'}</Card.Text>
                     <Card.Text>{product.age || 'tuổi'}</Card.Text>
-                  </Col>
+                  </Col> */}
                 </Row>
 
                 <br />
                 <Row>
-                  <Col md={4}>
-                    <Card.Text>
-                      <strong>Đánh giá: &nbsp;</strong>
-                    </Card.Text>
-                  </Col>
-                  <Col>
+                  <Col md={12}>
+                    <strong>Đánh giá: &nbsp;</strong>
                     <Rate
                       allowHalf
                       tooltips={desc}
@@ -177,6 +198,29 @@ function ProductDetail() {
             </Card>
           </Col>
         </Row>
+
+        {video && (
+          <Row style={{ marginTop: 20 }}>
+            <hr />
+            <Col className="align-items-center">
+              <div
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                <h4>Video giới thiệu</h4>
+                <iframe
+                  title="chim chao mao"
+                  width="500"
+                  height="300"
+                  allowFullScreen={true}
+                  style={{ border: '10px solid black' }}
+                  src={video.url}
+                ></iframe>
+              </div>
+            </Col>
+          </Row>
+        )}
 
         <div style={{ marginTop: 20 }}>
           <hr />
