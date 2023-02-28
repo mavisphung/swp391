@@ -20,7 +20,9 @@ function ProductCarousel({ list, type = 0 }) {
         }}
       >
         {list.map((b) => (
-          <BirdCard key={b.id} bird={b} type={type} />
+          <div key={b.id}>
+            <BirdCard bird={b} />
+          </div>
         ))}
       </Carousel>
       <div className="d-flex justify-content-center">

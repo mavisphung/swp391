@@ -1,12 +1,10 @@
 import { Col, Row } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 
 import "./HomeLayout.scss";
 import "react-toastify/dist/ReactToastify.css";
 import ProductCarousel from "./ProductCarousel";
 import CategoryCard from "./CategoryCard";
-import { cateList } from "~/data/Products";
 import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
 import api from "~/context/AppApi";
 
@@ -15,7 +13,7 @@ function HomePage() {
   const [foods, setFoods] = useState([]);
   const [popular, setPopular] = useState([]);
   const [others, setOthers] = useState([]);
-  // const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const getProducts = async () => {
     try {
@@ -26,7 +24,7 @@ function HomePage() {
         },
       });
 
-      console.log("RES", response);
+      // console.log("RES", response);
       console.log("RES.DATA", response.data);
       if (response.data) {
         const tmp1 = [];
@@ -52,7 +50,23 @@ function HomePage() {
     }
   };
 
+  const getCategory = async () => {
+    try {
+      const response = await api.get("/category", {
+        params: {
+          PageNumber: 2,
+          PageSize: 9,
+        },
+      });
+      setCategories(response.data);
+      console.log(categories);
+    } catch (e) {
+      console.log(`Fail to load category: ${e}`);
+    }
+  };
+
   useEffect(() => {
+    getCategory();
     getProducts();
   }, []);
 
@@ -64,10 +78,18 @@ function HomePage() {
           Danh mục sản phẩm
         </div>
         <Row>
-          <Col md>
-            {cateList.map((cate) => (
+          <Col md={12}>
+            {categories.map((cate) => (
               <CategoryCard key={cate.id} cate={cate} />
             ))}
+            <CategoryCard
+              cate={{
+                id: 7,
+                name: "Xem thêm",
+                image:
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlQ18XoCeH7nThpXbP5HApe3AA1LhldLbK9g&usqp=CAU",
+              }}
+            />
           </Col>
         </Row>
         <Row>
@@ -94,9 +116,6 @@ function HomePage() {
           </div>
           <ProductCarousel list={foods} />
         </Row>
-
-        {/* <button onClick={() => toast("Loading..")}>Show Toast</button>
-        <ToastContainer style={{ color: "blue" }} /> */}
         <div style={{ paddingBottom: "150px" }}></div>
       </div>
     </div>

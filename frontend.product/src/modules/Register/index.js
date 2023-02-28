@@ -27,9 +27,9 @@ function RegisterPage() {
 
   return (
     <div>
-      <a href={config.routes.dashboard}>
+      <Link to={config.routes.dashboard}>
         <img id="register-icon" src={AppIcons.logo} alt="ChyStore icon" />
-      </a>
+      </Link>
       <div className="register-center register-back-link">
         <Link to={config.routes.dashboard}>
           <ArrowLeftOutlined id="register-left-arrow" />

@@ -1,16 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import "./CartLayout.scss";
+import CartItem from "./widgets/CartItem";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
-import { getCart } from "~/common/LocalStorageUtil";
-import CartItem from "./widgets/CartItem";
+import { useUserCart } from "~/context/UserCartContext";
 
 function CartDetails() {
   // const [nextTimeList, setNextTimeList] = useState([]);
   let total = 0;
 
-  const cartList = getCart();
+  const { cart } = useUserCart();
+  const cartList = cart;
 
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ function CartDetails() {
           <h5>Hiện đang có {cartList.length} sản phẩm trong giỏ hàng</h5>
           <hr />
           {cartList.map((e) => {
-            total += e.price * 1;
+            total += e.price * e.amount;
             const img = e.medias[1].url;
             return (
               <CartItem
@@ -62,11 +63,14 @@ function CartDetails() {
             Đặt hàng
           </button>
           <br />
-          <a href={config.routes.dashboard}>
+          <Link to={config.routes.dashboard}>
             <span>Tiếp tục mua hàng?</span>
-            <br />
+          </Link>
+          <br />
+          <br />
+          <Link>
             <span>Trở về</span>
-          </a>
+          </Link>
         </div>
       </div>
       <div className="row" style={{ marginTop: "37px" }}>
