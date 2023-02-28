@@ -30,3 +30,8 @@ export const addBanner = async (body) => {
 export const removeBanner = async (bannerId) => {
   await api.delete(`/${bannerURL}/${bannerId}`);
 };
+
+// Update banner
+export const updateBannerById = async (bannerId, body) => {
+  await api.put(`/${bannerURL}/${bannerId}`, body);
+};

@@ -29,6 +29,7 @@ const BannersList = () => {
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
   const [bannerId, setBannerId] = useState('');
+  const [selectedBanner, setSelectedBanner] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
   const [errorCreate, setErrorCreate] = useState(false);
   const [bannerName, setBannerName] = useState('');
@@ -118,13 +119,16 @@ const BannersList = () => {
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={`${pathname}/${viewBannerDetail}/${record.id}`}>
-          <CustomTooltip title="Xem chi tiết" color="#014B92">
-            <Button className="mx-2" variant="outline-info" size="xs">
-              <FontAwesomeIcon icon={faEye} size="lg" />
-            </Button>
-          </CustomTooltip>
-        </Link>
+        <CustomTooltip title="Xem chi tiết" color="#014B92">
+          <Button
+            className="mx-2"
+            variant="outline-info"
+            size="xs"
+            onClick={() => handleShowCreate(record)}
+          >
+            <FontAwesomeIcon icon={faEye} size="lg" />
+          </Button>
+        </CustomTooltip>
         <CustomTooltip title="Xóa" color="#dc3545">
           <Button
             variant="outline-danger"
@@ -170,15 +174,27 @@ const BannersList = () => {
   // Manage create banner modal
   const handleCloseCreate = () => {
     setShowCreate(false);
+    setBannerId('');
     setBannerName('');
     setBannerImage(null);
     setBannerImageURL('');
     setErrorCreate(false);
   };
 
-  const handleShowCreate = () => {
+  const handleShowCreate = (record) => {
+    if (record) {
+      setSelectedBanner(record);
+      setBannerId(record.id);
+    }
     setShowCreate(true);
   };
+
+  useEffect(() => {
+    if (selectedBanner) {
+      setBannerImageURL(selectedBanner.image);
+      setBannerName(selectedBanner.name);
+    }
+  }, [selectedBanner]);
 
   // Manage create banner action
   const createBanner = async () => {
@@ -187,7 +203,7 @@ const BannersList = () => {
         name: bannerName,
         image: bannerImageURL,
       };
-      // call api deny
+      // call api create
       await addBanner(body);
       handleCloseCreate();
       getBannersList(pageIndex);
@@ -196,14 +212,36 @@ const BannersList = () => {
     }
   };
 
-  const handleCreateBanner = () => {
-    if (bannerName === '' || bannerImageURL === '') {
-      setErrorCreate(true);
-      return;
-    } else if (bannerName && bannerImageURL) {
-      createBanner();
-      toast.success('Tạo banner thành công', { autoClose: 1500 });
+  const updateBanner = async () => {
+    try {
+      const body = {
+        name: bannerName,
+        image: bannerImageURL,
+      };
+      console.log(body);
+      // call api update
+      // await updateBanner(selectedBanner.id);
       handleCloseCreate();
+      getBannersList(pageIndex);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCreateBanner = () => {
+    if (selectedBanner) {
+      updateBanner();
+      toast.success('Cập nhật banner thành công', { autoClose: 1500 });
+      handleCloseCreate();
+    } else {
+      if (bannerName === '' || bannerImageURL === '') {
+        setErrorCreate(true);
+        return;
+      } else if (bannerName && bannerImageURL) {
+        createBanner();
+        toast.success('Tạo banner thành công', { autoClose: 1500 });
+        handleCloseCreate();
+      }
     }
   };
 
@@ -311,12 +349,12 @@ const BannersList = () => {
 
           <CustomModal
             show={showCreate}
-            title="Thêm banner mới"
+            title={bannerId ? `Chi tiết banner ${bannerId}` : 'Thêm banner mới'}
             body={
               <>
                 <Row>
                   <Col className="align-items-center">
-                    <h5>Thêm banner</h5>
+                    <h5>{bannerId ? `Banner ${bannerId}` : 'Thêm banner'}</h5>
                   </Col>
                 </Row>
                 {bannerImageURL && (
