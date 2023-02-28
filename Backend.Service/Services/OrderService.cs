@@ -47,14 +47,14 @@ namespace Backend.Service.Services
             {
                 predicate = predicate.And(o => o.OrderDate <= filter.To.SetKindUtc());
             }
-
+            
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
                 orderBy: que => filter.Ascending == false
                                     ? que.OrderByDescending(order => order.OrderDate)
                                     : que.OrderBy(order => order.OrderDate),
                 includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
-            // TODO: Sửa order theo Descending theo OrderDate
+            // TODO: Sửa order theo Descending theo OrderDate - CHECKED
             return PagedList<OrderResponseModel>.ToPagedList(
                 query.Select(entity => new OrderResponseModel(entity)).ToList(),
                 filter.PageNumber,
