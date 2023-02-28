@@ -12,7 +12,7 @@ namespace Backend.Service.Annotations
 
         public override bool IsValid(object value)
         {
-            string strValue = value as string;
+           string strValue = value + "";
             if (!string.IsNullOrEmpty(strValue))
             {
                 return true;
