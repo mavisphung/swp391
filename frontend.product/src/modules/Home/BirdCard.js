@@ -16,19 +16,26 @@ const BirdCard = (props) => {
 
   const historyUrl = props.historyUrl ? props.historyUrl : [];
 
-  const quantity = props.bird.quantity ? props.bird.quantity : 100;
+  const isRetail = props.bird.age && props.bird.gender ? true : false;
 
   return (
     <Col className="pb-4 pe-3">
       <Card>
         <Card.Img src={props.bird.medias[1].url} />
         <Card.Body>
-          <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
-          <Card.Text>{`ML: LT0${props.bird.id}`}</Card.Text>
+          <Card.Title className="pro-card-title">
+            {props.bird.name} {isRetail ? "" : "các loại"}
+          </Card.Title>
+          <Card.Text>{isRetail ? `ML: LT0${props.bird.id}` : ""}</Card.Text>
           <div className="d-flex justify-content-between">
-            <div className="price">{formatPrice(props.bird.price)} đ</div>
+            <div>
+              <span className="price">{formatPrice(props.bird.price)} đ</span>
+              <span style={{ fontSize: "18px" }}>
+                {isRetail ? "" : " / con"}
+              </span>
+            </div>
             <span id="pro-amount-status">
-              {quantity > 0 ? "Còn hàng" : "Đã bán"}
+              {props.bird.quantity > 0 ? "Còn hàng" : "Đã bán"}
             </span>
           </div>
           <div className="pro-card-ctr">
