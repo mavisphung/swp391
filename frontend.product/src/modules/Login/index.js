@@ -34,7 +34,9 @@ function LoginPage() {
 
   return (
     <div>
-      <img id="login-icon" src={AppIcons.logo} alt="ChyStore icon" />
+      <Link to={config.routes.dashboard}>
+        <img id="login-icon" src={AppIcons.logo} alt="ChyStore icon" />
+      </Link>
       <div className="login-center login-back-link">
         <Link to={config.routes.dashboard}>
           <ArrowLeftOutlined id="login-left-arrow" />
@@ -51,7 +53,6 @@ function LoginPage() {
             id="femail"
             type="email"
             placeholder="Vui lòng nhập email"
-            // defaultValue="nguoibimatthegioi@gmail.com"
             onChange={(e) => setEmail(e.target.value)}
           />
           <label htmlFor="fpassword">Mật khẩu</label>
@@ -60,7 +61,6 @@ function LoginPage() {
               id="fpassword"
               type={passwordShowed ? "text" : "password"}
               placeholder="Vui lòng nhập mật khẩu"
-              // defaultValue="123456"
               onChange={(e) => setPassword(e.target.value)}
             />
             <span className="eye-icon">
@@ -80,7 +80,7 @@ function LoginPage() {
           <div className="login-flex-container">
             <Checkbox
               checked={checked}
-              onChange={(e) => setChecked(!checked)}
+              onChange={() => setChecked(!checked)}
               style={{ margin: 0, fontSize: "12px" }}
             >
               Lưu đăng nhập

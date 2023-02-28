@@ -11,7 +11,10 @@ namespace Backend.Service.Models.Order
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public DateTime? CloseDate { get; set; }
         public DateTime? EstimatedReceiveDate { get; set; }
+        public string? CancelReason { get; set; }
         public ICollection<OrderDetailRM> OrderDetails { get; set; }
+
+        public SAddressRM CustomerInfo { get; set; }
 
         public OrderResponseModel(Entities.Order entity) : base(entity) 
         {
@@ -22,6 +25,30 @@ namespace Backend.Service.Models.Order
             CloseDate = entity.CloseDate;
             EstimatedReceiveDate = entity.EstimatedReceiveDate;
             OrderDetails = entity.OrderDetails.Select(od => new OrderDetailRM(od)).ToList();
+            CustomerInfo = entity.ShippingAddress != null ? new SAddressRM(entity.ShippingAddress) : null;
+            CancelReason = entity.CancelledReason;
+        }
+    }
+
+    public class SAddressRM : BaseModel<Entities.ShippingAddress>
+    {
+        public string Email { get; set; }
+        public string Fullname { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Address { get; set; }
+        public string? Ward { get; set; }
+        public string? District { get; set; }
+        public string? Province { get; set; }
+
+        public SAddressRM(Entities.ShippingAddress entity) : base(entity)
+        {
+            Email = entity.Email;
+            Fullname = entity.FullName;
+            PhoneNumber = entity.PhoneNumber;
+            Address = entity.Address;
+            Ward = entity.Ward;
+            District = entity.District;
+            Province = entity.Province;
         }
     }
 

@@ -1,0 +1,144 @@
+.ly-cl-0 {
+  overflow: hidden;
+
+  h4 {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  #confirm-login-back a:hover,
+  a:active {
+    color: white;
+  }
+
+  #confirm-login-back span {
+    color: white;
+    font-size: 16px;
+    margin: 30px 0 12px;
+  }
+
+  #login-left-arrow {
+    color: white;
+    font-size: 16px;
+  }
+
+  .hoac-cl-0 {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+
+    .hoac-cl-1 {
+      position: relative;
+      left: -50%;
+      font-size: 22px;
+      padding-right: 7px;
+    }
+  }
+}
+
+.ly-cl-1 {
+  padding: 12px 165px 100px 110px;
+  background-color: #7c3d96; /* For browsers that do not support gradients */
+  background-image: linear-gradient(to bottom right, #f2635f, #7c3d96);
+
+  h4 {
+    color: white;
+  }
+
+  label,
+  span {
+    color: white;
+    font-size: 16px;
+  }
+
+  .btn-cl-1 {
+    width: 100%;
+    background-color: white;
+    padding: 8px 0;
+    border-radius: 7px;
+    border: none;
+    box-shadow: 1px 4px 4px #b9b9b9a9;
+    margin-top: 19px;
+  }
+
+  .dk-cs {
+    color: #68f227;
+    text-decoration: underline;
+    margin-left: 5px;
+  }
+
+  form {
+    label {
+      margin-bottom: 5px;
+    }
+
+    input {
+      border-radius: 5px;
+    }
+  }
+}
+
+.ly-cl-2 {
+  padding: 12px 165px 100px 110px;
+
+  h4 {
+    margin: 57px 0 35px;
+  }
+
+  form span {
+    background-color: white;
+    border: none;
+  }
+
+  .btn-cl-2 {
+    width: 100%;
+    background-color: #f2635f;
+    color: white;
+    padding: 8px 0;
+    border-radius: 7px;
+    border: none;
+    box-shadow: 1px 4px 4px #b9b9b9a9;
+  }
+
+  .eye-icon {
+    top: 18px;
+  }
+
+  .hoac-cl {
+    display: block;
+    margin: 37px 0 9px;
+  }
+
+  .btn-cl-3 {
+    border: none;
+    padding: 6px 18px;
+    background-color: white;
+    border-radius: 7px;
+    box-shadow: 1px 4px 4px #b9b9b9a9;
+    margin-bottom: 36px;
+  }
+
+  .register-cl {
+    color: #f2635f;
+    font-size: 16px;
+    margin-left: 5px;
+    font-weight: 700;
+  }
+}
+
+.bg-cl {
+  width: 50%;
+  height: 150%;
+  position: absolute;
+  z-index: -10;
+  top: 0;
+  left: 0;
+  background-color: #7c3d96; /* For browsers that do not support gradients */
+  background-image: linear-gradient(to bottom right, #f2635f, #7c3d96);
+}
+
+@media only screen and (max-width: 780px) {
+  .hoac-cl-0 {
+    visibility: hidden;
+  }
+}

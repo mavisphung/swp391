@@ -1,4 +1,6 @@
-﻿using Backend.Service.Entities;
+﻿using Backend.Service.Consts;
+using Backend.Service.Entities;
+using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
 using Backend.Service.Models.Order;
@@ -45,15 +47,28 @@ namespace Backend.Service.Services
             {
                 predicate = predicate.And(o => o.OrderDate <= filter.To.SetKindUtc());
             }
-
+            
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
-                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product");
-
+                orderBy: que => filter.Ascending == false
+                                    ? que.OrderByDescending(order => order.OrderDate)
+                                    : que.OrderBy(order => order.OrderDate),
+                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+            // TODO: Sửa order theo Descending theo OrderDate - CHECKED
             return PagedList<OrderResponseModel>.ToPagedList(
-                query.AsQueryable().OrderBy(u => u.Id).Select(entity => new OrderResponseModel(entity)),
+                query.Select(entity => new OrderResponseModel(entity)).ToList(),
                 filter.PageNumber,
                 filter.PageSize);
+        }
+
+        public async Task<Order> GetOneAsync(int id)
+        {
+            var found = await _orderRepository.GetFirstOrDefaultAsync(
+                o => !o.IsDeleted && o.Id == id,
+                "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+            if (found == null)
+                throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
+            return found;
         }
 
         public async Task<OrderResponseModel> ProcessAddToCartUnauth(UnauthOrderRequestModel model)
@@ -107,6 +122,8 @@ namespace Backend.Service.Services
                 p => !p.IsDeleted 
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
 
+            // TODO: trừ số lượng sản phẩm trong product
+
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
@@ -135,6 +152,34 @@ namespace Backend.Service.Services
             // TODO: Thêm payment vào version sau
 
             return new OrderResponseModel(newOrder);
+        }
+
+        public async Task<Order> UpdateStatusAsync(int id, UpdateOrderStatusModel model)
+        {
+            User? staff = await _userRepository.GetUserByIdAsync(model.StaffAccountId);
+            Order found = await GetOneAsync(id);
+            found.Status = model.OrderStatus;
+            found.UpdatedBy = staff!.Fullname;
+
+            if (model.OrderStatus == OrderStatus.Accepted && model.EstimatedReceiveDate != null)
+            {
+                found.EstimatedReceiveDate = model.EstimatedReceiveDate.SetKindUtc();
+            }
+
+            if (model.OrderStatus == OrderStatus.Cancelled && !string.IsNullOrEmpty(model.Reason))
+            {
+                found.CancelledReason = model.Reason;
+                found.CloseDate = DateTime.UtcNow;
+            }
+
+            if (model.OrderStatus == OrderStatus.Finished)
+            {
+                found.CloseDate = DateTime.UtcNow;
+            }
+
+            _orderRepository.Update(found);
+            await _orderRepository.SaveDbChangeAsync();
+            return found;
         }
     }
 }

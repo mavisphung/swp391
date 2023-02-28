@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { formatPrice } from "~/common/Helper";
 
 import "../CartLayout.scss";
+import { formatPrice } from "~/common/Helper";
+import { useUserCart } from "~/context/UserCartContext";
 
-function CartItem({ id, name, img, cate, price, amount, isBuy }) {
+function CartItem({ id, name, img, des, price, amount, isBuy }) {
+  const { dispatch } = useUserCart();
   const [newAmount, setAmount] = useState(amount);
   const total = price * newAmount;
   return (
@@ -15,7 +17,7 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
         <h6>{name}</h6>
         <div className="col-9">
           <div className="d-flex justify-content-between">
-            <span>Loại: {cate ? cate : "64 nan"}</span>
+            <span>Mô tả: {des}</span>
             <span>Giá sản phẩm: {formatPrice(price)}đ</span>
           </div>
           <div className="d-flex justify-content-between">
@@ -44,10 +46,26 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
           </div>
         </div>
         <div className="col-3 d-flex align-items-end flex-column">
-          <a href="/">{isBuy ? "Để dành lần sau" : "Thêm vào đơn hàng"}</a>
-          <a href="/" className="mt15">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              // addToCart(props.bird);
+            }}
+          >
+            {isBuy ? "Để dành lần sau" : "Thêm vào đơn hàng"}
+          </button>
+          <button
+            className="mt15"
+            onClick={(e) => {
+              e.preventDefault();
+              dispatch({
+                type: "REMOVE_FROM_CART",
+                payload: id,
+              });
+            }}
+          >
             Xóa?
-          </a>
+          </button>
         </div>
       </div>
     </div>

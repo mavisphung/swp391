@@ -1,6 +1,10 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text.Json;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
+using Backend.Service.Extensions;
 using Backend.Service.Helper;
 using Backend.Service.Models.Category;
 using Backend.Service.Repositories;
@@ -19,7 +23,7 @@ namespace Backend.Service.Services
             _cateRepository = cateRepository;
         }
 
-        public PagedList<CategoryResponseModel> GetAll(FilterParameter filter)
+        public PagedList<CategoryResponseModel> GetAll(CategoryFilterParameter filter)
         {
             //var removeDiacritics = filter.Search.RemoveDiacritics();
             //Console.WriteLine($"Sau khi bỏ dấu: {removeDiacritics}");
@@ -28,6 +32,11 @@ namespace Backend.Service.Services
             if (!string.IsNullOrEmpty(filter.Search))
             {
                 predicate = predicate.And(cat => cat.SearchVector.Matches(filter.Search));
+            }
+
+            if (filter.CategoryType != null) 
+            {
+                predicate = predicate.And(cat => cat.CategoryType == filter.CategoryType);
             }
 
             IEnumerable<Category> categories = _cateRepository.GetAll(predicate);
@@ -45,6 +54,8 @@ namespace Backend.Service.Services
                 Name = model.Name,
                 Description = model.Description,
                 CategoryType = model.CategoryType,
+                Image = model.Image,
+                RelativeCategories = model.RelativeCategories,
             };
             await _cateRepository.AddAsync(category);
             await _cateRepository.SaveDbChangeAsync();
@@ -66,18 +77,55 @@ namespace Backend.Service.Services
             _cateRepository.SaveDbChange();
         }
 
-        public async Task<CategoryResponseModel> UpdateCategory(int id, CreateCategoryModel model)
+        public async Task<CategoryResponseModel> UpdateCategory(int id, UpdateCategoryModel model)
         {
             var found = await _cateRepository.GetAsync(id);
             if (found == null)
                 throw new NotFoundException();
 
-            found.Name = found.Name.Equals(model.Name) ? found.Name : model.Name;
-            found.Description = model.Description ?? found.Description;
-            found.CategoryType = found.CategoryType == model.CategoryType ? found.CategoryType : model.CategoryType;
+            Type updateModel = model.GetType();
+            IEnumerable<PropertyInfo> props = new List<PropertyInfo>(updateModel.GetProperties());
+
+            foreach (PropertyInfo prop in props)
+            {
+                object? value = prop.GetValue(model);
+                bool isMatched = found.GetType().GetProperties().Where(pi => pi.Name == prop.Name).Any();
+
+                if (!isMatched || value == null) continue;
+
+                found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
+            }
+
             _cateRepository.Update(found);
             _cateRepository.SaveDbChange();
             return new CategoryResponseModel(found);
+        }
+
+        internal async IAsyncEnumerable<CategoryResponseModel> GetAllAsync(FilterParameter filter)
+        {
+            var predicate = PredicateBuilder.New<Category>().And(cat => !cat.IsDeleted);
+
+            if (!string.IsNullOrEmpty(filter.Search))
+            {
+                predicate = predicate.And(cat => cat.SearchVector.Matches(filter.Search));
+            }
+
+            var data = await _cateRepository.GetAllAsync(predicate);
+            foreach (var item in data)
+            {
+                yield return new CategoryResponseModel(item);
+            }
+        }
+
+        internal async Task<PagedList<CategoryResponseModel>> GetRelativeCategories(int categoryId, FilterParameter filter)
+        {
+            Category found = await _cateRepository.GetAsync(categoryId);
+            var relativesSet = found.RelativeCategories?.ToHashSet() ?? new HashSet<int>();
+            IEnumerable<Category> relatives = await _cateRepository.GetAllAsync(cate => relativesSet.Contains(cate.Id));
+            return PagedList<CategoryResponseModel>.ToPagedList(
+                relatives.Select(cate => new CategoryResponseModel(cate)).ToList(),
+                filter.PageNumber, 
+                filter.PageSize);
         }
     }
 }

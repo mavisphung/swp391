@@ -1,0 +1,20 @@
+.btn-pay {
+    border: none !important;
+    font-weight: 700 !important;
+    box-shadow: 1px 4px 4px rgb(147 146 146 / 66%) !important;
+    --bs-btn-hover-bg: #fff !important;
+    --bs-btn-border-color: #fff !important;
+    --bs-btn-hover-color: #1c0808 !important;
+    --bs-btn-bg: #ee3e6a !important; 
+    
+}
+
+.form-check-input:checked {
+    background-color: #ee3e6a !important;
+    border-color: #ee3e6a !important;
+}
+
+// .btn{
+//     --bs-btn-color: #f8f9fa;
+//     --bs-btn-bg: #ee3e6a;
+// }

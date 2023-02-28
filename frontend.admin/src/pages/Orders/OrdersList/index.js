@@ -7,6 +7,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment/moment';
 
 import CustomTooltip from '~/ui/CustomTooltip';
+import CustomSpinner from '~/ui/CustomSpinner';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
@@ -17,88 +18,23 @@ import {
   pending,
 } from '~/system/Constants/constants';
 import { MSG07 } from '~/system/Messages/messages';
+import { viewOrderDetail } from '~/system/Constants/LinkURL';
+import {
+  getCustomerOrderListData,
+  getFilterCustomerOrderListData,
+} from '~/api/orders';
+import { orderStatusList } from '~/system/Data/status';
 
 import '../../../styles/Component/label.scss';
 import './OrdersList.scss';
-import { viewOrderDetail } from '~/system/Constants/LinkURL';
 
 const { Search } = Input;
-
-const statusList = [
-  {
-    key: '',
-    tab: 'Tất cả',
-  },
-  {
-    key: 0,
-    tab: 'Chờ xác nhận',
-  },
-  {
-    key: 1,
-    tab: 'Đang xử lí',
-  },
-  {
-    key: 2,
-    tab: 'Thành công',
-  },
-  {
-    key: 3,
-    tab: 'Đã hủy',
-  },
-];
-
-const ordersList = {
-  data: [
-    {
-      id: 'OCH0123456',
-      customerAccount: {
-        fullname: 'Thái Đăng Linh',
-      },
-      status: 0,
-      orderDate: '2023-01-09',
-      estimatedReceiveDate: '2023-01-12',
-      totalPrice: '3600000',
-    },
-    {
-      id: 'OCH0123789',
-      customerAccount: {
-        fullname: 'Phùng Hữu Kiều',
-      },
-      status: 0,
-      orderDate: '2023-01-15',
-      estimatedReceiveDate: '2023-01-18',
-      totalPrice: '1500000',
-    },
-    {
-      id: 'OCH0123555',
-      customerAccount: {
-        fullname: 'Lương Bá Thành',
-      },
-      status: 1,
-      orderDate: '2023-01-12',
-      estimatedReceiveDate: '2023-01-14',
-      totalPrice: '2300000',
-    },
-    {
-      id: 'OCH0123666',
-      customerAccount: {
-        fullname: 'Trần Công Minh',
-      },
-      status: 3,
-      orderDate: '2023-02-06',
-      estimatedReceiveDate: '2023-02-10',
-      totalPrice: '3000000',
-    },
-  ],
-  pageSize: 10,
-  totalCount: 2,
-};
 
 const OrdersList = () => {
   const { pathname } = useLocation();
 
   const [orderStatus, setOrderStatus] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [searchOrderId, setSearchOrderId] = useState('');
   const [pageIndex, setPageIndex] = useState(1);
@@ -115,20 +51,21 @@ const OrdersList = () => {
     async (pageIndex, orderStatus, searchOrderId) => {
       try {
         if (searchOrderId === '' && orderStatus === '') {
-          const data = ordersList;
+          const data = await getCustomerOrderListData(pageIndex);
           setOrders(data.data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         } else {
-          const data = null;
-          // const data = await getFilterCustomerOrderListData(
-          //   pageIndex,
-          //   orderStatus,
-          //   searchOrderId,
-          // );
+          const data = await getFilterCustomerOrderListData(
+            pageIndex,
+            orderStatus,
+            searchOrderId,
+          );
           setOrders(data.data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         }
         setLoading(false);
         setLoadingSearch(false);
@@ -151,13 +88,13 @@ const OrdersList = () => {
   // Manage table
   const columns = [
     {
-      title: 'Mã đơn hàng',
+      title: 'Mã đơn',
       dataIndex: 'id',
       key: 'id',
     },
     {
       title: 'Khách hàng',
-      dataIndex: ['customerAccount', 'fullname'],
+      dataIndex: ['customerInfo', 'fullname'],
       key: 'customer',
     },
     {
@@ -175,9 +112,17 @@ const OrdersList = () => {
       dataIndex: 'estimatedReceiveDate',
       key: 'estimatedReceiveDate',
       render: (text, record) => {
-        return moment(record.estimatedReceiveDate, dateConvert).format(
-          defaultDatePickerRange,
-        );
+        if (record.estimatedReceiveDate) {
+          if (record.status === cancelled) {
+            return 'Đã hủy';
+          } else {
+            return moment(record.estimatedReceiveDate, dateConvert).format(
+              defaultDatePickerRange,
+            );
+          }
+        } else {
+          return 'Chờ xác nhận';
+        }
       },
     },
     {
@@ -234,50 +179,56 @@ const OrdersList = () => {
 
   return (
     <>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Danh sách đơn đặt hàng</h2>
-      </div>
-      <Card
-        tabList={statusList}
-        activeTabKey={orderStatus}
-        onTabChange={(rowkey) => {
-          onStatusChange(rowkey);
-        }}
-        className="status_card"
-      />
-      <Row className="my-3" justify="center">
-        <Search
-          style={{ width: '48%' }}
-          placeholder="Tìm mã đơn hàng"
-          enterButton
-          size="large"
-          loading={loadingSearch}
-          onSearch={(value) => {
-            setPageIndex(1);
-            setSearchOrderId(value);
-            setLoadingSearch(true);
-          }}
-        />
-      </Row>
-      <div className="my-3">
-        <Table
-          rowKey="id"
-          locale={{ emptyText: MSG07 }}
-          columns={columns}
-          dataSource={orders}
-          pagination={{
-            defaultCurrent: 1,
-            current: pageIndex,
-            pageSize: pageSize,
-            total: totalCount,
-            position: ['none', 'bottomCenter'],
-            onChange: (page) => {
-              setPageIndex(page);
-            },
-          }}
-          bordered
-        />
-      </div>
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <div style={{ textAlign: 'center' }}>
+            <h2>Danh sách đơn đặt hàng</h2>
+          </div>
+          <Card
+            tabList={orderStatusList}
+            activeTabKey={orderStatus}
+            onTabChange={(rowkey) => {
+              onStatusChange(rowkey);
+            }}
+            className="status_card"
+          />
+          <Row className="my-3" justify="center">
+            <Search
+              style={{ width: '48%' }}
+              placeholder="Tìm mã đơn hàng"
+              enterButton
+              size="large"
+              loading={loadingSearch}
+              onSearch={(value) => {
+                setPageIndex(1);
+                setSearchOrderId(value);
+                setLoadingSearch(true);
+              }}
+            />
+          </Row>
+          <div className="my-3">
+            <Table
+              rowKey="id"
+              locale={{ emptyText: MSG07 }}
+              columns={columns}
+              dataSource={orders}
+              pagination={{
+                defaultCurrent: 1,
+                current: pageIndex,
+                pageSize: pageSize,
+                total: totalCount,
+                position: ['none', 'bottomCenter'],
+                onChange: (page) => {
+                  setPageIndex(page);
+                },
+              }}
+              bordered
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

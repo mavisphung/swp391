@@ -1,92 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Space, Table } from 'antd';
+import { Image, Space, Table } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faEye, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
-import { MSG07, MSG08 } from '~/system/Messages/messages';
+import { MSG07, MSG08, MSG42 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
+import CustomSpinner from '~/ui/CustomSpinner';
+import CustomModal from '~/components/Modal';
 import { useUserAuth } from '~/context/UserAuthContext';
+import { updateAccount } from '~/system/Constants/LinkURL';
+import { active, Admin, inactive } from '~/system/Constants/constants';
+import { getAccountsListData } from '~/api/accounts';
+import { accountRoles } from '~/system/Data/roles';
+import { accountStatus } from '~/system/Data/status';
 
 import '../../../styles/Component/button.scss';
 import '../../../styles/Component/label.scss';
 import '../../../styles/Component/table.scss';
-import CustomModal from '~/components/Modal';
-import { updateAccount } from '~/system/Constants/LinkURL';
-import { active, inactive } from '~/system/Constants/constants';
-
-const accountRoles = [
-  {
-    id: 1,
-    name: 'Quản trị viên',
-  },
-  {
-    id: 2,
-    name: 'Nhân viên',
-  },
-  {
-    id: 3,
-    name: 'Khách hàng',
-  },
-];
-
-const accountStatus = [
-  {
-    id: '1',
-    value: true,
-    name: 'Hoạt động',
-  },
-  {
-    id: '0',
-    value: false,
-    name: 'Không hoạt động',
-  },
-];
-
-const accountList = {
-  type: 'list',
-  data: [
-    {
-      id: 1,
-      fullname: 'Bao Khang',
-      email: 'admin@chytech.com.vn',
-      password: 'admin123',
-      roleId: 1,
-      status: true,
-      phone: '0123123123',
-    },
-    {
-      id: 2,
-      fullname: 'Kevin Ken',
-      email: 'staff@chytech.com.vn',
-      password: 'staff123',
-      roleId: 2,
-      status: true,
-      phone: '0123123555',
-    },
-    {
-      id: 3,
-      fullname: 'Thái Đăng Linh',
-      email: 'linhtd@gmail.com.vn',
-      password: 'linhtd123',
-      roleId: 3,
-      status: true,
-      phone: '0901565565',
-    },
-    {
-      id: 4,
-      fullname: 'Phùng Hữu Kiều',
-      email: 'kieuph@gmail.com.vn',
-      password: 'kieuph123',
-      roleId: 3,
-      status: false,
-      phone: '0901789789',
-    },
-  ],
-  pageSize: 10,
-  totalCount: 4,
-};
 
 function ViewAccountsList() {
   const { getCurrentUser } = useUserAuth();
@@ -103,24 +36,39 @@ function ViewAccountsList() {
   const [totalCount, setTotalCount] = useState(1);
   const [show, setShow] = useState(false);
   const [accountId, setAccountId] = useState('');
+  const [loading, setLoading] = useState(true);
 
   // Get all accounts
-  const getAccountsList = useCallback((pageIndex) => {
-    const data = accountList;
-    setAccounts(data.data.map((account) => account));
-    setPageSize(data.pageSize);
-    setTotalCount(data.totalCount);
-  }, []);
+  const getAccountsList = useCallback(
+    async (pageIndex, searchAccountStatus) => {
+      try {
+        if (searchAccountStatus === '') {
+          const data = await getAccountsListData(pageIndex);
+          setAccounts(data.data.map((account) => account));
+
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
+        } else {
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    getAccountsList(pageIndex);
-  }, [getAccountsList, pageIndex]);
+    getAccountsList(pageIndex, searchAccountStatus);
+  }, [getAccountsList, pageIndex, searchAccountStatus]);
 
   //Enable the Deactivate Button
-  const checkDisableButton = (email, status) => {
+  const checkDisableButton = (email, isDeleted) => {
     if (user.email === email) {
       return true;
-    } else if (status !== active) {
+    } else if (isDeleted !== inactive) {
       return true;
     } else {
       return false;
@@ -138,18 +86,24 @@ function ViewAccountsList() {
             </Button>
           </CustomTooltip>
         </Link>
-        <CustomTooltip title="Vô hiệu hóa" color="#dc3545">
-          <Button
-            variant="outline-danger"
-            size="xs"
-            disabled={
-              checkDisableButton(record.email, record.status) ? true : false
-            }
-            onClick={() => handleShowModal(record.id)}
-          >
-            <FontAwesomeIcon icon={faBan} size="lg" />
-          </Button>
-        </CustomTooltip>
+        {user.roleId === Admin ? (
+          <CustomTooltip title="Vô hiệu hóa" color="#dc3545">
+            <Button
+              variant="outline-danger"
+              size="xs"
+              disabled={
+                checkDisableButton(record.email, record.isDeleted)
+                  ? true
+                  : false
+              }
+              onClick={() => handleShowModal(record.id)}
+            >
+              <FontAwesomeIcon icon={faBan} size="lg" />
+            </Button>
+          </CustomTooltip>
+        ) : (
+          <></>
+        )}
       </Space>
     );
   };
@@ -161,15 +115,39 @@ function ViewAccountsList() {
       key: 'id',
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      width: 250,
+      title: 'Ảnh',
+      dataIndex: 'avatar',
+      key: 'avatar',
+      width: 50,
+      render: (text, record) => {
+        return record.avatar ? (
+          <>
+            <div
+              style={{
+                display: 'inline-block',
+                borderRadius: '50%',
+                width: 40,
+                height: 40,
+                overflow: 'hidden',
+              }}
+            >
+              <Image src={record.avatar} />
+            </div>
+          </>
+        ) : (
+          <FontAwesomeIcon style={{ fontSize: 40 }} icon={faUserCircle} />
+        );
+      },
     },
     {
       title: 'Họ và tên',
       dataIndex: 'fullname',
       key: 'fullname',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Vai trò',
@@ -179,23 +157,26 @@ function ViewAccountsList() {
         const roleName = accountRoles.find(
           (role) => role.id === record.roleId,
         )?.name;
-        return roleName;
+        return roleName || 'NaN';
       },
     },
     {
       title: 'Số điện thoại',
       dataIndex: 'phone',
       key: 'phone',
+      render: (text, record) => {
+        return record.phone || 'Chưa cập nhật';
+      },
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'isDeleted',
+      key: 'isDeleted',
       width: 200,
       render: (text, record) => {
-        if (record.status === active) {
+        if (record.isDeleted === inactive) {
           return <span className="c-label c-label-success"> Hoạt động</span>;
-        } else if (record.status === inactive) {
+        } else if (record.isDeleted === active) {
           return (
             <span className="c-label c-label-danger"> Không hoạt động</span>
           );
@@ -234,6 +215,7 @@ function ViewAccountsList() {
   const handleDeactivateAccount = (accountId) => {
     const accountById = accounts.find((account) => account.id === accountId);
     deactivateAccountStatusById(accountById);
+    toast.success(MSG42, { autoClose: 1500 });
     setShow(false);
   };
 
@@ -264,82 +246,88 @@ function ViewAccountsList() {
 
   return (
     <>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Danh sách tài khoản</h2>
-      </div>
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <div style={{ textAlign: 'center' }}>
+            <h2>Danh sách tài khoản</h2>
+          </div>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          paddingBottom: 15,
-        }}
-      >
-        <Space>
-          <Form.Control
-            placeholder="Tìm email"
-            onChange={handleChangeAccountEmail}
-            value={searchAccountEmail}
-            type="text"
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              paddingBottom: 15,
+            }}
+          >
+            <Space>
+              <Form.Control
+                placeholder="Tìm email"
+                onChange={handleChangeAccountEmail}
+                value={searchAccountEmail}
+                type="text"
+              />
+              {/* <Form.Control
+              placeholder="Tìm tên"
+              onChange={handleChangeAccountEmail}
+              value={searchAccountEmail}
+              type="text"
+            /> */}
+              <Form.Select
+                value={searchAccountRole}
+                onChange={handleChangeAccountRole}
+                aria-label="Chọn vai trò"
+                required
+              >
+                <option value="">Chọn vai trò</option>
+                {accountRoles.map((role, index) => (
+                  <option key={index} value={role.id}>
+                    {role.name}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Select
+                value={searchAccountStatus}
+                onChange={handleChangeAccountStatus}
+                aria-label="Chọn trạng thái"
+                required
+              >
+                <option value="">Chọn trạng thái</option>
+                {accountStatus.map((status, index) => (
+                  <option key={index} value={status.value}>
+                    {status.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Space>
+          </div>
+
+          <Table
+            locale={{ emptyText: MSG07 }}
+            rowKey="id"
+            columns={columns}
+            dataSource={accounts}
+            pagination={{
+              pageSize: pageSize,
+              total: totalCount,
+              position: ['none', 'bottomCenter'],
+              onChange: (page) => {
+                setPageIndex(page);
+              },
+            }}
+            bordered
           />
-          {/* <Form.Control
-            placeholder="Tìm tên"
-            onChange={handleChangeAccountEmail}
-            value={searchAccountEmail}
-            type="text"
-          /> */}
-          <Form.Select
-            value={searchAccountRole}
-            onChange={handleChangeAccountRole}
-            aria-label="Chọn vai trò"
-            required
-          >
-            <option value="">Chọn vai trò</option>
-            {accountRoles.map((role, index) => (
-              <option key={index} value={role.id}>
-                {role.name}
-              </option>
-            ))}
-          </Form.Select>
-          <Form.Select
-            value={searchAccountStatus}
-            onChange={handleChangeAccountStatus}
-            aria-label="Chọn trạng thái"
-            required
-          >
-            <option value="">Chọn trạng thái</option>
-            {accountStatus.map((status, index) => (
-              <option key={index} value={status.value}>
-                {status.name}
-              </option>
-            ))}
-          </Form.Select>
-        </Space>
-      </div>
 
-      <Table
-        locale={{ emptyText: MSG07 }}
-        rowKey="id"
-        columns={columns}
-        dataSource={accounts}
-        pagination={{
-          pageSize: pageSize,
-          total: totalCount,
-          position: ['none', 'bottomCenter'],
-          onChange: (page) => {
-            setPageIndex(page);
-          },
-        }}
-        bordered
-      />
-
-      <CustomModal
-        show={show}
-        title="Vô hiệu hóa tài khoản"
-        body={MSG08}
-        handleClose={handleCloseModal}
-        handleSubmit={() => handleDeactivateAccount(accountId)}
-      />
+          <CustomModal
+            show={show}
+            title="Vô hiệu hóa tài khoản"
+            body={MSG08}
+            handleClose={handleCloseModal}
+            handleSubmit={() => handleDeactivateAccount(accountId)}
+          />
+        </>
+      )}
     </>
   );
 }

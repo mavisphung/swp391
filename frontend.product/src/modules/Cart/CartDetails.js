@@ -1,33 +1,28 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import "./CartLayout.scss";
-import config from "~/config";
-import Bird from "~/models/Bird";
-import { formatPrice } from "~/common/Helper";
 import CartItem from "./widgets/CartItem";
-
-const cartList = [
-  new Bird(
-    0,
-    "Chim nhồng (chim yểng)",
-    "https://tmdl.edu.vn/wp-content/uploads/2022/08/cac-loai-chim-chao-mao-6.jpg",
-    1050000
-  ),
-  new Bird(
-    1,
-    "Ba lô đeo lồng chim ChyStore",
-    "https://www.chimcanhvietnam.vn/images/sanpham/210765393421390586_341776619584210_635816962_o.jpg",
-    20000
-  ),
-];
+import config from "~/config";
+import { formatPrice } from "~/common/Helper";
+import { useUserCart } from "~/context/UserCartContext";
 
 function CartDetails() {
+  // const [nextTimeList, setNextTimeList] = useState([]);
   let total = 0;
+
+  const { cart } = useUserCart();
+  const cartList = cart;
 
   const navigate = useNavigate();
 
   const handleClick = (e) => {
     e.preventDefault();
+    if (cartList.length == 0) {
+      alert(
+        "Giỏ hàng của bạn đang trống! Bạn hãy quay lại trang chủ và chọn món hàng muốn đặt nhé."
+      );
+      return;
+    }
     navigate(config.routes.confirmLogin);
   };
 
@@ -38,15 +33,17 @@ function CartDetails() {
           <h5>Hiện đang có {cartList.length} sản phẩm trong giỏ hàng</h5>
           <hr />
           {cartList.map((e) => {
-            total += e.price * 1;
+            total += e.price * e.amount;
+            const img = e.medias[1].url;
             return (
               <CartItem
                 key={e.id}
                 id={e.id}
                 name={e.name}
-                img={e.img}
+                img={img}
+                des={e.shortDescription}
                 price={e.price}
-                amount={1}
+                amount={e.amount}
                 isBuy={true}
               />
             );
@@ -66,18 +63,21 @@ function CartDetails() {
             Đặt hàng
           </button>
           <br />
-          <a href={config.routes.dashboard}>
+          <Link to={config.routes.dashboard}>
             <span>Tiếp tục mua hàng?</span>
-            <br />
+          </Link>
+          <br />
+          <br />
+          <Link>
             <span>Trở về</span>
-          </a>
+          </Link>
         </div>
       </div>
       <div className="row" style={{ marginTop: "37px" }}>
         <div className="col-12 col-lg-9">
           <h5>Lần sau mua tiếp</h5>
           <hr />
-          {cartList.map((e) => (
+          {[].map((e) => (
             <CartItem
               key={e.id}
               id={e.id}

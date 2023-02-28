@@ -74,8 +74,15 @@ input[type="submit"]:hover {
 
 .price {
   color: #f2635f;
-  font-size: 26px;
+  font-size: 26px !important;
   font-weight: 700;
   margin-top: 12px;
   margin-bottom: 5px;
+}
+
+.c-input-group-append {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  z-index: 10;
 }

@@ -1,0 +1,86 @@
+.div-filter {
+  overflow: auto;
+  padding-bottom: 20px;
+  #btn-filter {
+    float: right;
+    padding: 8px 16px;
+    background-color: white;
+    border-radius: 7px;
+    border-width: 1px;
+    box-shadow: 1px 4px 4px #b9b9b9a9;
+  }
+}
+
+#filter-modal {
+  visibility: hidden; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  right: 0;
+  top: 0;
+  width: 391px; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+
+  /* Modal Content */
+  .filter-modal-content {
+    position: fixed;
+    right: 0;
+    background-color: #fefefe;
+    padding: 20px;
+    width: 391px;
+    height: 100%;
+  }
+
+  /* The Close Button */
+  .btn-close-filter {
+    background-color: white;
+    border: none;
+    font-size: 12px;
+  }
+
+  .btn-close-filter:hover,
+  .btn-close-filter:focus {
+    cursor: pointer;
+  }
+}
+
+.filter-modal-body {
+  padding: 16px 0;
+
+  h5 {
+    font-size: 18px !important;
+    font-weight: normal;
+    margin-top: 24px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 11px 15px;
+    border-radius: 5px;
+    border-width: 1px;
+  }
+
+  .btn-search {
+    background-color: white;
+    border-radius: 5px;
+    margin-left: 30px;
+    border-width: 1px;
+    padding: 0 15px;
+  }
+
+  .cbx-filter {
+    width: 160px;
+    display: block;
+    padding: 11px 15px;
+    border-radius: 5px;
+  }
+
+  input[type="date"] {
+    width: 100%;
+    padding: 11px 15px;
+    border-radius: 5px;
+    border-width: 1px;
+  }
+}

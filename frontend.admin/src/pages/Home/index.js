@@ -1,24 +1,33 @@
+import {
+  faSquareFacebook,
+  faSquareInstagram,
+  faSquareTwitter,
+} from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect } from 'react';
 import { Col, Row, Button, Container, Image } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 import images from '~/assets/img';
 import { useUserAuth } from '~/context/UserAuthContext';
+import { Admin } from '~/system/Constants/constants';
 
 import './Home.scss';
 
 function Home() {
   // Get current user
-  const { getCurrentUser } = useUserAuth();
+  const { getCurrentUser, logOut } = useUserAuth();
   const user = getCurrentUser();
 
   // Go to dashboard if not logout
   let navigate = useNavigate();
   useEffect(() => {
-    if (user) {
+    if (user && user.roleId === Admin) {
       navigate(`/dashboard`);
+    } else {
+      logOut();
     }
-  }, [user, navigate]);
+  }, [user, navigate, logOut]);
 
   return (
     <div className="home-container">
@@ -33,7 +42,7 @@ function Home() {
         <div className="home-content-group">
           <Link to={`/login`}>
             <Button variant="dark" className="login-btn">
-              Đăng nhập
+              <strong>Đăng nhập</strong>
             </Button>
           </Link>
           <span className="home-quote">
@@ -72,6 +81,20 @@ function Home() {
 
             <Col>
               <div className="group-header">Kết nối với chúng tôi</div>
+              <div className="social-group">
+                <FontAwesomeIcon
+                  className="social-icon"
+                  icon={faSquareFacebook}
+                />
+                <FontAwesomeIcon
+                  className="social-icon"
+                  icon={faSquareInstagram}
+                />
+                <FontAwesomeIcon
+                  className="social-icon"
+                  icon={faSquareTwitter}
+                />
+              </div>
             </Col>
           </Row>
         </Container>

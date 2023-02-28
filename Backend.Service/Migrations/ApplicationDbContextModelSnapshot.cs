@@ -183,12 +183,18 @@ namespace Backend.Service.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<ICollection<int>>("RelativeCategories")
+                        .HasColumnType("jsonb");
 
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
@@ -402,6 +408,9 @@ namespace Backend.Service.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
@@ -412,6 +421,9 @@ namespace Backend.Service.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentType")
                         .HasColumnType("integer");
 
                     b.Property<string>("UpdatedBy")
@@ -443,6 +455,9 @@ namespace Backend.Service.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Age")
+                        .HasColumnType("text");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
@@ -451,6 +466,9 @@ namespace Backend.Service.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<bool?>("Gender")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("ImportQuantity")
                         .HasColumnType("integer");
@@ -775,7 +793,7 @@ namespace Backend.Service.Migrations
             modelBuilder.Entity("Backend.Service.Entities.Payment", b =>
                 {
                     b.HasOne("Backend.Service.Entities.Order", "Order")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

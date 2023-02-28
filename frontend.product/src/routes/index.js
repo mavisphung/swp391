@@ -8,6 +8,8 @@ import Dashboard from "~/components/Dashboard";
 import Cart from "~/modules/Cart";
 import DefaultLayout from "~/components/DefaultLayout";
 import ProductDetails from "~/modules/Product";
+import BirdProductDetails from "~/modules/Product2";
+import ConfirmLogin from "~/modules/ConfirmLogin";
 
 const CustomRoutes = () => {
   return (
@@ -29,6 +31,15 @@ const CustomRoutes = () => {
           </DefaultLayout>
         }
       />
+      <Route
+        path={config.routes.birdDetails}
+        element={
+          <DefaultLayout>
+            <BirdProductDetails />
+          </DefaultLayout>
+        }
+      />
+      <Route path={config.routes.confirmLogin} element={<ConfirmLogin />} />
     </Routes>
   );
 };

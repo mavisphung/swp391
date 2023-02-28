@@ -31,7 +31,8 @@ builder.Services.AddCors(options =>
                           builder.WithOrigins("*")
                                 .AllowAnyOrigin()
                                 .AllowAnyMethod()
-                                .AllowAnyHeader();
+                                .AllowAnyHeader()
+                                .WithExposedHeaders("X-Pagination");
                       });
 });
 
@@ -41,6 +42,7 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateProductExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateBannerExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<CreateAccountExample>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<LoginExample>();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateCategoryExample>();
 
 // Add services to the container.
 // Must enable XML comment to generate exactly what we want
@@ -131,6 +133,7 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DataSource"));
+    opt.EnableSensitiveDataLogging();
 });
 
 //--------------------------------------------------------------
@@ -147,6 +150,7 @@ builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddTransient<ICartItemRepository, CartItemRepository>();
 builder.Services.AddTransient<IShippingAddressRepository, ShippingAddressRepository>();
+builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 
 // Add services
 builder.Services.AddTransient<UserService, UserService>();
@@ -157,7 +161,10 @@ builder.Services.AddTransient<BannerService, BannerService>();
 builder.Services.AddTransient<OrderService, OrderService>();
 builder.Services.AddTransient<CartService, CartService>();
 builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
+builder.Services.AddTransient<VNPayConst, VNPayConst>();
+builder.Services.AddTransient<PaymentService, PaymentService>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
+
 
 // Add Exception handler
 builder.Services.AddTransient<ExceptionHandler, ExceptionHandler>();
