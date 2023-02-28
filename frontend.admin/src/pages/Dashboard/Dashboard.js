@@ -2,6 +2,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Layout } from 'antd';
 
 import Store from '~/pages/Store/Store';
+import BannersList from '../Store/Banner/BannersList';
 import OrdersList from '~/pages/Orders/OrdersList';
 import OrderDetail from '../Orders/OrderDetail';
 import Statistics from '../Statistics';
@@ -29,7 +30,9 @@ import {
   productId,
   updateAccount,
   updateCategory,
+  updateProduct,
   viewAccountsList,
+  viewBannersList,
   viewCategoriesList,
   viewOrderDetail,
   viewOrdersList,
@@ -79,6 +82,7 @@ function Dashboard() {
         return (
           <Routes>
             <Route path="/" element={<Store />} />
+            <Route path={`/${viewBannersList}`} element={<BannersList />} />
             <Route
               path={`${viewAccountsList}`}
               element={<ViewAccountsList />}
@@ -108,6 +112,10 @@ function Dashboard() {
               element={<ProductDetail />}
             />
             <Route path={`${addProduct}`} element={<AddEditProduct />} />
+            <Route
+              path={`${viewProductsList}/${viewProductDetail}/${productId}/${updateProduct}`}
+              element={<AddEditProduct />}
+            />
             <Route path={`${viewStatistics}`} element={<Statistics />} />
             <Route path={`${accountProfile}`} element={<AccountProfile />} />
             <Route path={`${changePassword}`} element={<ChangePassword />} />

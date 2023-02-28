@@ -246,7 +246,11 @@ const OrderDetail = () => {
               </p>
               <p>
                 <strong>Ngày lấy hàng: </strong>{' '}
-                {customerOrder.closeDate || 'Chưa lấy hàng'}
+                {customerOrder.closeDate
+                  ? moment(customerOrder.closeDate, dateTimeConvert)
+                      .add(7, 'hours')
+                      .format(defaultDateTimePickerRange)
+                  : 'Chưa lấy hàng'}
               </p>
             </>
           )}

@@ -21,6 +21,10 @@ export const viewProductsList = 'products-list';
 export const viewProductDetail = 'product-detail';
 export const addProduct = 'add-product';
 export const updateProduct = 'update-product';
+export const viewBannersList = 'banners-list';
+export const viewBannerDetail = 'banner-detail';
+export const addBanner = 'add-banner';
+export const updateBanner = 'update-banner';
 
 // Params in URL
 export const accountId = ':accountId';
