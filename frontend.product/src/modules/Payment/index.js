@@ -9,11 +9,13 @@ import { toast } from "react-toastify";
 import config from "~/config";
 import { emptyCart } from "~/common/LocalStorageUtil";
 import dateFormat from "dateformat";
-import hmacSHA512 from "crypto-js/hmac-sha512";
-import { vnpHashSecret, vnpTmnCode } from "~/system/Constants/constants";
-import Hex from "crypto-js/enc-hex";
-import HmacSHA512 from "crypto-js/hmac-sha512";
-// import {  VNPay } from "vn-payments";
+import { vnpHashSecret, vnpTmnCode, locale, secureHashType } from "~/system/Constants/constants";
+
+async function createHmacSHA512(data)  {
+  const hmac512 = require('crypto-js/hmac-sha512');
+  const hashed = hmac512(data, vnpHashSecret);
+  return hashed;
+}
 
 function sortObject(obj) {
   let sorted = {};
@@ -279,14 +281,13 @@ function PaymentPage() {
                 let date = new Date();
                 let createDate = dateFormat(date, "yyyymmddHHMMss");
                 let orderId = dateFormat(date, "HHmmss");
-                let vnpVersion = "2.0.1";
+                let vnpVersion = "2.1.0";
                 let vnpCommand = "pay";
                 let vnpAmount = sum * 100;
                 let vnpCurrCode = "VND";
-                let vnpLocale = "vn";
-                let vnpOrderInfo = `Payment`;
-                let vnpReturnUrl = `localhost`;
-                let vnp_BankCode = "NCB";
+                let vnpLocale = locale;
+                let vnpOrderInfo = `Payment cho cong ty`;
+                let vnpReturnUrl = `http://localhost:3002`;
 
                 const myUrlWithParams = new URL(vnpUrl);
                 myUrlWithParams.searchParams.append("vnp_Version", vnpVersion);
@@ -305,28 +306,21 @@ function PaymentPage() {
                 myUrlWithParams.searchParams.append("vnp_Locale", vnpLocale);
                 myUrlWithParams.searchParams.append(
                   "vnp_OrderInfo",
-                  "Chuyen tien"
+                  vnpOrderInfo
                 );
                 myUrlWithParams.searchParams.append(
                   "vnp_ReturnUrl",
                   vnpReturnUrl
                 );
+                // Order là order ID bên dưới database
                 myUrlWithParams.searchParams.append("vnp_TxnRef", orderId);
                 myUrlWithParams.searchParams.append("vnp_OrderType", "other");
                 myUrlWithParams.searchParams.sort();
-                // const hashed = Hex.stringify(
-                //   myUrlWithParams.searchParams.toString(),
-                //   vnpHashSecret
-                // );
-                // console.log(myUrlWithParams.searchParams.toString());
-                // myUrlWithParams.searchParams.append("vnp_SecureHash", hashed);
-                let hashed = HmacSHA512(
-                  myUrlWithParams.searchParams.toString(),
-                  vnpHashSecret
-                );
-                hashed = Hex.stringify(hashed);
+                // TODO: Code mẫu
+                let hashed = await createHmacSHA512(myUrlWithParams.searchParams.toString());
+                myUrlWithParams.searchParams.append("vnp_SecureHashType", secureHashType);
                 myUrlWithParams.searchParams.append("vnp_SecureHash", hashed);
-                console.log("payment url", myUrlWithParams.href);
+                console.log("payment url", myUrlWithParams.searchParams.toString().split('&'));
                 window.location.href = myUrlWithParams.href;
               }}
             >
