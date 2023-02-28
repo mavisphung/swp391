@@ -1,5 +1,5 @@
 import { Rate } from "antd";
-import { Button } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { MdOutlineStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ function ProductOrderPane({ pro }) {
   return (
     <div id="order-pane">
       <h4 style={{ fontWeight: 400 }}>{pro.name}</h4>
-      <span>Đánh giá: </span>
+      {/* <span>Đánh giá: </span>
       <Rate
         allowHalf
         disabled
@@ -40,9 +40,18 @@ function ProductOrderPane({ pro }) {
         defaultValue={4.5}
         character={<MdOutlineStar />}
       />
-      <span>({pro.rating})</span>
+      <span>({pro.rating})</span> */}
       <p>{pro.description}</p>
-      <p className="price">{formatPrice(pro.price)} đ</p>
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        <p className="price text-dark text-decoration-line-through">
+          {formatPrice(pro.price + (pro.price * 20) / 100)} đ
+        </p>
+        <p className="price ps-3">{formatPrice(pro.price)} đ</p>
+      </div>
       {/* <span>Chọn loại:</span>
       <select id="cb-cate">
         {cate.map((c, index) => (

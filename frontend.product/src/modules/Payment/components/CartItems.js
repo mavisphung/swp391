@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Col, Image, Row } from "react-bootstrap";
+import { formatPrice } from "~/common/Helper";
 
 function CartItems({
   productImage,
@@ -25,22 +26,15 @@ function CartItems({
           <Row className="">Loại: {productType}</Row>
           <Row className="">
             <Col className="col-md-auto pe-2 row justify-content-center align-self-center">
-              Số lượng{" "}
+              Số lượng:{" "}
             </Col>
             <Col className="">
-              <div className="form-outline w-25 h-25">
-                <input
-                  defaultValue={productAmount}
-                  type="text"
-                  id="input1"
-                  className="form-control p-0 text-center"
-                />
-              </div>
+              <div className="form-outline w-25 h-25">{productAmount}</div>
             </Col>
             <Col className="col-md-auto">
               Thành tiền:{" "}
               <span>
-                <u>{`${productPrice}đ`}</u>
+                <u>{`${formatPrice(productAmount * productPrice)}đ`}</u>
               </span>
             </Col>
           </Row>

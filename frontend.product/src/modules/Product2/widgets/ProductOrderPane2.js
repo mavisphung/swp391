@@ -31,7 +31,10 @@ function ProductOrderPane2({ bird }) {
       <span></span>
       <br />
       <span>Giá: </span>
-      <span className="price">{formatPrice(bird.price)} đ</span>
+      <span className="price text-dark text-decoration-line-through">
+        {formatPrice(bird.price + (bird.price * 20) / 100)} đ
+      </span>
+      <span className="price ps-2">{formatPrice(bird.price)} đ</span>
       <div className="pro-order-ctr">
         <Button className="btn-buy" onClick={handleBuyClick}>
           Mua ngay

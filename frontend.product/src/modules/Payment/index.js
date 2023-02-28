@@ -7,37 +7,27 @@ import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 import { toast } from "react-toastify";
 import config from "~/config";
-import { emptyCart } from "~/common/LocalStorageUtil";
-import dateFormat from "dateformat";
-import { vnpHashSecret, vnpTmnCode, locale, secureHashType } from "~/system/Constants/constants";
 
-async function createHmacSHA512(data)  {
-  const hmac512 = require('crypto-js/hmac-sha512');
-  const hashed = hmac512(data, vnpHashSecret);
-  return hashed;
-}
-
-function sortObject(obj) {
-  let sorted = {};
-  let str = [];
-  let key;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      str.push(encodeURIComponent(key));
-    }
-  }
-  str.sort();
-  for (key = 0; key < str.length; key++) {
-    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
-  }
-  return sorted;
-}
+import { setLocalCart, useUserCart } from "~/context/UserCartContext";
+import { vnpPayment } from "./PaymentFunctions";
 
 function PaymentPage() {
   const location = useLocation();
+  const userCart = useUserCart();
   const [ip, setIp] = useState("");
-  const { name, tel, email, address, commune, district, province, cart } =
-    location.state;
+  const {
+    name,
+    tel,
+    email,
+    address,
+    commune,
+    district,
+    province,
+    cart,
+    communeId,
+    districtId,
+    provinceId,
+  } = location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(2);
@@ -51,13 +41,19 @@ function PaymentPage() {
   // console.log("PROVINCE", province);
   // console.log("ADDRESS", address);
   // console.log("CART", cart);
+  // console.log("UserCart", userCart.cart);
+  // console.log("COMMUNE_ID", communeId);
+  console.log(`Commune ID: ${communeId}`);
+  console.log(`District ID: ${districtId}`);
+
+  console.log(`Province ID: ${provinceId}`);
 
   const navigate = useNavigate();
 
   let sum = 0;
 
   cart.map((c) => {
-    sum = sum + c.price;
+    sum = sum + c.price * c.amount;
   });
 
   const getIp = () => {
@@ -72,7 +68,7 @@ function PaymentPage() {
     toast("Đặt hàng thành công!");
   };
 
-  let items = cart.map((c) => {
+  let items = userCart.cart.map((c) => {
     return {
       productId: c.id,
       quantity: c.amount,
@@ -89,9 +85,9 @@ function PaymentPage() {
           fullname: name,
           phoneNumber: tel,
           address: address,
-          ward: commune,
-          district: district,
-          province: province,
+          ward: communeId,
+          district: districtId,
+          province: provinceId,
         },
       };
 
@@ -99,13 +95,11 @@ function PaymentPage() {
         "https://localhost:7179/api/order/unauth",
         order
       );
-      // toast("Successfully!!!");
+      toast("Đặt hàng thành công!");
       console.log(request.data);
-      emptyCart();
-      // window.location.reload(false);
-      navigate(config.routes.home);
+      setLocalCart([]);
     } catch (e) {
-      // toast("Error!!!");
+      toast("Đặt hàng không thành công! Vui lòng thử lại!");
       console.log(e);
     }
   };
@@ -115,12 +109,17 @@ function PaymentPage() {
     console.log(event.target.value);
   };
 
-  function checkout() {
-    notify();
-    postOrder();
+  async function checkout() {
+    if (paymentMethod === 1) {
+      await postOrder();
+      vnpPayment(sum);
+      // postOrder();
+    } else {
+      // notify();
+      await postOrder();
+      navigate(config.routes.home);
+    }
   }
-
-  function getReturnUrl() {}
 
   useEffect(() => {
     getIp();
@@ -156,7 +155,7 @@ function PaymentPage() {
               productName={c.name}
               productImage={c.medias[1].url}
               productType={c.categoryName}
-              productPrice={formatPrice(c.price)}
+              productPrice={c.price}
               productAmount={c.amount}
             />
           ))}
@@ -271,61 +270,6 @@ function PaymentPage() {
               Thanh toán
             </Button>
             {/* <Button onClick={notify}>Toast</Button> */}
-          </Row>
-          <Row>
-            <Button
-              className="mt-5"
-              onClick={async () => {
-                let vnpUrl =
-                  "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-                let date = new Date();
-                let createDate = dateFormat(date, "yyyymmddHHMMss");
-                let orderId = dateFormat(date, "HHmmss");
-                let vnpVersion = "2.1.0";
-                let vnpCommand = "pay";
-                let vnpAmount = sum * 100;
-                let vnpCurrCode = "VND";
-                let vnpLocale = locale;
-                let vnpOrderInfo = `Payment cho cong ty`;
-                let vnpReturnUrl = `http://localhost:3002`;
-
-                const myUrlWithParams = new URL(vnpUrl);
-                myUrlWithParams.searchParams.append("vnp_Version", vnpVersion);
-                myUrlWithParams.searchParams.append("vnp_Command", vnpCommand);
-                myUrlWithParams.searchParams.append("vnp_TmnCode", vnpTmnCode);
-                myUrlWithParams.searchParams.append("vnp_Amount", vnpAmount);
-                myUrlWithParams.searchParams.append(
-                  "vnp_CreateDate",
-                  createDate
-                );
-                myUrlWithParams.searchParams.append(
-                  "vnp_CurrCode",
-                  vnpCurrCode
-                );
-                myUrlWithParams.searchParams.append("vnp_IpAddr", ip);
-                myUrlWithParams.searchParams.append("vnp_Locale", vnpLocale);
-                myUrlWithParams.searchParams.append(
-                  "vnp_OrderInfo",
-                  vnpOrderInfo
-                );
-                myUrlWithParams.searchParams.append(
-                  "vnp_ReturnUrl",
-                  vnpReturnUrl
-                );
-                // Order là order ID bên dưới database
-                myUrlWithParams.searchParams.append("vnp_TxnRef", orderId);
-                myUrlWithParams.searchParams.append("vnp_OrderType", "other");
-                myUrlWithParams.searchParams.sort();
-                // TODO: Code mẫu
-                let hashed = await createHmacSHA512(myUrlWithParams.searchParams.toString());
-                myUrlWithParams.searchParams.append("vnp_SecureHashType", secureHashType);
-                myUrlWithParams.searchParams.append("vnp_SecureHash", hashed);
-                console.log("payment url", myUrlWithParams.searchParams.toString().split('&'));
-                window.location.href = myUrlWithParams.href;
-              }}
-            >
-              test vnpay
-            </Button>
           </Row>
         </Col>
       </Container>
