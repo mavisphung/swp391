@@ -33,7 +33,6 @@ namespace Backend.Service.Controllers
         /// <response code="200">Return data successfully</response>
         // GET: api/category
         [HttpGet]
-        [Authorize(Roles = "1,3")]
         public IActionResult GetAll([FromQuery] CategoryFilterParameter filter)
         {
             var data = _categoryService.GetAll(filter);

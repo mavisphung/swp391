@@ -1,31 +1,54 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link, redirect } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import config from "~/config";
 import { emptyCart } from "~/common/LocalStorageUtil";
+import dateFormat from "dateformat";
+import hmacSHA512 from "crypto-js/hmac-sha512";
+import { vnpHashSecret, vnpTmnCode } from "~/system/Constants/constants";
+import Hex from "crypto-js/enc-hex";
+import HmacSHA512 from "crypto-js/hmac-sha512";
+// import {  VNPay } from "vn-payments";
+
+function sortObject(obj) {
+  let sorted = {};
+  let str = [];
+  let key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      str.push(encodeURIComponent(key));
+    }
+  }
+  str.sort();
+  for (key = 0; key < str.length; key++) {
+    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+  }
+  return sorted;
+}
 
 function PaymentPage() {
   const location = useLocation();
+  const [ip, setIp] = useState("");
   const { name, tel, email, address, commune, district, province, cart } =
     location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState(2);
   const [note, setNote] = useState("");
 
-  console.log("NAME", name);
-  console.log("TEL", tel);
-  console.log("EMAIL", email);
-  console.log("COMMUNE", commune);
-  console.log("DISTRICT", district);
-  console.log("PROVINCE", province);
-  console.log("ADDRESS", address);
-  console.log("CART", cart);
+  // console.log("NAME", name);
+  // console.log("TEL", tel);
+  // console.log("EMAIL", email);
+  // console.log("COMMUNE", commune);
+  // console.log("DISTRICT", district);
+  // console.log("PROVINCE", province);
+  // console.log("ADDRESS", address);
+  // console.log("CART", cart);
 
   const navigate = useNavigate();
 
@@ -34,6 +57,14 @@ function PaymentPage() {
   cart.map((c) => {
     sum = sum + c.price;
   });
+
+  const getIp = () => {
+    // const res = await axios.get("https://geolocation-db.com/json/");
+    // console.log(res.data);
+
+    setIp("127.0.0.1");
+    // return "127.0.0.1";
+  };
 
   const notify = () => {
     toast("Đặt hàng thành công!");
@@ -87,30 +118,14 @@ function PaymentPage() {
     postOrder();
   }
 
-  // const onepayIntl = new OnePayInternational({
-  //   paymentGateway: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
-  //   merchant: "TESTONEPAY",
-  //   accessCode: "4KKAH0Z4",
-  //   secureSecret: "XGJLPDAXNSVTYJFOZDUUOSJTJAYEWNNK",
-  // });
+  function getReturnUrl() {}
+
+  useEffect(() => {
+    getIp();
+  }, []);
 
   return (
     <Container>
-      {/* <div>
-        <Breadcrumb separator={<RightOutlined />}>
-          <Breadcrumb.Item href="">
-            <HomeFilled />
-            <span>Trang chủ</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="">
-            <span>Giỏ hàng của bạn</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="">
-            <span>Phương thức thanh toán</span>
-          </Breadcrumb.Item>
-        </Breadcrumb>
-      </div> */}
-
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
       <Col className="pb-3">
         <Container>
@@ -207,7 +222,7 @@ function PaymentPage() {
                 // checked={payAdvanced === "VNPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(0);
+                  setPaymentMethod(1);
                 }}
               />
               <Form.Check
@@ -219,7 +234,7 @@ function PaymentPage() {
                 // checked={payAdvanced === "CashPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(1);
+                  setPaymentMethod(2);
                 }}
               />
               <Form.Check
@@ -229,7 +244,7 @@ function PaymentPage() {
                 label="Đặt cọc trước 50%"
                 onClick={() => {
                   setPayAdvanced(true);
-                  setPaymentMethod(2);
+                  setPaymentMethod(3);
                 }}
               />
               <Form.Check
@@ -240,7 +255,7 @@ function PaymentPage() {
                 // checked={payAdvanced === "ShippingPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(3);
+                  setPaymentMethod(4);
                 }}
               />
             </Form>
@@ -254,18 +269,65 @@ function PaymentPage() {
               Thanh toán
             </Button>
             {/* <Button onClick={notify}>Toast</Button> */}
-            <ToastContainer />
           </Row>
           <Row>
             <Button
               className="mt-5"
-              onClick={() => {
-                // var dateFormat = require("dateformat");
-                // var date = new Date();
-                // var createDate = dateFormat(date, "yyyymmddHHmmss");
-                // window.location.replace(
-                //   "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=1806000&vnp_Command=pay&vnp_CreateDate=20230227112801&vnp_CurrCode=VND&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%3A5&vnp_OrderType=other&vnp_ReturnUrl=https%3A%2F%2Fdomainmerchant.vn%2FReturnUrl&vnp_TmnCode=4KKAH0Z4&vnp_TxnRef=5&vnp_Version=2.1.0&vnp_SecureHash=XGJLPDAXNSVTYJFOZDUUOSJTJAYEWNNK"
+              onClick={async () => {
+                let vnpUrl =
+                  "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+                let date = new Date();
+                let createDate = dateFormat(date, "yyyymmddHHMMss");
+                let orderId = dateFormat(date, "HHmmss");
+                let vnpVersion = "2.0.1";
+                let vnpCommand = "pay";
+                let vnpAmount = sum * 100;
+                let vnpCurrCode = "VND";
+                let vnpLocale = "vn";
+                let vnpOrderInfo = `Payment`;
+                let vnpReturnUrl = `localhost`;
+                let vnp_BankCode = "NCB";
+
+                const myUrlWithParams = new URL(vnpUrl);
+                myUrlWithParams.searchParams.append("vnp_Version", vnpVersion);
+                myUrlWithParams.searchParams.append("vnp_Command", vnpCommand);
+                myUrlWithParams.searchParams.append("vnp_TmnCode", vnpTmnCode);
+                myUrlWithParams.searchParams.append("vnp_Amount", vnpAmount);
+                myUrlWithParams.searchParams.append(
+                  "vnp_CreateDate",
+                  createDate
+                );
+                myUrlWithParams.searchParams.append(
+                  "vnp_CurrCode",
+                  vnpCurrCode
+                );
+                myUrlWithParams.searchParams.append("vnp_IpAddr", ip);
+                myUrlWithParams.searchParams.append("vnp_Locale", vnpLocale);
+                myUrlWithParams.searchParams.append(
+                  "vnp_OrderInfo",
+                  "Chuyen tien"
+                );
+                myUrlWithParams.searchParams.append(
+                  "vnp_ReturnUrl",
+                  vnpReturnUrl
+                );
+                myUrlWithParams.searchParams.append("vnp_TxnRef", orderId);
+                myUrlWithParams.searchParams.append("vnp_OrderType", "other");
+                myUrlWithParams.searchParams.sort();
+                // const hashed = Hex.stringify(
+                //   myUrlWithParams.searchParams.toString(),
+                //   vnpHashSecret
                 // );
+                // console.log(myUrlWithParams.searchParams.toString());
+                // myUrlWithParams.searchParams.append("vnp_SecureHash", hashed);
+                let hashed = HmacSHA512(
+                  myUrlWithParams.searchParams.toString(),
+                  vnpHashSecret
+                );
+                hashed = Hex.stringify(hashed);
+                myUrlWithParams.searchParams.append("vnp_SecureHash", hashed);
+                console.log("payment url", myUrlWithParams.href);
+                window.location.href = myUrlWithParams.href;
               }}
             >
               test vnpay

@@ -62,7 +62,6 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
                 type: "REMOVE_FROM_CART",
                 payload: id,
               });
-              window.location.reload(false);
             }}
           >
             Xóa?
