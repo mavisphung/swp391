@@ -12,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function Header() {
   const { cartAmount } = useUserCart();
+
   return (
     <div>
       <Container>

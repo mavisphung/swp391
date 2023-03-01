@@ -64,7 +64,7 @@ function getLocalCart() {
   return cart ? JSON.parse(cart) : [];
 }
 
-function setLocalCart(newCart) {
+export function setLocalCart(newCart) {
   localStorage.setItem("CART", JSON.stringify(newCart));
 }
 
