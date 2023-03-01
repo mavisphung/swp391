@@ -2,9 +2,10 @@ import { useState } from "react";
 
 import "../CartLayout.scss";
 import { formatPrice } from "~/common/Helper";
-import { removeFromCart } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
-function CartItem({ id, name, img, cate, price, amount, isBuy }) {
+function CartItem({ id, name, img, des, price, amount, isBuy }) {
+  const { dispatch } = useUserCart();
   const [newAmount, setAmount] = useState(amount);
   const total = price * newAmount;
   return (
@@ -16,7 +17,7 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
         <h6>{name}</h6>
         <div className="col-9">
           <div className="d-flex justify-content-between">
-            <span>Loại: {cate ? cate : "64 nan"}</span>
+            <span>Mô tả: {des}</span>
             <span>Giá sản phẩm: {formatPrice(price)}đ</span>
           </div>
           <div className="d-flex justify-content-between">
@@ -57,7 +58,10 @@ function CartItem({ id, name, img, cate, price, amount, isBuy }) {
             className="mt15"
             onClick={(e) => {
               e.preventDefault();
-              removeFromCart(id);
+              dispatch({
+                type: "REMOVE_FROM_CART",
+                payload: id,
+              });
             }}
           >
             Xóa?

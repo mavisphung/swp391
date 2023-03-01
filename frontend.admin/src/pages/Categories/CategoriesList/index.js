@@ -1,52 +1,70 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Space, Table } from 'antd';
+import { Image, Space, Table } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 
-import categoriesListData from './categoryData.json';
+import CustomSpinner from '~/ui/CustomSpinner';
 import CustomTooltip from '~/ui/CustomTooltip';
 import { MSG07 } from '~/system/Messages/messages';
-import moment from 'moment';
 import {
   dateConvert,
   defaultDatePickerRange,
 } from '~/system/Constants/constants';
+import { getCategoriesListData } from '~/api/categories';
+import { categoriesTypesList } from '~/system/Data/types';
+import { updateCategory } from '~/system/Constants/LinkURL';
 
 const CategoriesList = () => {
   const { pathname } = useLocation();
 
   const [categories, setCategories] = useState([]);
-  const [categoryTypes, setCategoryTypes] = useState([]);
   const [searchCategoryName, setSearchCategoryName] = useState('');
   const [searchCategoryType, setSearchCategoryType] = useState('');
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   // Get all categories
-  const getCategoriesList = useCallback((pageIndex) => {
-    const data = categoriesListData;
-    setCategories(data.map((category) => category));
+  const getCategoriesList = useCallback(
+    async (pageIndex, searchCategoryName, searchCategoryType) => {
+      try {
+        const data = await getCategoriesListData(
+          pageIndex,
+          10,
+          searchCategoryName,
+          searchCategoryType,
+        );
+        setCategories(data.data.map((category) => category));
 
-    let allTypesList = data.map((category) => category.categoryType);
-    let uniqueTypes = [...new Set(allTypesList)];
-    setCategoryTypes(uniqueTypes.map((type) => type));
+        let paginationObj = JSON.parse(data.headers['x-pagination']);
+        setPageSize(paginationObj.CurrentPage);
+        setPageSize(paginationObj.PageSize);
+        setTotalCount(paginationObj.TotalCount);
 
-    // setPageSize(data.pageSize);
-    // setTotalCount(data.totalCount);
-  }, []);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    getCategoriesList(pageIndex);
-  }, [getCategoriesList, pageIndex]);
+    const delayDebounceFn = setTimeout(() => {
+      getCategoriesList(pageIndex, searchCategoryName, searchCategoryType);
+    }, 400);
+    return () => clearTimeout(delayDebounceFn);
+  }, [getCategoriesList, pageIndex, searchCategoryName, searchCategoryType]);
 
   // Table record buttons group
   const cellButton = (record) => {
     return (
       <Space>
-        <Link to={``}>
+        <Link to={`${pathname}/${updateCategory}/${record.id}`}>
           <CustomTooltip title="Xem chi tiết" color="#014B92">
             <Button className="mx-2" variant="outline-info" size="xs">
               <FontAwesomeIcon icon={faEye} size="lg" />
@@ -60,11 +78,35 @@ const CategoriesList = () => {
   const columns = [
     {
       title: 'Id',
-      dataIndex: 'Id',
-      key: 'Id',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
-      title: 'Tên',
+      title: 'Ảnh',
+      dataIndex: 'image',
+      key: 'image',
+      width: 50,
+      render: (text, record) => {
+        return (
+          <>
+            <div
+              style={{
+                display: 'inline-block',
+                borderRadius: '50%',
+                width: 40,
+                height: 40,
+                overflow: 'hidden',
+                backgroundColor: 'black',
+              }}
+            >
+              <Image src={record.image} />
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      title: 'Tên loại hàng',
       dataIndex: 'name',
       key: 'name',
     },
@@ -72,21 +114,25 @@ const CategoriesList = () => {
       title: 'Phân loại',
       dataIndex: 'categoryType',
       key: 'categoryType',
+      render: (text, record) => {
+        let obj = categoriesTypesList.find((c) => c.id === record.categoryType);
+        return obj.name;
+      },
     },
     {
       title: 'Ngày cập nhật',
-      dataIndex: 'UpdatedDate',
-      key: 'UpdatedDate',
+      dataIndex: 'updatedDate',
+      key: 'updatedDate',
       render: (text, record) => {
-        return moment(record.UpdatedDate, dateConvert).format(
-          defaultDatePickerRange,
-        );
+        return moment(record.updatedDate, dateConvert)
+          .add(7, 'hours')
+          .format(defaultDatePickerRange);
       },
     },
     {
       title: 'Người cập nhật',
-      dataIndex: 'UpdatedBy',
-      key: 'UpdatedBy',
+      dataIndex: 'updatedBy',
+      key: 'updatedBy',
     },
     {
       title: '',
@@ -102,7 +148,7 @@ const CategoriesList = () => {
     setPageIndex(1);
     setSearchCategoryName(e.target.value);
     if (e.target.value === '') {
-      getCategoriesList();
+      getCategoriesList(pageIndex);
     }
   };
 
@@ -116,55 +162,61 @@ const CategoriesList = () => {
 
   return (
     <>
-      <div style={{ textAlign: 'center' }}>
-        <h2>Danh sách loại hàng</h2>
-      </div>
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <div style={{ textAlign: 'center' }}>
+            <h2>Danh sách loại hàng</h2>
+          </div>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          paddingBottom: 15,
-        }}
-      >
-        <Space>
-          <Form.Control
-            placeholder="Tìm theo tên"
-            onChange={handleChangeCategoryName}
-            value={searchCategoryName}
-            type="text"
-          />
-          <Form.Select
-            value={searchCategoryType}
-            onChange={handleChangeCategoryType}
-            aria-label="Chọn phân loại"
-            required
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              paddingBottom: 15,
+            }}
           >
-            <option value="">Chọn phân loại</option>
-            {categoryTypes.map((type, index) => (
-              <option key={index} value={type}>
-                {type}
-              </option>
-            ))}
-          </Form.Select>
-        </Space>
-      </div>
+            <Space>
+              <Form.Control
+                placeholder="Tìm theo tên"
+                onChange={handleChangeCategoryName}
+                value={searchCategoryName}
+                type="text"
+              />
+              <Form.Select
+                value={searchCategoryType}
+                onChange={handleChangeCategoryType}
+                aria-label="Chọn phân loại"
+                required
+              >
+                <option value="">Chọn phân loại</option>
+                {categoriesTypesList.map((type, index) => (
+                  <option key={index} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Space>
+          </div>
 
-      <Table
-        locale={{ emptyText: MSG07 }}
-        rowKey="Id"
-        columns={columns}
-        dataSource={categories}
-        pagination={{
-          pageSize: pageSize,
-          total: totalCount,
-          position: ['none', 'bottomCenter'],
-          onChange: (page) => {
-            setPageIndex(page);
-          },
-        }}
-        bordered
-      />
+          <Table
+            locale={{ emptyText: MSG07 }}
+            rowKey="id"
+            columns={columns}
+            dataSource={categories}
+            pagination={{
+              pageSize: pageSize,
+              total: totalCount,
+              position: ['none', 'bottomCenter'],
+              onChange: (page) => {
+                setPageIndex(page);
+              },
+            }}
+            bordered
+          />
+        </>
+      )}
     </>
   );
 };

@@ -12,7 +12,7 @@ const CategoryCard = ({ cate }) => {
 
   return (
     <Figure
-      className="px-2"
+      className="px-2 cate-card"
       onClick={() =>
         navigate(
           {
@@ -37,7 +37,7 @@ const CategoryCard = ({ cate }) => {
         width={220}
         height={170}
         alt="Chào mào"
-        src={cate.imgUrl}
+        src={cate.image}
         // style={{ objectFit: "contain" }}
       />
       <Figure.Caption>{cate.name}</Figure.Caption>

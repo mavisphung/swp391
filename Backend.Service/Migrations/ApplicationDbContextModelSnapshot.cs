@@ -193,6 +193,9 @@ namespace Backend.Service.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<ICollection<int>>("RelativeCategories")
+                        .HasColumnType("jsonb");
+
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
@@ -405,6 +408,9 @@ namespace Backend.Service.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
@@ -415,6 +421,9 @@ namespace Backend.Service.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentType")
                         .HasColumnType("integer");
 
                     b.Property<string>("UpdatedBy")
@@ -784,7 +793,7 @@ namespace Backend.Service.Migrations
             modelBuilder.Entity("Backend.Service.Entities.Payment", b =>
                 {
                     b.HasOne("Backend.Service.Entities.Order", "Order")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

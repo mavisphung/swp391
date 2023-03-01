@@ -8,12 +8,12 @@ const id = 'orderId';
 export const getCustomerOrderListData = async (page) => {
   try {
     const response = await api.get(
-      `/${orderURL}?PageNumber=${page}&PageSize=10`,
+      `/${orderURL}?PageNumber=${page}&PageSize=10&Ascending=false`,
     );
     if (response.status !== 200) {
       throw new Error('Customer order list has the problem');
     }
-    const data = await response.data;
+    const data = await response;
     if (data) {
       return data;
     }
@@ -28,8 +28,10 @@ export const getFilterCustomerOrderListData = async (
   page,
   statusId,
   orderId,
+  fromDate,
+  toDate,
 ) => {
-  let url = `/${orderURL}?PageNumber=${page}&PageSize=10`;
+  let url = `/${orderURL}?PageNumber=${page}&PageSize=10&Ascending=false`;
   try {
     // Create url
     if (statusId) {
@@ -38,15 +40,21 @@ export const getFilterCustomerOrderListData = async (
     if (orderId) {
       url = `${url}&${id}=${orderId}`;
     }
+    if (
+      fromDate &&
+      toDate &&
+      fromDate !== 'Invalid date' &&
+      toDate !== 'Invalid date'
+    ) {
+      url = `${url}&From=${fromDate}&To=${toDate}`;
+    }
 
     // Call api
-    console.log('Url:', url);
     const response = await api.get(`${url}`);
     if (response.status !== 200) {
       throw new Error('Filtered customer orders list has the problem');
     }
-    const data = await response.data;
-    console.log('api:', data);
+    const data = await response;
     if (data) {
       return data;
     }

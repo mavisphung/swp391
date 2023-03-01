@@ -19,7 +19,9 @@ namespace Backend.Service.Migrations
                     PaymentCode = table.Column<Guid>(type: "uuid", nullable: false),
                     Amount = table.Column<int>(type: "integer", nullable: false),
                     PaymentMethod = table.Column<int>(type: "integer", nullable: false),
+                    PaymentType = table.Column<int>(type: "integer", nullable: false),
                     PaidDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsSuccess = table.Column<bool>(type: "boolean", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedBy = table.Column<string>(type: "text", nullable: false),
                     AddedBy = table.Column<string>(type: "text", nullable: false),
@@ -36,7 +38,15 @@ namespace Backend.Service.Migrations
                 table: "Payments",
                 column: "PaymentCode",
                 unique: true);
-        }
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Payments_Orders_OrderId",
+                table: "Payments",
+                column: "OrderId",
+                principalTable: "Orders",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+            }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {

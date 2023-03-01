@@ -29,7 +29,7 @@ namespace Backend.Service.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
+        private Expression<Func<Product, bool>> _buildExpression(ProductFilterParameter filter)
         {
             var predicate = PredicateBuilder.New<Product>().And(product => !product.IsDeleted);
 
@@ -49,6 +49,37 @@ namespace Backend.Service.Services
                 predicate = predicate.And(product => product.Category.CategoryType == filter.CategoryType.Value);
             }
 
+            if (filter.Status.HasValue)
+            {
+                predicate = predicate.And(product => product.Status == filter.Status.Value);
+            }
+
+            if (filter.FromPrice.HasValue)
+            {
+                predicate = predicate.And(product => product.Price >= filter.FromPrice.Value);
+            }
+
+            if (filter.ToPrice.HasValue)
+            {
+                predicate = predicate.And(product => product.Price <= filter.ToPrice.Value);
+            }
+
+            if (filter.FromDate != null)
+            {
+                predicate = predicate.And(product => product.CreatedDate >= filter.FromDate.SetKindUtc());
+            }
+
+            if (filter.ToDate != null)
+            {
+                predicate = predicate.And(product => product.CreatedDate <= filter.ToDate.SetKindUtc());
+            }
+
+            return predicate;
+        }
+
+        public async Task<PagedList<ProductResponseModel>> GetAllAsync(ProductFilterParameter filter)
+        {
+            var predicate = _buildExpression(filter);
             IEnumerable<Product> query = await _productRepository.GetAllAsync(
                 filter: predicate,
                 includeProperties: "Category");
@@ -74,7 +105,7 @@ namespace Backend.Service.Services
                 Medias = model.Medias ?? new List<Media>(),
                 CategoryId = category.Id,
                 Category = category,
-                Gender = model.Gender,
+                Gender = model.Gender ?? true,
                 Age = model.Age
             };
 

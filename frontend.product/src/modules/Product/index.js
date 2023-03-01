@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams, useLocation, Link } from "react-router-dom";
 
 import "./ProductLayout.scss";
 import ProductCarousel from "../Home/ProductCarousel";
@@ -28,13 +28,12 @@ function ProductDetails() {
     try {
       const response = await api.get(`/product/${id}`);
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
+      console.log("PRODUCT RES.DATA", response.data);
       if (response.data) {
         setPro(response.data);
       }
     } catch (error) {
-      console.log("Get /product/:id Error", error);
+      console.log("PRODUCT Get /product/:id Error", error);
     }
   };
 
@@ -47,13 +46,12 @@ function ProductDetails() {
         },
       });
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
+      console.log("PRODUCT RES.DATA", response.data);
       if (response.data) {
         setCount(count + 1);
         const tmp1 = [];
         const tmp2 = [];
-        response.data.map((p) => {
+        response.data.forEach((p) => {
           if (p.categoryType === categoryType) {
             tmp1.push(p);
           } else {
@@ -64,7 +62,7 @@ function ProductDetails() {
         setOthers(tmp2);
       }
     } catch (error) {
-      console.log("Get /product/ Error", error);
+      console.log("PRODUCT Get /product/ Error", error);
     }
     setIsLoading(false);
   };
@@ -72,7 +70,7 @@ function ProductDetails() {
   useEffect(() => {
     getProductWithId(productId);
     getProduct();
-  }, []);
+  }, [productId]);
 
   if (!pro || isLoading) return <h1>Loading</h1>;
 
@@ -95,7 +93,7 @@ function ProductDetails() {
       <div className="product-block">
         <div className="d-flex justify-content-between">
           <h5>Đánh giá từ người dùng</h5>
-          <a href={config.routes.dashboard}>Xem thêm</a>
+          <Link to={config.routes.dashboard}>Xem thêm</Link>
         </div>
         <ListComment />
       </div>

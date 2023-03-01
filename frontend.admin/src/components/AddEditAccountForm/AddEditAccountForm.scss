@@ -6,6 +6,11 @@
   height: 100%;
 }
 
+.create-product-image {
+  width: 80%;
+  height: 300px;
+}
+
 .account-image-file-content,
 .product-image-file-content {
   justify-content: center;
@@ -32,6 +37,7 @@ product-image-invalid {
 .align-items-center {
   display: flex;
   justify-content: center;
+  margin-bottom: 10px;
 }
 
 .product-image-invalid {

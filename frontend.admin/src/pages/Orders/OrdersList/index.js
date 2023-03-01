@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Card, Input, Row, Space, Table } from 'antd';
+import { Card, DatePicker, Input, Row, Space, Table } from 'antd';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment/moment';
 
 import CustomTooltip from '~/ui/CustomTooltip';
+import CustomSpinner from '~/ui/CustomSpinner';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
@@ -22,43 +23,24 @@ import {
   getCustomerOrderListData,
   getFilterCustomerOrderListData,
 } from '~/api/orders';
+import { orderStatusList } from '~/system/Data/status';
 
 import '../../../styles/Component/label.scss';
 import './OrdersList.scss';
-import CustomSpinner from '~/ui/CustomSpinner';
 
 const { Search } = Input;
 
-const statusList = [
-  {
-    key: '',
-    tab: 'Tất cả',
-  },
-  {
-    key: 4,
-    tab: 'Chờ xác nhận',
-  },
-  {
-    key: 1,
-    tab: 'Đang xử lí',
-  },
-  {
-    key: 2,
-    tab: 'Thành công',
-  },
-  {
-    key: 3,
-    tab: 'Đã hủy',
-  },
-];
-
 const OrdersList = () => {
   const { pathname } = useLocation();
+  const { RangePicker } = DatePicker;
 
   const [orderStatus, setOrderStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [searchOrderId, setSearchOrderId] = useState('');
+  const [startPeriod, setStartPeriod] = useState('');
+  const [endPeriod, setEndPeriod] = useState('');
+
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [orders, setOrders] = useState([]);
@@ -70,22 +52,31 @@ const OrdersList = () => {
 
   // Get customer order list
   const getCustomerOrderList = useCallback(
-    async (pageIndex, orderStatus, searchOrderId) => {
+    async (pageIndex, orderStatus, searchOrderId, startPeriod, endPeriod) => {
       try {
-        if (searchOrderId === '' && orderStatus === '') {
+        if (
+          searchOrderId === '' &&
+          orderStatus === '' &&
+          ((startPeriod === '' && endPeriod === '') ||
+            (startPeriod === 'Invalid date' && endPeriod === 'Invalid date'))
+        ) {
           const data = await getCustomerOrderListData(pageIndex);
-          setOrders(data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          setOrders(data.data.map((order) => order));
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         } else {
           const data = await getFilterCustomerOrderListData(
             pageIndex,
             orderStatus,
             searchOrderId,
+            startPeriod,
+            endPeriod,
           );
-          setOrders(data.map((order) => order));
-          setPageSize(data.pageSize);
-          setTotalCount(data.totalCount);
+          setOrders(data.data.map((order) => order));
+          let paginationObj = JSON.parse(data.headers['x-pagination']);
+          setPageSize(paginationObj.PageSize);
+          setTotalCount(paginationObj.TotalCount);
         }
         setLoading(false);
         setLoadingSearch(false);
@@ -97,12 +88,26 @@ const OrdersList = () => {
   );
 
   useEffect(() => {
-    getCustomerOrderList(pageIndex, orderStatus, searchOrderId);
-  }, [getCustomerOrderList, pageIndex, orderStatus, searchOrderId]);
+    getCustomerOrderList(
+      pageIndex,
+      orderStatus,
+      searchOrderId,
+      startPeriod,
+      endPeriod,
+    );
+  }, [
+    getCustomerOrderList,
+    pageIndex,
+    orderStatus,
+    searchOrderId,
+    startPeriod,
+    endPeriod,
+  ]);
 
   // Manage tabs
   const onStatusChange = (key) => {
     setOrderStatus(key);
+    setPageIndex(1);
   };
 
   // Manage table
@@ -197,6 +202,22 @@ const OrdersList = () => {
     );
   };
 
+  //Choose date range
+  const onDateSelection = (value, dateString) => {
+    setStartPeriod(
+      moment(dateString[0], defaultDatePickerRange).format(dateConvert),
+    );
+    setEndPeriod(
+      moment(dateString[1], defaultDatePickerRange).format(dateConvert),
+    );
+    setPageIndex(1);
+  };
+
+  const disabledDate = (current) => {
+    // Can not select days after today
+    return current && current > moment().endOf('day');
+  };
+
   return (
     <>
       {loading ? (
@@ -207,17 +228,35 @@ const OrdersList = () => {
             <h2>Danh sách đơn đặt hàng</h2>
           </div>
           <Card
-            tabList={statusList}
+            tabList={orderStatusList}
             activeTabKey={orderStatus}
             onTabChange={(rowkey) => {
               onStatusChange(rowkey);
             }}
             className="status_card"
           />
+
+          <div
+            style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}
+          >
+            <span
+              style={{ marginTop: 3, marginRight: 10, fontSize: '1.01rem' }}
+            >
+              Chọn Ngày:
+            </span>
+            <RangePicker
+              placeholder={['Từ ngày', 'Đến ngày']}
+              format={defaultDatePickerRange}
+              onChange={onDateSelection}
+              disabledDate={disabledDate}
+              bordered="true"
+            />
+          </div>
+
           <Row className="my-3" justify="center">
             <Search
               style={{ width: '48%' }}
-              placeholder="Tìm mã đơn hàng"
+              placeholder="Tìm khách hàng"
               enterButton
               size="large"
               loading={loadingSearch}

@@ -4,9 +4,11 @@ import { createSearchParams, useNavigate } from "react-router-dom";
 import "./BirdCardLayout.scss";
 import config from "~/config";
 import { formatPrice } from "~/common/Helper";
-import { addToCart } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 const BirdCard = (props) => {
+  const { dispatch } = useUserCart();
+
   const navigate = useNavigate();
   const params = {
     productId: props.bird.id,
@@ -14,7 +16,14 @@ const BirdCard = (props) => {
 
   const historyUrl = props.historyUrl ? props.historyUrl : [];
 
-  const quantity = props.bird.quantity ? props.bird.quantity : 100;
+  const isRetail =
+    (props.bird.age && props.bird.gender != null) ||
+    props.bird.categoryType !== 1
+      ? true
+      : false;
+
+  const saleAmount = props.bird.categoryType / 10 + 1.1;
+  const fakePrice = props.bird.price * saleAmount;
 
   return (
     <Col className="pb-4 pe-3">
@@ -22,12 +31,22 @@ const BirdCard = (props) => {
         <Card.Img src={props.bird.medias[1].url} />
         <Card.Body>
           <Card.Title className="pro-card-title">{props.bird.name}</Card.Title>
-          <Card.Text>ML: LT720</Card.Text>
           <div className="d-flex justify-content-between">
-            <div className="price">{formatPrice(props.bird.price)} đ</div>
+            <Card.Text>
+              {props.bird.categoryType === 1
+                ? isRetail
+                  ? `MSP: LT0${props.bird.id}`
+                  : "Chim bán theo loài"
+                : "Trạng thái:"}
+            </Card.Text>
             <span id="pro-amount-status">
-              {quantity > 0 ? "Còn hàng" : "Đã bán"}
+              {props.bird.status === 2 ? "Còn hàng" : "Đã bán"}
             </span>
+          </div>
+          <div>
+            <span className="price">{formatPrice(props.bird.price)} đ</span>
+            <span className="fake-price">{formatPrice(fakePrice)} đ</span>
+            <span style={{ fontSize: "18px" }}>{isRetail ? "" : " / con"}</span>
           </div>
           <div className="pro-card-ctr">
             <Button
@@ -79,7 +98,10 @@ const BirdCard = (props) => {
               className="btn-add-cart"
               onClick={(e) => {
                 e.preventDefault();
-                addToCart(props.bird);
+                dispatch({
+                  type: "ADD_TO_CART",
+                  payload: props.bird,
+                });
               }}
             >
               Thêm giỏ hàng

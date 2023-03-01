@@ -35,7 +35,10 @@ namespace Backend.Service.Consts
         PHONE_NUMBER_EXISTED,
         UNAUTHENTICATED,
         ADDRESS_NOT_FOUND,
-        ORDER_NOT_FOUND
+        ORDER_NOT_FOUND,
+        [Description("Not existed in database")]
+        DATA_NOT_FOUND,
+        INSUFFICIENT_QUANTITY,
     }
 
     public static class EnumStringMessage

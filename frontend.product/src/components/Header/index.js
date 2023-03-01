@@ -1,15 +1,18 @@
 import { MdAlternateEmail } from "react-icons/md";
 import { BsFillTelephoneFill, BsCartFill } from "react-icons/bs";
 import { Col, Container, Form, Image, Nav, Navbar } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import "./HeaderLayout.scss";
 import config from "~/config";
 import AppIcons from "~/assets/icons";
-import { getCartAmount } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Header() {
+  const { cartAmount } = useUserCart();
+
   return (
     <div>
       <Container>
@@ -23,8 +26,10 @@ function Header() {
         </div>
         <Navbar expand="lg" variant="light" className="">
           <Container fluid style={{ padding: 0 }}>
-            <Navbar.Brand href={config.routes.dashboard}>
-              <Image src={AppIcons.logo} alt="ChyStore icon" />
+            <Navbar.Brand>
+              <Link to={config.routes.dashboard}>
+                <Image src={AppIcons.logo} alt="ChyStore icon" />
+              </Link>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
@@ -44,17 +49,17 @@ function Header() {
                   {/* <Button variant="outline-success">Search</Button> */}
                 </Form>
               </Nav>
-              <div className="d-flex">
-                <Nav.Link href={config.routes.cart} className="pl-2">
-                  <BsCartFill color="#ee3e6a" /> ({getCartAmount()})
-                </Nav.Link>
-                <Nav.Link href={config.routes.login} className="px-2">
+              <div className="d-flex header-link">
+                <Link to={config.routes.cart} className="pl-2">
+                  <BsCartFill color="#ee3e6a" /> ({cartAmount})
+                </Link>
+                <Link to={config.routes.login} className="px-2">
                   Đăng nhập
-                </Nav.Link>
+                </Link>
                 <div className="px-1">|</div>
-                <Nav.Link href={config.routes.register} className="px-2">
+                <Link to={config.routes.register} className="px-2">
                   Đăng ký
-                </Nav.Link>
+                </Link>
               </div>
             </Navbar.Collapse>
           </Container>

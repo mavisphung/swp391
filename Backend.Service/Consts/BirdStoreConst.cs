@@ -17,6 +17,11 @@
         {
             return _configuration.GetSection("AppSettings:Token").Value;
         }
+
+        public string GetUTC7TimeZone()
+        {
+            return _configuration["AppSettings:TimeZoneId"];
+        }        
     }
 }
 

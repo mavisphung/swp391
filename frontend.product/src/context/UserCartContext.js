@@ -1,0 +1,93 @@
+import { createContext, useContext, useReducer } from "react";
+
+const userCartContext = createContext();
+
+export const useUserCart = () => {
+  return useContext(userCartContext);
+};
+
+const CartReducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TO_CART":
+      addToLocalCart(action.payload);
+      const pro = action.payload;
+      const existed = state.cart.findIndex((e) => e.id === pro.id);
+      if (existed !== -1) {
+        state.cart.map((e) => {
+          if (e.id === pro.id) {
+            e.amount += 1;
+          }
+          return e;
+        });
+        action.type = "DONE";
+        return { ...state };
+      }
+      state.cart.push({ ...pro, amount: 1 });
+      action.type = "DONE";
+      return { ...state };
+    case "REMOVE_FROM_CART":
+      removeFromLocalCart(action.payload);
+      if (state.cart.length === 0) return { ...state };
+      const newCart = state.cart.filter((p) => p.id !== action.payload);
+      state.cart = newCart;
+      action.type = "DONE";
+      return {
+        ...state,
+      };
+    default:
+      return state;
+  }
+};
+
+const initialState = {
+  cart: getLocalCart(),
+};
+
+export const UserCartContextProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(CartReducer, initialState);
+
+  return (
+    <userCartContext.Provider
+      value={{
+        dispatch: dispatch,
+        cart: state.cart,
+        cartAmount: state.cart.length,
+      }}
+    >
+      {children}
+    </userCartContext.Provider>
+  );
+};
+
+function getLocalCart() {
+  const cart = localStorage.getItem("CART");
+  return cart ? JSON.parse(cart) : [];
+}
+
+export function setLocalCart(newCart) {
+  localStorage.setItem("CART", JSON.stringify(newCart));
+}
+
+function addToLocalCart(pro) {
+  const cart = getLocalCart();
+  const existed = cart.findIndex((e) => e.id === pro.id);
+  if (existed !== -1) {
+    const newCart = cart.map((e) => {
+      if (e.id === pro.id) {
+        e.amount += 1;
+      }
+      return e;
+    });
+    setLocalCart(newCart);
+    return;
+  }
+  cart.push({ ...pro, amount: 1 });
+  setLocalCart(cart);
+}
+
+function removeFromLocalCart(id) {
+  const cart = getLocalCart();
+  if (cart.length === 0) return;
+  const newCart = cart.filter((p) => p.id !== id);
+  setLocalCart(newCart);
+}

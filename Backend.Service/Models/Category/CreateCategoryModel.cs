@@ -19,6 +19,8 @@ namespace Backend.Service.Models.Category
         [EnumDataType(typeof(CategoryType), ErrorMessage = "Category type is invalid. Try again from 0 to 4")]
         public CategoryType CategoryType { get; set; }
 
+        public ICollection<int>? RelativeCategories { get; set; } = new HashSet<int>();
+
         public override string? ToString()
         {
             return JsonSerializer.Serialize(this);
