@@ -34,6 +34,13 @@ const CartReducer = (state, action) => {
       return {
         ...state,
       };
+    case "EMPTY_CART":
+      setLocalCart([]);
+      state.cart = [];
+      action.type = "DONE";
+      return {
+        ...state,
+      };
     default:
       return state;
   }

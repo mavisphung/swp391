@@ -9,10 +9,11 @@ import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 import { toast } from "react-toastify";
 import config from "~/config";
-import { emptyCart, getCart } from "~/common/LocalStorageUtil";
+import { useUserCart } from "~/context/UserCartContext";
 
 function PaymentPage() {
   const location = useLocation();
+  const { dispatch } = useUserCart();
   const { name, tel, email, address, commune, district, province, cart } =
     location.state;
 
@@ -37,10 +38,6 @@ function PaymentPage() {
     sum = sum + c.price;
   });
 
-  const notify = () => {
-    toast("Đặt hàng thành công!");
-  };
-
   let items = cart.map((c) => {
     return {
       productId: c.id,
@@ -61,18 +58,19 @@ function PaymentPage() {
         },
       };
 
-      const request = await axios.post(
+      const response = await axios.post(
         "https://localhost:7179/api/order/unauth",
         order
       );
-      // toast("Successfully!!!");
-      console.log(request.data);
-      emptyCart();
-      // window.location.reload(false);
-      navigate(config.routes.home);
+      if (response.status === 201) {
+        toast.success("Đặt hàng thành công!");
+        console.log(response);
+        emptyCart();
+        navigate(config.routes.home);
+      }
     } catch (e) {
-      // toast("Error!!!");
-      console.log(e);
+      toast.error("Đơn hàng đặt không thành công. Xin bạn hãy thử lại sau.");
+      console.log("PAYMENT order", e);
     }
   };
 
@@ -81,9 +79,10 @@ function PaymentPage() {
     console.log(event.target.value);
   };
 
-  function checkout() {
-    notify();
-    postOrder();
+  function emptyCart() {
+    dispatch({
+      type: "EMPTY_CART",
+    });
   }
 
   return (
@@ -240,11 +239,11 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={checkout}
+              onClick={postOrder}
             >
               Thanh toán
             </Button>
-            <Button onClick={notify}>Toast</Button>
+            {/* <Button onClick={notify}>Toast</Button> */}
           </Row>
         </Col>
       </Container>
