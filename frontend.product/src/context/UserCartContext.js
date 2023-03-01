@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
+import { toast } from "react-toastify";
 
 const userCartContext = createContext();
 
@@ -24,6 +25,7 @@ const CartReducer = (state, action) => {
       }
       state.cart.push({ ...pro, amount: 1 });
       action.type = "DONE";
+      toast.success("Thêm sản phẩm vào giỏ hàng thành công.");
       return { ...state };
     case "REMOVE_FROM_CART":
       removeFromLocalCart(action.payload);
@@ -31,6 +33,7 @@ const CartReducer = (state, action) => {
       const newCart = state.cart.filter((p) => p.id !== action.payload);
       state.cart = newCart;
       action.type = "DONE";
+      toast.success("Bỏ sản phẩm khỏi giỏ hàng thành công.");
       return {
         ...state,
       };
