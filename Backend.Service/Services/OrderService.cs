@@ -18,17 +18,20 @@ namespace Backend.Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IShippingAddressRepository _addressRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IPaymentRepository _paymentRepository;
 
         public OrderService(
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             IShippingAddressRepository shippingAddressRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IPaymentRepository paymentRepository)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _addressRepository = shippingAddressRepository;
             _productRepository = productRepository;
+            _paymentRepository = paymentRepository;
         }
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
@@ -149,6 +152,7 @@ namespace Backend.Service.Services
             });
             newOrder.OrderDetails = orderDetails.ToList();
             newOrder.TotalPrice = orderDetails.Sum(p => p.Price);
+
             shippingAddress.Orders.Add(newOrder);
             if (shippingAddress.Id == 0)
             {
@@ -168,7 +172,17 @@ namespace Backend.Service.Services
 
             // TODO: Thêm payment vào version sau
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
-
+            Payment payment = new Payment
+            {
+                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+                IsSuccess = true,
+            };
+            if (newOrder.Payments == null)
+            {
+                newOrder.Payments = new List<Payment>();
+            }
+            newOrder.Payments.Add(payment);
+            _orderRepository.Update(newOrder);
 
             return new OrderResponseModel(newOrder);
         }
