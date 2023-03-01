@@ -37,7 +37,8 @@ namespace Backend.Service.Consts
         ADDRESS_NOT_FOUND,
         ORDER_NOT_FOUND,
         [Description("Not existed in database")]
-        DATA_NOT_FOUND
+        DATA_NOT_FOUND,
+        INSUFFICIENT_QUANTITY,
     }
 
     public static class EnumStringMessage
