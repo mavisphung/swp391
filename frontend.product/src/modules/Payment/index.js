@@ -91,7 +91,7 @@ function PaymentPage() {
         },
       };
 
-      const request = await axios.post(
+      const response = await axios.post(
         "https://localhost:7179/api/order/unauth",
         order
       );
@@ -265,7 +265,7 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={checkout}
+              onClick={postOrder}
             >
               Thanh toán
             </Button>

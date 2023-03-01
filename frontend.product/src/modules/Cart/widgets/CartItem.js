@@ -16,12 +16,14 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
       <div className="row col-12 col-lg-9">
         <h6>{name}</h6>
         <div className="col-9">
-          <div className="d-flex justify-content-between">
-            <span>Mô tả: {des}</span>
-            <span>Giá sản phẩm: {formatPrice(price)}đ</span>
+          <div className="row">
+            <span className="col-7">Mô tả: {des}</span>
+            <span className="col-5" style={{ textAlign: "right" }}>
+              Giá sản phẩm: {formatPrice(price)}đ
+            </span>
           </div>
-          <div className="d-flex justify-content-between">
-            <div className="mt15">
+          <div className="row">
+            <div className="mt15 col-md-7">
               <span>Số lượng:</span>
               <input
                 className="no-spinner"
@@ -37,7 +39,7 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
                 }}
               />
             </div>
-            <div className="mt15">
+            <div className="mt15 col-md-5" style={{ textAlign: "right" }}>
               <span>Thành tiền: </span>
               <span style={{ textDecoration: "underline" }}>
                 {formatPrice(total)}đ
