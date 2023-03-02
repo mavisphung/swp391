@@ -1,4 +1,5 @@
-﻿using Backend.Service.Consts;
+﻿using System.Net;
+using Backend.Service.Consts;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
@@ -17,17 +18,20 @@ namespace Backend.Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IShippingAddressRepository _addressRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IPaymentRepository _paymentRepository;
 
         public OrderService(
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             IShippingAddressRepository shippingAddressRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IPaymentRepository paymentRepository)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _addressRepository = shippingAddressRepository;
             _productRepository = productRepository;
+            _paymentRepository = paymentRepository;
         }
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
@@ -121,12 +125,24 @@ namespace Backend.Service.Services
             IEnumerable<Product> products = await _productRepository.GetAllAsync(
                 p => !p.IsDeleted 
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
+            products = products.ToList(); //cached
 
             // TODO: trừ số lượng sản phẩm trong product
-
+            // Kiểm tra xem tất cả product có cái nào có quantity <= 0 không
+            bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
+            if (isInsufficientQuantity)
+            {
+                throw new BaseException(
+                    errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
+                    statusCode: StatusCodes.Status409Conflict,
+                    httpStatus: HttpStatusCode.Conflict
+                );
+            }
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
+                foundProd.Quantity -= ci.Quantity.GetValueOrDefault();
+                _productRepository.Update(foundProd);
                 return new OrderDetail()
                 {
                     ProductId = ci.ProductId.GetValueOrDefault(),
@@ -136,6 +152,7 @@ namespace Backend.Service.Services
             });
             newOrder.OrderDetails = orderDetails.ToList();
             newOrder.TotalPrice = orderDetails.Sum(p => p.Price);
+
             shippingAddress.Orders.Add(newOrder);
             if (shippingAddress.Id == 0)
             {
@@ -147,9 +164,25 @@ namespace Backend.Service.Services
                 // Cập nhật order vào shipping address
                 _addressRepository.Update(shippingAddress);
             }
-            await _addressRepository.SaveDbChangeAsync();
+            if (user != null)
+                shippingAddress.Receiver = user;
+
+            await _addressRepository.SaveDbChangeAsync(); // Cập nhật hoặc thêm mới địa chỉ ship
+            await _productRepository.SaveDbChangeAsync(); // Cập nhật lại số lượng sản phẩm
 
             // TODO: Thêm payment vào version sau
+            // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
+            Payment payment = new Payment
+            {
+                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+                IsSuccess = true,
+            };
+            if (newOrder.Payments == null)
+            {
+                newOrder.Payments = new List<Payment>();
+            }
+            newOrder.Payments.Add(payment);
+            _orderRepository.Update(newOrder);
 
             return new OrderResponseModel(newOrder);
         }
