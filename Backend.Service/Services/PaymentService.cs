@@ -16,15 +16,25 @@ namespace Backend.Service.Services
     public class PaymentService
     {
         private readonly IPaymentRepository _paymentRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly VNPayConst _vnPayConst;
-        public PaymentService(IPaymentRepository paymentRepository, VNPayConst vnPayConst)
+        public PaymentService(
+            IPaymentRepository paymentRepository, 
+            VNPayConst vnPayConst,
+            IOrderRepository orderRepository)
         {
             _paymentRepository = paymentRepository;
             _vnPayConst = vnPayConst;
+            _orderRepository = orderRepository;
         }
 
         public async Task<PaymentResponseModel> CreatePayment(PaymentRequestModel paymentRequestModel)
         {
+            Order order = await _orderRepository.GetFirstOrDefaultAsync(ord => !ord.IsDeleted && ord.Id == paymentRequestModel.OrderId);
+            if (order == null)
+            {
+                throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
+            }
 
             DateTime orderDate = DateTime.UtcNow;
 
@@ -34,11 +44,11 @@ namespace Backend.Service.Services
             {
                 PaymentCode = guid,
                 Amount = paymentRequestModel.Amount,
-                PaymentMethod = (PaymentMethod)paymentRequestModel.PaymentMethod,
-                PaymentType = (PaymentType)paymentRequestModel.PaymentType,
+                PaymentMethod = paymentRequestModel.PaymentMethod,
+                PaymentType = paymentRequestModel.PaymentType ?? PaymentType.Full,
                 PaidDate = orderDate,
                 OrderId = paymentRequestModel.OrderId,
-                IsSuccess = paymentRequestModel.IsSuccess
+                IsSuccess = true
             };
             try
             {
@@ -64,7 +74,6 @@ namespace Backend.Service.Services
             byteList.Add(Convert.ToByte(paymentRequestModel.PaymentType));
             byteList.AddRange(amountBytes);
             byteList.AddRange(orderIdByte);
-            byteList.Add(Convert.ToByte(paymentRequestModel.IsSuccess));
 
             var bytes = byteList.ToArray();
             Array.Resize(ref bytes, 16);
