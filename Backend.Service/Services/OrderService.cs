@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Backend.Service.Consts;
 using Backend.Service.Entities;
 using Backend.Service.Exceptions;
@@ -170,43 +171,103 @@ namespace Backend.Service.Services
 
             // TODO: Thêm payment vào version sau
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
-            //Payment payment = new Payment
-            //{
-            //    Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
-            //    IsSuccess = true,
-            //};
+            Payment payment = new Payment
+            {
+                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+                IsSuccess = true,
+                PaymentMethod = model.PaymentMethod,
+            };
 
-            //if (newOrder.Payments == null)
-            //{
-            //    newOrder.Payments = new List<Payment>();
-            //}
-            //newOrder.Payments.Add(payment);
-            //_orderRepository.Update(newOrder);
+            if (newOrder.Payments == null)
+            {
+                newOrder.Payments = new List<Payment>();
+            }
+            newOrder.Payments.Add(payment);
+            _orderRepository.Update(newOrder);
+            await _orderRepository.SaveDbChangeAsync();
 
             return new OrderResponseModel(newOrder);
+        }
+
+        private async Task<Order> _acceptOrder(Order order, UpdateOrderStatusModel model)
+        {
+            if (order.Status == OrderStatus.Accepted)
+            {
+                throw new BaseException(
+                    errorMessage: BaseError.CONFLICT_DATA.ToString(),
+                    statusCode: (int)HttpStatusCode.Conflict,
+                    httpStatus: HttpStatusCode.Conflict);
+            }
+            // Lấy danh sách sản phẩm nằm bên trong order
+            var prodIds = order.OrderDetails.Select(od => od.ProductId).ToList();
+            var products = await _productRepository.GetAllAsync(
+                prod => prodIds.Contains(prod.Id));
+            products = products.ToList(); // cached
+
+            // Trừ sản phẩm trong products
+            foreach (var od in order.OrderDetails)
+            {
+                var foundProduct = products.Where(prod => prod.Id == od.ProductId).FirstOrDefault();
+                foundProduct!.Quantity -= od.Quantity;
+                _productRepository.Update(foundProduct);
+            }
+            order.Status = OrderStatus.Accepted;
+            order.EstimatedReceiveDate = model.EstimatedReceiveDate.SetKindUtc();
+            _orderRepository.Update(order);
+
+            //await _orderRepository.SaveDbChangeAsync();
+            return order;
+        }
+
+        private async Task<Order> _cancelOrder(Order order, UpdateOrderStatusModel model)
+        {
+            if (order.Status == OrderStatus.Accepted)
+            {
+                throw new BaseException(
+                    errorMessage: BaseError.CONFLICT_DATA.ToString(),
+                    statusCode: (int)HttpStatusCode.Conflict,
+                    httpStatus: HttpStatusCode.Conflict);
+            }
+            order.CancelledReason = model.Reason;
+            order.CloseDate = DateTime.UtcNow;
+            return order;
+        }
+
+        private async Task<Order> _finishOrder(Order order, UpdateOrderStatusModel model)
+        {
+            if (order.Status == OrderStatus.Accepted)
+            {
+                throw new BaseException(
+                    errorMessage: BaseError.CONFLICT_DATA.ToString(),
+                    statusCode: (int)HttpStatusCode.Conflict,
+                    httpStatus: HttpStatusCode.Conflict);
+            }
+            order.CloseDate = DateTime.UtcNow;
+            return order;
         }
 
         public async Task<Order> UpdateStatusAsync(int id, UpdateOrderStatusModel model)
         {
             User? staff = await _userRepository.GetUserByIdAsync(model.StaffAccountId);
             Order found = await GetOneAsync(id);
-            found.Status = model.OrderStatus;
             found.UpdatedBy = staff!.Fullname;
 
+            // Khi admin nhấn nút chấp thuận
             if (model.OrderStatus == OrderStatus.Accepted && model.EstimatedReceiveDate != null)
             {
-                found.EstimatedReceiveDate = model.EstimatedReceiveDate.SetKindUtc();
+                found = await _acceptOrder(found, model);
             }
 
-            if (model.OrderStatus == OrderStatus.Cancelled && !string.IsNullOrEmpty(model.Reason))
+            // Khi admin nhấn nút hủy
+            if (model.OrderStatus == OrderStatus.Cancelled)
             {
-                found.CancelledReason = model.Reason;
-                found.CloseDate = DateTime.UtcNow;
+                found = await _cancelOrder(found, model);
             }
 
+            // Khi admin nhấn nút kết thúc
             if (model.OrderStatus == OrderStatus.Finished)
             {
-                found.CloseDate = DateTime.UtcNow;
+                found = await _finishOrder(found, model);
             }
 
             _orderRepository.Update(found);
