@@ -39,6 +39,7 @@ namespace Backend.Service.Consts
         [Description("Not existed in database")]
         DATA_NOT_FOUND,
         INSUFFICIENT_QUANTITY,
+        CONFLICT_DATA,
     }
 
     public static class EnumStringMessage
