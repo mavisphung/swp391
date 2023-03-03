@@ -141,8 +141,6 @@ namespace Backend.Service.Services
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
-                foundProd.Quantity -= ci.Quantity.GetValueOrDefault();
-                _productRepository.Update(foundProd);
                 return new OrderDetail()
                 {
                     ProductId = ci.ProductId.GetValueOrDefault(),
@@ -168,21 +166,22 @@ namespace Backend.Service.Services
                 shippingAddress.Receiver = user;
 
             await _addressRepository.SaveDbChangeAsync(); // Cập nhật hoặc thêm mới địa chỉ ship
-            await _productRepository.SaveDbChangeAsync(); // Cập nhật lại số lượng sản phẩm
+            //await _productRepository.SaveDbChangeAsync(); // Cập nhật lại số lượng sản phẩm
 
             // TODO: Thêm payment vào version sau
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
-            Payment payment = new Payment
-            {
-                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
-                IsSuccess = true,
-            };
-            if (newOrder.Payments == null)
-            {
-                newOrder.Payments = new List<Payment>();
-            }
-            newOrder.Payments.Add(payment);
-            _orderRepository.Update(newOrder);
+            //Payment payment = new Payment
+            //{
+            //    Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+            //    IsSuccess = true,
+            //};
+
+            //if (newOrder.Payments == null)
+            //{
+            //    newOrder.Payments = new List<Payment>();
+            //}
+            //newOrder.Payments.Add(payment);
+            //_orderRepository.Update(newOrder);
 
             return new OrderResponseModel(newOrder);
         }
