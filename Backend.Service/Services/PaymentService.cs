@@ -35,7 +35,7 @@ namespace Backend.Service.Services
                 PaymentCode = guid,
                 Amount = paymentRequestModel.Amount,
                 PaymentMethod = (PaymentMethod)paymentRequestModel.PaymentMethod,
-                PaymentType = (PaymentType)paymentRequestModel.PaymentType,
+                PayInAdvance = paymentRequestModel.PayInAdvance,
                 PaidDate = orderDate,
                 OrderId = paymentRequestModel.OrderId,
                 IsSuccess = paymentRequestModel.IsSuccess
@@ -58,10 +58,11 @@ namespace Backend.Service.Services
             byte[] nowByte = BitConverter.GetBytes(now.Ticks);
             byte[] amountBytes = Encoding.ASCII.GetBytes(paymentRequestModel.Amount + "");
             byte[] orderIdByte = Encoding.ASCII.GetBytes(paymentRequestModel.OrderId + "");
+            byte[] payInDadvanceByte = Encoding.ASCII.GetBytes(paymentRequestModel.PayInAdvance + "");
 
             byteList.AddRange(nowByte);
             byteList.Add(Convert.ToByte(paymentRequestModel.PaymentMethod));
-            byteList.Add(Convert.ToByte(paymentRequestModel.PaymentType));
+            byteList.AddRange(payInDadvanceByte);
             byteList.AddRange(amountBytes);
             byteList.AddRange(orderIdByte);
             byteList.Add(Convert.ToByte(paymentRequestModel.IsSuccess));
