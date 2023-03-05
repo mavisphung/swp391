@@ -68,11 +68,11 @@ namespace Backend.Service.Services
             byte[] nowByte = BitConverter.GetBytes(now.Ticks);
             byte[] amountBytes = Encoding.ASCII.GetBytes(paymentRequestModel.Amount + "");
             byte[] orderIdByte = Encoding.ASCII.GetBytes(paymentRequestModel.OrderId + "");
-            byte[] payInDadvanceByte = Encoding.ASCII.GetBytes(paymentRequestModel.PayInAdvance + "");
+            byte[] payInAdvanceByte = Encoding.ASCII.GetBytes(paymentRequestModel.PayInAdvance + "");
 
             byteList.AddRange(nowByte);
             byteList.Add(Convert.ToByte(paymentRequestModel.PaymentMethod));
-            byteList.AddRange(payInDadvanceByte);
+            byteList.AddRange(payInAdvanceByte);
             byteList.AddRange(amountBytes);
             byteList.AddRange(orderIdByte);
 
