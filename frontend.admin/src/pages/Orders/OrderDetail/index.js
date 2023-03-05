@@ -552,7 +552,8 @@ const OrderDetail = () => {
                 pagination={false}
                 dataSource={orderDetails}
                 rowClassName={(record, index) =>
-                  record.product.quantity < record.quantity
+                  record.product.quantity < record.quantity &&
+                  customerOrder.status === pending
                     ? 'error'
                     : 'allowed'
                 }
