@@ -56,3 +56,8 @@ export const getProductDetailsById = async (productId) => {
 export const addNewProduct = async (body) => {
   await api.post(`/${productURL}`, body);
 };
+
+// Update product
+export const updateProductById = async (productId, body) => {
+  await api.put(`/${productURL}/${productId}`, body);
+};
