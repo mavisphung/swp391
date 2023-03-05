@@ -216,6 +216,7 @@ namespace Backend.Service.Services
             _orderRepository.Update(order);
 
             //await _orderRepository.SaveDbChangeAsync();
+            // TODO: Gửi email sau khi admin chấp nhận đơn hàng
             return order;
         }
 

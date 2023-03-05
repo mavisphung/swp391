@@ -1,4 +1,6 @@
-﻿using Backend.Service.Entities;
+﻿using Backend.Service.Consts;
+using Backend.Service.Entities;
+using Backend.Service.Exceptions;
 using Backend.Service.Helper;
 using Backend.Service.Models.Banner;
 using Backend.Service.Models.Product;
@@ -62,6 +64,21 @@ namespace Backend.Service.Services
         {
             _bannerRepository.Remove(id);
             await _bannerRepository.SaveDbChangeAsync();
+        }
+
+        internal async Task<BannerResponseModel> UpdateAsync(int id, CreateBannerModel model)
+        {
+            var found = _bannerRepository.Get(id);
+            if (found == null) 
+            {
+                throw new NotFoundException(BaseError.BANNER_NOT_FOUND.ToString());
+            }
+            
+            found.Name = model.Name;
+            found.Image = model.Image;
+            _bannerRepository.Update(found);
+            await _bannerRepository.SaveDbChangeAsync();
+            return new BannerResponseModel(found);
         }
     }
 }
