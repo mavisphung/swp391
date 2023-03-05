@@ -8,7 +8,7 @@ namespace Backend.Service.Entities
     [Index(nameof(PaymentCode), IsUnique = true)]
     public class Payment : BaseEntity
     {
-        public Guid PaymentCode { get; set; }
+        public Guid PaymentCode { get; set; } = Guid.NewGuid();
         
         // Giá tiền
         public int Amount { get; set; }

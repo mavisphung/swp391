@@ -30,16 +30,18 @@ const CategoriesList = () => {
 
   // Get all categories
   const getCategoriesList = useCallback(
-    async (pageIndex, searchCategoryName) => {
+    async (pageIndex, searchCategoryName, searchCategoryType) => {
       try {
         const data = await getCategoriesListData(
           pageIndex,
           10,
           searchCategoryName,
+          searchCategoryType,
         );
         setCategories(data.data.map((category) => category));
 
         let paginationObj = JSON.parse(data.headers['x-pagination']);
+        setPageSize(paginationObj.CurrentPage);
         setPageSize(paginationObj.PageSize);
         setTotalCount(paginationObj.TotalCount);
 
@@ -53,10 +55,10 @@ const CategoriesList = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      getCategoriesList(pageIndex, searchCategoryName);
-    }, 500);
+      getCategoriesList(pageIndex, searchCategoryName, searchCategoryType);
+    }, 400);
     return () => clearTimeout(delayDebounceFn);
-  }, [getCategoriesList, pageIndex, searchCategoryName]);
+  }, [getCategoriesList, pageIndex, searchCategoryName, searchCategoryType]);
 
   // Table record buttons group
   const cellButton = (record) => {

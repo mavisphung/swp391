@@ -30,7 +30,7 @@ function HomePage() {
         const tmp1 = [];
         const tmp2 = [];
         const tmp3 = [];
-        response.data.map((p) => {
+        response.data.forEach((p) => {
           if (p.categoryType === 1) {
             tmp1.push(p);
           } else if (p.categoryType === 2) {
@@ -50,22 +50,22 @@ function HomePage() {
     }
   };
 
-  const getCategory = async () => {
-    try {
-      const response = await api.get("/category", {
-        params: {
-          PageNumber: 2,
-          PageSize: 9,
-        },
-      });
-      setCategories(response.data);
-      console.log(categories);
-    } catch (e) {
-      console.log(`Fail to load category: ${e}`);
-    }
-  };
-
   useEffect(() => {
+    const getCategory = async () => {
+      try {
+        const response = await api.get("/category", {
+          params: {
+            PageNumber: 2,
+            PageSize: 9,
+          },
+        });
+        setCategories(response.data);
+        console.log(categories);
+      } catch (e) {
+        console.log(`Fail to load category: ${e}`);
+      }
+    };
+
     getCategory();
     getProducts();
   }, []);

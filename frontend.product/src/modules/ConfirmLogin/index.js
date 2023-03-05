@@ -101,8 +101,11 @@ function ConfirmLogin() {
           email: email1,
           address: address,
           commune: communeObj.name,
+          communeId: wardId,
           district: districtObj.name,
+          districtId: districtId,
           province: provinceObj.name,
+          provinceId: provinceId,
           cart: cartList,
         },
       });

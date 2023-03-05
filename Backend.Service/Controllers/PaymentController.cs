@@ -22,10 +22,11 @@ namespace Backend.Service.Controllers
         public PaymentController(PaymentService paymentService, ILogger<PaymentController> logger)
         {
             _paymentService = paymentService;
-            _logger = logger;        }
+            _logger = logger;
+        }
 
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestModel paymentRequestModel)
         {
             var data = await _paymentService.CreatePayment(paymentRequestModel);
