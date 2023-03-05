@@ -11,8 +11,8 @@ namespace Backend.Service.Models.Payment
         public int PaymentMethod { get; set; }
         [AttributeNotBlank(ErrorMessage = "Order Id is not empty")]
         public int OrderId { get; set; }
-        [AttributeNotBlank(ErrorMessage = "Payment Type is not empty")]
-        public int PaymentType { get; set; }
+        [AttributeMinMax(ErrorMessage = "PayInAdvance is not empty", Maximum = 100, Minimum = 1)]
+        public int PayInAdvance { get; set; } = 100;
         [AttributeNotBlank(ErrorMessage = "Is Success is not empty")]
         public bool IsSuccess { get; set; }
     }
