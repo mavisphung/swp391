@@ -1,6 +1,8 @@
 ﻿using Backend.Service.Entities;
 using Backend.Service.Helper;
+using Backend.Service.Models.Order;
 using Backend.Service.Repositories.IRepositories;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Services
@@ -8,14 +10,18 @@ namespace Backend.Service.Services
     public class UserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IOrderRepository _orderRepository;
 
         //private readonly ApplicationDbContext _context;
         public UserService(
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IOrderRepository orderRepository
             //ApplicationDbContext context
+
         )
         {
             _userRepository = userRepository;
+            _orderRepository = orderRepository;
             //_context = context;
         }
 
@@ -118,6 +124,43 @@ namespace Backend.Service.Services
             var values = _userRepository.CheckEmailExsited(emailStr);
 
             return values;
+        }
+
+        internal async Task<PagedList<OrderResponseModel>> GetOrderHistoryAsync(OrderHistoryParameter filter)
+        {
+            var predicate = PredicateBuilder.New<Order>(ord => !ord.IsDeleted);
+
+            if (filter.UserId.HasValue)
+            {
+                predicate = predicate.And(ord => ord.UserId == filter.UserId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Email)) 
+            {
+                predicate = predicate.And(ord => ord.ShippingAddress.Email == filter.Email);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Phone)) 
+            {
+                predicate = predicate.And(ord => ord.ShippingAddress.PhoneNumber == filter.Phone);
+            }
+
+            if (filter.OrderStatus.GetValueOrDefault() != 0)
+            {
+                predicate = predicate.And(ord => ord.Status == filter.OrderStatus.GetValueOrDefault());
+            }
+
+            IEnumerable<Order> query = await _orderRepository.GetAllAsync(
+                filter: predicate,
+                orderBy: que => filter.Ascending == false
+                                    ? que.OrderByDescending(order => order.OrderDate)
+                                    : que.OrderBy(order => order.OrderDate),
+                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+
+            return PagedList<OrderResponseModel>.ToPagedList(
+                query.Select(entity => new OrderResponseModel(entity)),
+                filter.PageNumber,
+                filter.PageSize);
         }
 
         //public User GetStoreManager(string storeCode)
