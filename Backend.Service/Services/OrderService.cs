@@ -222,7 +222,7 @@ namespace Backend.Service.Services
 
         private async Task<Order> _cancelOrder(Order order, UpdateOrderStatusModel model)
         {
-            if (order.Status == OrderStatus.Accepted)
+            if (order.Status == OrderStatus.Cancelled)
             {
                 throw new BaseException(
                     errorMessage: BaseError.CONFLICT_DATA.ToString(),
@@ -236,7 +236,7 @@ namespace Backend.Service.Services
 
         private async Task<Order> _finishOrder(Order order, UpdateOrderStatusModel model)
         {
-            if (order.Status == OrderStatus.Accepted)
+            if (order.Status == OrderStatus.Finished)
             {
                 throw new BaseException(
                     errorMessage: BaseError.CONFLICT_DATA.ToString(),
@@ -274,6 +274,15 @@ namespace Backend.Service.Services
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
             return found;
+        }
+
+        internal dynamic GetStatisticAsync()
+        {
+            var query = _orderRepository.GetDbSet().GroupBy(ord => ord.CreatedDate.Date)
+                .Select(g => new { CreatedDate = g.Key, Orders = g.Count() })
+                .OrderBy(g => g.CreatedDate)
+                .ToList();
+            return query;
         }
     }
 }

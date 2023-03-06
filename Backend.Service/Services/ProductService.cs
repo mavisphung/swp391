@@ -153,8 +153,8 @@ namespace Backend.Service.Services
                 found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
             }
 
-            //_productRepository.Update(found);
-            //await _productRepository.SaveDbChangeAsync();
+            _productRepository.Update(found);
+            await _productRepository.SaveDbChangeAsync();
             _logger.LogInformation($"Updated product {id} successfully");
             return new ProductResponseModel(found);
         }
