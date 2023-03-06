@@ -58,7 +58,7 @@ import CustomSpinner from '~/ui/CustomSpinner';
 const shortDescriptionListData = [
   {
     id: 1,
-    name: 'Chim bổi',
+    name: 'Chim non',
   },
   {
     id: 2,
@@ -70,7 +70,7 @@ const shortDescriptionListData = [
   },
   {
     id: 4,
-    name: 'Chim non',
+    name: 'Chim bổi',
   },
 ];
 
@@ -870,6 +870,7 @@ const AddEditProductForm = () => {
                       <Form.Control
                         type="number"
                         value={quantity || 1}
+                        max={age ? '1' : ''}
                         isInvalid={quantity && parseInt(quantity) <= 0}
                         onChange={(e) => {
                           setQuantity(e.target.value);
