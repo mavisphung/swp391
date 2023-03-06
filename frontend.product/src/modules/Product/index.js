@@ -10,6 +10,7 @@ import ProductOrderPane from "./widgets/ProductOrderPane";
 import AppTrace from "~/components/AppTrace";
 import config from "~/config";
 import api from "~/context/AppApi";
+import CustomSpinner from "~/components/CustomSpinner";
 
 function ProductDetails() {
   const [searchParams] = useSearchParams();
@@ -72,7 +73,7 @@ function ProductDetails() {
     getProduct();
   }, [productId]);
 
-  if (!pro || isLoading) return <h1>Loading</h1>;
+  if (!pro || isLoading) return <CustomSpinner />;
 
   return (
     <div className="container">

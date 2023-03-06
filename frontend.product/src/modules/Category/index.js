@@ -9,6 +9,7 @@ import api from "~/context/AppApi";
 import AppTrace from "~/components/AppTrace";
 import BirdCard from "../Home/BirdCard";
 import { formatPrice } from "~/common/Helper";
+import CustomSpinner from "~/components/CustomSpinner";
 
 function CategoryPage() {
   const [searchParams] = useSearchParams();
@@ -49,8 +50,6 @@ function CategoryPage() {
 
   const getProductsWithCategoryId = async (id) => {
     try {
-      console.log("MINDATE", minDate);
-      console.log("MAXDATE", maxDate);
       const response = await api.get("/product", {
         params: {
           CategoryId: id,
@@ -208,7 +207,7 @@ function CategoryPage() {
           })}
         </div>
       ) : (
-        <h1>Loading</h1>
+        <CustomSpinner />
       )}
     </div>
   );
