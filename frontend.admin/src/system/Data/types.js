@@ -1,5 +1,9 @@
 export const categoriesTypesList = [
   {
+    id: '',
+    name: 'Chọn phân loại',
+  },
+  {
     id: 1,
     name: 'Chim',
   },
@@ -18,9 +22,5 @@ export const categoriesTypesList = [
   {
     id: 5,
     name: 'Khác',
-  },
-  {
-    id: 0,
-    name: 'Lỗi',
   },
 ];
