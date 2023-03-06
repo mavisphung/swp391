@@ -12,6 +12,10 @@ import {
   defaultDatePickerRange,
 } from '~/system/Constants/constants';
 import moment from 'moment';
+import PieChart from './Charts/PieChart';
+import LineChart from './Charts/LineChart';
+import BarChart from './Charts/BarChart';
+import './Statistics.scss';
 
 function Statistics() {
   const { RangePicker } = DatePicker;
@@ -132,20 +136,29 @@ function Statistics() {
       </Row>
       <br />
       <Row>
+        <Col span={12} style={{ paddingRight: 10 }}>
+          <LineChart />
+        </Col>
+        <Col span={12} style={{ paddingLeft: 10 }}>
+          <PieChart />
+        </Col>
+      </Row>
+      <Row style={{ marginTop: 30 }}>
         <Col span={8}>
           <RecentOrders />
         </Col>
-        <Col span={16}>
-          <h3 style={{ marginLeft: 20 }}>Chart here</h3>
+        <Col span={16} style={{ paddingLeft: 30 }}>
+          <BarChart />
         </Col>
       </Row>
+      <br />
     </>
   );
 }
 
 function DashboardCard({ title, value, icon }) {
   return (
-    <Card>
+    <Card className="outline-border-shadow">
       <Space direction="horizontal">
         {icon}
         <Statistic title={title} value={value} style={{ marginLeft: 50 }} />
@@ -208,6 +221,7 @@ function RecentOrders() {
             },
           },
         ]}
+        className="outline-border-shadow"
         rowKey="id"
         dataSource={orders}
         loading={loading}
