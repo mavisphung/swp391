@@ -231,6 +231,7 @@ namespace Backend.Service.Services
             }
             order.CancelledReason = model.Reason;
             order.CloseDate = DateTime.UtcNow;
+            order.Status = OrderStatus.Cancelled;
             return order;
         }
 
@@ -244,6 +245,7 @@ namespace Backend.Service.Services
                     httpStatus: HttpStatusCode.Conflict);
             }
             order.CloseDate = DateTime.UtcNow;
+            order.Status = OrderStatus.Finished;
             return order;
         }
 
