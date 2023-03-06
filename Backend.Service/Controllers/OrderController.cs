@@ -3,6 +3,7 @@ using Backend.Service.Helper;
 using Backend.Service.Models.Order;
 using Backend.Service.Models.Validation;
 using Backend.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -91,6 +92,14 @@ namespace Backend.Service.Controllers
         {
             var response = await _orderService.ProcessAddToCartUnauth(model);
             return Created("", response);
+        }
+
+        [HttpGet("stats")]
+        //[Authorize(Roles = "1")]
+        public IActionResult GetStatisticInfo()
+        {
+            var data = _orderService.GetStatisticAsync();
+            return Ok(data);
         }
     }
 }

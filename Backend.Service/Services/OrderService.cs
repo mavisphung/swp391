@@ -216,12 +216,13 @@ namespace Backend.Service.Services
             _orderRepository.Update(order);
 
             //await _orderRepository.SaveDbChangeAsync();
+            // TODO: Gửi email sau khi admin chấp nhận đơn hàng
             return order;
         }
 
         private async Task<Order> _cancelOrder(Order order, UpdateOrderStatusModel model)
         {
-            if (order.Status == OrderStatus.Accepted)
+            if (order.Status == OrderStatus.Cancelled)
             {
                 throw new BaseException(
                     errorMessage: BaseError.CONFLICT_DATA.ToString(),
@@ -230,12 +231,13 @@ namespace Backend.Service.Services
             }
             order.CancelledReason = model.Reason;
             order.CloseDate = DateTime.UtcNow;
+            order.Status = OrderStatus.Cancelled;
             return order;
         }
 
         private async Task<Order> _finishOrder(Order order, UpdateOrderStatusModel model)
         {
-            if (order.Status == OrderStatus.Accepted)
+            if (order.Status == OrderStatus.Finished)
             {
                 throw new BaseException(
                     errorMessage: BaseError.CONFLICT_DATA.ToString(),
@@ -243,6 +245,7 @@ namespace Backend.Service.Services
                     httpStatus: HttpStatusCode.Conflict);
             }
             order.CloseDate = DateTime.UtcNow;
+            order.Status = OrderStatus.Finished;
             return order;
         }
 
@@ -273,6 +276,15 @@ namespace Backend.Service.Services
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
             return found;
+        }
+
+        internal dynamic GetStatisticAsync()
+        {
+            var query = _orderRepository.GetDbSet().GroupBy(ord => ord.CreatedDate.Date)
+                .Select(g => new { CreatedDate = g.Key, Orders = g.Count() })
+                .OrderBy(g => g.CreatedDate)
+                .ToList();
+            return query;
         }
     }
 }

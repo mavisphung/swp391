@@ -48,5 +48,19 @@ namespace Backend.Service.Controllers
         //    var user = _userService.GetUserById(id);
         //    return Ok(user?.ToData());
         //}
+
+        /// <summary>
+        /// Lấy lịch sử đơn hơn có kèm tham số
+        /// </summary>
+        /// <response code="200">Trả về danh sách order theo user</response>
+        [HttpGet("orders")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetOrderHistory([FromQuery]OrderHistoryParameter filter)
+        {
+            Console.WriteLine(filter.ToString());
+            var data = await _userService.GetOrderHistoryAsync(filter);
+            AddPaginationToHeader(data);
+            return Ok(data);
+        }
     }
 }
