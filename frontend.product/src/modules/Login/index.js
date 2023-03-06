@@ -20,12 +20,13 @@ function LoginPage() {
 
   const navigate = useNavigate();
 
-  const { loginWithEmail } = useUserAuth();
+  const { loginWithEmail, getUser } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (email && password) {
-      const user = await loginWithEmail(email, password);
+      await loginWithEmail(email, password);
+      const user = getUser();
       if (user) {
         navigate(config.routes.dashboard);
       }
