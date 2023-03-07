@@ -28,6 +28,7 @@ const CategoryCard = ({ cate }) => {
                   url: `/dashboard/category?categoryId=${cate.id}`,
                 },
               ],
+              cateId: cate.id,
             },
           }
         )

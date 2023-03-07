@@ -25,7 +25,7 @@ function HomePage() {
       });
 
       // console.log("RES", response);
-      console.log("RES.DATA", response.data);
+      // console.log("RES.DATA", response.data);
       if (response.data) {
         const tmp1 = [];
         const tmp2 = [];
@@ -54,8 +54,8 @@ function HomePage() {
     try {
       const response = await api.get("/category", {
         params: {
-          PageNumber: 2,
-          PageSize: 9,
+          PageNumber: 1,
+          PageSize: 8,
         },
       });
       setCategories(response.data);
