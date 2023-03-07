@@ -21,13 +21,12 @@ function BirdProductDetails() {
     try {
       const response = await api.get(`/product/${id}`);
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
+      console.log("PRODUCT2 RES.DATA", response.data);
       if (response.data) {
         setPro(response.data);
       }
     } catch (error) {
-      console.log("Get /product/:id Error", error);
+      console.log("PRODUCT2 Get /product/:id Error", error);
     }
   };
 
@@ -40,11 +39,10 @@ function BirdProductDetails() {
         },
       });
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
+      console.log("PRODUCT2 RES.DATA", response.data);
       if (response.data) {
         const tmp1 = [];
-        response.data.map((p) => {
+        response.data.forEach((p) => {
           if (p.categoryType === 1) {
             tmp1.push(p);
           }
@@ -52,7 +50,7 @@ function BirdProductDetails() {
         setRelate(tmp1);
       }
     } catch (error) {
-      console.log("Get /product/ Error", error);
+      console.log("PRODUCT2 Get /product/ Error", error);
     }
     setIsLoading(false);
   };
@@ -60,7 +58,7 @@ function BirdProductDetails() {
   useEffect(() => {
     getProductWithId(productId);
     getProduct();
-  }, []);
+  }, [productId]);
 
   if (!pro || isLoading) return <h1>Loading</h1>;
 

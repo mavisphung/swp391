@@ -2,15 +2,18 @@ import api from './api';
 
 const categoryURL = 'category';
 const categoryName = 'Search';
-const id = 'categoryId';
+const categoryId = 'CategoryType';
 
 // Get all categories
-export const getCategoriesListData = async (page, pageSize, name) => {
+export const getCategoriesListData = async (page, pageSize, name, category) => {
   let url = `/${categoryURL}?PageNumber=${page}&PageSize=${pageSize}`;
   try {
     // Create url
     if (name) {
       url = `${url}&${categoryName}=${name}`;
+    }
+    if (category) {
+      url = `${url}&${categoryId}=${category}`;
     }
 
     // Call api

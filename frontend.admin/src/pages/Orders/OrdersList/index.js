@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Card, Input, Row, Space, Table } from 'antd';
+import { Card, DatePicker, Input, Row, Space, Table } from 'antd';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
@@ -32,11 +32,15 @@ const { Search } = Input;
 
 const OrdersList = () => {
   const { pathname } = useLocation();
+  const { RangePicker } = DatePicker;
 
   const [orderStatus, setOrderStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [searchOrderId, setSearchOrderId] = useState('');
+  const [startPeriod, setStartPeriod] = useState('');
+  const [endPeriod, setEndPeriod] = useState('');
+
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [orders, setOrders] = useState([]);
@@ -48,9 +52,14 @@ const OrdersList = () => {
 
   // Get customer order list
   const getCustomerOrderList = useCallback(
-    async (pageIndex, orderStatus, searchOrderId) => {
+    async (pageIndex, orderStatus, searchOrderId, startPeriod, endPeriod) => {
       try {
-        if (searchOrderId === '' && orderStatus === '') {
+        if (
+          searchOrderId === '' &&
+          orderStatus === '' &&
+          ((startPeriod === '' && endPeriod === '') ||
+            (startPeriod === 'Invalid date' && endPeriod === 'Invalid date'))
+        ) {
           const data = await getCustomerOrderListData(pageIndex);
           setOrders(data.data.map((order) => order));
           let paginationObj = JSON.parse(data.headers['x-pagination']);
@@ -61,6 +70,8 @@ const OrdersList = () => {
             pageIndex,
             orderStatus,
             searchOrderId,
+            startPeriod,
+            endPeriod,
           );
           setOrders(data.data.map((order) => order));
           let paginationObj = JSON.parse(data.headers['x-pagination']);
@@ -77,12 +88,26 @@ const OrdersList = () => {
   );
 
   useEffect(() => {
-    getCustomerOrderList(pageIndex, orderStatus, searchOrderId);
-  }, [getCustomerOrderList, pageIndex, orderStatus, searchOrderId]);
+    getCustomerOrderList(
+      pageIndex,
+      orderStatus,
+      searchOrderId,
+      startPeriod,
+      endPeriod,
+    );
+  }, [
+    getCustomerOrderList,
+    pageIndex,
+    orderStatus,
+    searchOrderId,
+    startPeriod,
+    endPeriod,
+  ]);
 
   // Manage tabs
   const onStatusChange = (key) => {
     setOrderStatus(key);
+    setPageIndex(1);
   };
 
   // Manage table
@@ -177,6 +202,22 @@ const OrdersList = () => {
     );
   };
 
+  //Choose date range
+  const onDateSelection = (value, dateString) => {
+    setStartPeriod(
+      moment(dateString[0], defaultDatePickerRange).format(dateConvert),
+    );
+    setEndPeriod(
+      moment(dateString[1], defaultDatePickerRange).format(dateConvert),
+    );
+    setPageIndex(1);
+  };
+
+  const disabledDate = (current) => {
+    // Can not select days after today
+    return current && current > moment().endOf('day');
+  };
+
   return (
     <>
       {loading ? (
@@ -194,10 +235,28 @@ const OrdersList = () => {
             }}
             className="status_card"
           />
+
+          <div
+            style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}
+          >
+            <span
+              style={{ marginTop: 3, marginRight: 10, fontSize: '1.01rem' }}
+            >
+              Chọn Ngày:
+            </span>
+            <RangePicker
+              placeholder={['Từ ngày', 'Đến ngày']}
+              format={defaultDatePickerRange}
+              onChange={onDateSelection}
+              disabledDate={disabledDate}
+              bordered="true"
+            />
+          </div>
+
           <Row className="my-3" justify="center">
             <Search
               style={{ width: '48%' }}
-              placeholder="Tìm mã đơn hàng"
+              placeholder="Tìm khách hàng"
               enterButton
               size="large"
               loading={loadingSearch}

@@ -246,7 +246,11 @@ const OrderDetail = () => {
               </p>
               <p>
                 <strong>Ngày lấy hàng: </strong>{' '}
-                {customerOrder.closeDate || 'Chưa lấy hàng'}
+                {customerOrder.closeDate
+                  ? moment(customerOrder.closeDate, dateTimeConvert)
+                      .add(7, 'hours')
+                      .format(defaultDateTimePickerRange)
+                  : 'Chưa lấy hàng'}
               </p>
             </>
           )}
@@ -285,7 +289,11 @@ const OrderDetail = () => {
         return (
           <div className="name-group">
             <div className="product-img">
-              <Image src={record.product.medias[1].url} />
+              <Image
+                src={
+                  record.product.medias[1]?.url || record.product.medias[2]?.url
+                }
+              />
             </div>
             <span className="mx-2">{record.product.name}</span>
           </div>
@@ -543,6 +551,12 @@ const OrderDetail = () => {
                 columns={columns}
                 pagination={false}
                 dataSource={orderDetails}
+                rowClassName={(record, index) =>
+                  record.product.quantity < record.quantity &&
+                  customerOrder.status === pending
+                    ? 'error'
+                    : 'allowed'
+                }
               />
               <Row justify="end" className="mx-3">
                 <h4>

@@ -91,12 +91,12 @@ function PaymentPage() {
         },
       };
 
-      const request = await axios.post(
+      const response = await axios.post(
         "https://localhost:7179/api/order/unauth",
         order
       );
       toast("Đặt hàng thành công!");
-      console.log(request.data);
+      // console.log(request.data);
       setLocalCart([]);
     } catch (e) {
       toast("Đặt hàng không thành công! Vui lòng thử lại!");
@@ -265,7 +265,7 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={checkout}
+              onClick={postOrder}
             >
               Thanh toán
             </Button>

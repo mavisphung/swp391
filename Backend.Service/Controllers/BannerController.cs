@@ -64,6 +64,21 @@ namespace Backend.Service.Controllers
             return Created("", createdObj);
         }
 
+        /// <summary>
+        /// Cập nhật tên và hình banner
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> Put(int id, [FromBody] CreateBannerModel model)
+        {
+            var updated = await _bannerService.UpdateAsync(id, model);
+            return Accepted(updated);
+        }
+
         //// PUT api/<Banner>/5
         //[HttpPut("{id}")]
         //public void Put(int id, [FromBody] string value)

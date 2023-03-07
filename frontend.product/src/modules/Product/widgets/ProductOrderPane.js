@@ -1,6 +1,6 @@
-import { Rate } from "antd";
-import { Button, Col, Row } from "react-bootstrap";
-import { MdOutlineStar } from "react-icons/md";
+// import { Rate } from "antd";
+import { Button } from "react-bootstrap";
+// import { MdOutlineStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 import "../ProductLayout.scss";
@@ -9,14 +9,6 @@ import { formatPrice } from "~/common/Helper";
 import { useUserCart } from "~/context/UserCartContext";
 
 function ProductOrderPane({ pro }) {
-  // name = name ? name : "Lồng kỹ chào mào";
-  // rating = rating ? rating : 4.5;
-  // des = des
-  //   ? des
-  //   : "Lồng được áp dụng chính sách 'HOÀN TIỀN' nếu khách hàng tìm được lỗi sản phẩm lúc nhận hàng. Gía lồng 720.000đ áp dụng cho tất cả các size (64, 68, 72)";
-  // price = price ? price : 950000;
-  // cate = cate ? cate : ["64 nan", "72 nan", "90 nan"];
-
   const { dispatch } = useUserCart();
   const navigate = useNavigate();
 
@@ -41,25 +33,20 @@ function ProductOrderPane({ pro }) {
         character={<MdOutlineStar />}
       />
       <span>({pro.rating})</span> */}
-      <p>{pro.description}</p>
-      <div
-        style={{
-          display: "flex",
-        }}
-      >
-        <p className="price text-dark text-decoration-line-through">
-          {formatPrice(pro.price + (pro.price * 20) / 100)} đ
-        </p>
-        <p className="price ps-3">{formatPrice(pro.price)} đ</p>
+      <span className="pro-des-label">Ngày đăng: </span>
+      <span>{pro.createdDate.substring(0, 10)}</span>
+      <br />
+      <span className="pro-des-label">Mô tả: </span>
+      <div>
+        <p>{pro.shortDescription}</p>
+        <p>{pro.description}</p>
       </div>
-      {/* <span>Chọn loại:</span>
-      <select id="cb-cate">
-        {cate.map((c, index) => (
-          <option key={index} value={c}>
-            {c}
-          </option>
-        ))}
-      </select> */}
+      <br />
+      <span className="pro-des-label">Trạng thái: </span>
+      <span>{pro.status === 2 ? "Còn hàng" : "Đã bán"}</span>
+      <br />
+      <span className="pro-des-label">Giá: </span>
+      <span className="price">{formatPrice(pro.price)} đ</span>
       <div className="pro-order-ctr">
         <Button className="btn-buy" onClick={handleBuyClick}>
           Mua ngay

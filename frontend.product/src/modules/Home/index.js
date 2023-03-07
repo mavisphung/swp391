@@ -30,7 +30,7 @@ function HomePage() {
         const tmp1 = [];
         const tmp2 = [];
         const tmp3 = [];
-        response.data.map((p) => {
+        response.data.forEach((p) => {
           if (p.categoryType === 1) {
             tmp1.push(p);
           } else if (p.categoryType === 2) {
