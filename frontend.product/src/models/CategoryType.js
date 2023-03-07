@@ -6,3 +6,5 @@ const categoryType = {
   accessory: 4,
   other: 5,
 };
+
+export default categoryType;

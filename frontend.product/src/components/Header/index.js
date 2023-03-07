@@ -54,19 +54,27 @@ function Header() {
               </Nav>
               <>
                 {user ? (
-                  <>
-                    <div>
-                      <img
-                        src={user.avatar}
-                        alt="User avatar"
-                        className="user-avatar"
-                      />
+                  <div>
+                    <div style={{ textAlign: "end" }}>ChyStore kính chào,</div>
+                    <div className="drop">
+                      <button>
+                        <img
+                          src={user.avatar}
+                          alt="User avatar"
+                          className="user-avatar"
+                        />
+                        <div style={{ display: "inline-block" }}>
+                          <span style={{ marginLeft: "10px" }}>
+                            {user.fullname}
+                          </span>
+                        </div>
+                      </button>
+                      <div className="drop-content">
+                        <Link>{user.fullname}</Link>
+                        <Link>{user.fullname}</Link>
+                      </div>
                     </div>
-                    <div style={{ marginLeft: "10px" }}>
-                      <span>ChyStore kính chào,</span>
-                      <Link className="user-name-link">{user.fullname}</Link>
-                    </div>
-                  </>
+                  </div>
                 ) : (
                   <div className="d-flex header-link">
                     <Link to={config.routes.cart} className="pl-2">

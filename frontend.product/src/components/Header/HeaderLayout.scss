@@ -64,12 +64,51 @@
   border-radius: 50%;
 }
 
-.user-name-link {
-  display: block;
-  color: black;
-  font-size: 17px;
+.drop button {
+  background-color: white;
+  border-radius: 7px;
+  display: inline-block;
+  padding: 8px 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 16px;
+  border: none;
 }
 
-.user-name-link:hover {
-  color: black !important;
+.drop button:hover {
+  background-color: rgb(240, 240, 240);
+}
+
+.drop {
+  position: relative;
+  display: inline-block;
+}
+
+.drop-content {
+  width: 200px !important;
+  color: black;
+  background-color: white;
+  box-shadow: 0px 5px 10px 0px #92929233;
+  display: none !important;
+  position: absolute;
+  z-index: 1;
+}
+
+.drop-content a {
+  color: black;
+  display: block;
+  margin: 10px 0;
+  font-size: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.drop-content a:hover {
+  text-decoration: none !important;
+  color: #f2635f !important;
+}
+
+.drop:hover .drop-content {
+  display: block !important;
+  z-index: 10;
 }

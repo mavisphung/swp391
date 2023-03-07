@@ -1,5 +1,18 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
+import { toast } from "react-toastify";
+
 import api from "./AppApi";
+import {
+  loginSucess,
+  networkErrorMsg,
+  wrongEmail,
+  wrongPassword,
+} from "~/system/Constants/ToastMessage";
+import {
+  invalidPassword,
+  networkError,
+  userNotFound,
+} from "~/system/Constants/ErrorMessage";
 
 const userAuthContext = createContext();
 
@@ -8,7 +21,9 @@ export const useUserAuth = () => {
 };
 
 export const UserAuthContextProvider = ({ children }) => {
-  async function loginWithEmail(email, password) {
+  const [user, setUser] = useState();
+
+  async function loginWithEmail(email, password, saveLogin) {
     try {
       const response = await api.post(
         "/auth/sign-en",
@@ -23,10 +38,24 @@ export const UserAuthContextProvider = ({ children }) => {
         }
       );
       if (response.status === 201) {
-        localStorage.setItem("USER", JSON.stringify(response.data));
+        setUser(response.data);
+        if (saveLogin) {
+          localStorage.setItem("USER", JSON.stringify(response.data));
+        }
+        toast.success(loginSucess);
+        return response.data;
       }
     } catch (error) {
-      console.log("Error", error);
+      if (error.message === networkError) {
+        toast.error(networkErrorMsg);
+      } else {
+        const errData = error.response.data;
+        if (errData.message === invalidPassword) {
+          toast.error(wrongPassword);
+        } else if (errData.message === userNotFound) {
+          toast.error(wrongEmail);
+        }
+      }
     }
   }
 
@@ -35,7 +64,8 @@ export const UserAuthContextProvider = ({ children }) => {
   }
 
   function getUser() {
-    return JSON.parse(localStorage.getItem("USER"));
+    const localUser = JSON.parse(localStorage.getItem("USER"));
+    return localUser ?? user;
   }
 
   return (
