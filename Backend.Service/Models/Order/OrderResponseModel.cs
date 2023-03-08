@@ -26,7 +26,7 @@ namespace Backend.Service.Models.Order
             CloseDate = entity.CloseDate;
             EstimatedReceiveDate = entity.EstimatedReceiveDate;
             OrderDetails = entity.OrderDetails.Select(od => new OrderDetailRM(od)).ToList();
-            //Payments = entity.Payments.Select(pm => new PaymentRM(pm)).ToList();
+            Payments = entity.Payments.Select(pm => new PaymentRM(pm)).ToList();
             CustomerInfo = entity.ShippingAddress != null ? new SAddressRM(entity.ShippingAddress) : null;
             CancelReason = entity.CancelledReason;
         }
