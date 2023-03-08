@@ -265,7 +265,7 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={postOrder}
+              onClick={checkout}
             >
               Thanh toán
             </Button>
