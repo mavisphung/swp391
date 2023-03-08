@@ -70,7 +70,7 @@ function BarChart() {
   return (
     <>
       <h5 style={{ marginBottom: 10 }}>Đơn hàng</h5>
-      <Column {...config} className="outline-border-shadow" />
+      <Column {...config} />
     </>
   );
 }

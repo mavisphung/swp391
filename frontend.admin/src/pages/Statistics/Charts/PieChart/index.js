@@ -49,7 +49,7 @@ function PieChart() {
   return (
     <>
       <h5 style={{ marginBottom: 10 }}>Tỉnh thành</h5>
-      <Pie {...config} className="outline-border-shadow" />
+      <Pie {...config} />
     </>
   );
 }

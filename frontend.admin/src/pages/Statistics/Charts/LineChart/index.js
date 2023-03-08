@@ -35,7 +35,7 @@ function LineChart() {
   return (
     <div>
       <h5 style={{ marginBottom: 10 }}>Doanh số</h5>
-      <Line {...config} className="outline-border-shadow" />
+      <Line {...config} />
     </div>
   );
 }
