@@ -58,7 +58,7 @@ namespace Backend.Service.Services
                 orderBy: que => filter.Ascending == false
                                     ? que.OrderByDescending(order => order.OrderDate)
                                     : que.OrderBy(order => order.OrderDate),
-                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category,Payments");
             // TODO: Sửa order theo Descending theo OrderDate - CHECKED
             return PagedList<OrderResponseModel>.ToPagedList(
                 query.Select(entity => new OrderResponseModel(entity)).ToList(),
@@ -70,7 +70,7 @@ namespace Backend.Service.Services
         {
             var found = await _orderRepository.GetFirstOrDefaultAsync(
                 o => !o.IsDeleted && o.Id == id,
-                "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+                "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category,Payments");
             if (found == null)
                 throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
             return found;
