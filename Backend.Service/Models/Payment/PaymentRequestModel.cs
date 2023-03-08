@@ -15,8 +15,7 @@ namespace Backend.Service.Models.Payment
 
         [AttributeNotBlank(ErrorMessage = "Order Id is not empty")]
         public int OrderId { get; set; }
-
-        [EnumDataType(typeof(PaymentMethod))]
-        public PaymentType? PaymentType { get; set; }
+        [AttributeMinMax(ErrorMessage = "PayInAdvance from 1 to 100", Maximum = 100, Minimum = 1)]
+        public int PayInAdvance { get; set; } = 100;
     }
 }

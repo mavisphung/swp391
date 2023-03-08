@@ -25,6 +25,9 @@ namespace Backend.Service.Models.Product
         [EnumDataType(typeof(ProductStatus), ErrorMessage = "Product status is invalid. Try again from 0 to 1")]
         public ProductStatus? Status { get; set; }
 
+        public string? Age { get; set; }
+        public bool? Gender { get; set; }
+
         public override string? ToString()
         {
             return JsonSerializer.Serialize(this);
