@@ -10,3 +10,15 @@ export const vnpHashSecret = "XGJLPDAXNSVTYJFOZDUUOSJTJAYEWNNK";
 
 export const secureHashType = "HmacSHA512";
 export const locale = "vn";
+
+export const menuKeys = {
+  dashboard: "dashboard",
+  orderList: "order-list",
+  accountProfile: "account-profile",
+  changePassword: "change-password",
+  viewCategoryList: "category-list",
+  addCategory: "add-category",
+  viewProductList: "product-list",
+  addProduct: "add-product",
+  addAccount: "add-account",
+};

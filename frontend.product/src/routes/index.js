@@ -10,6 +10,7 @@ import DefaultLayout from "~/components/DefaultLayout";
 import ProductDetails from "~/modules/Product";
 import BirdProductDetails from "~/modules/Product2";
 import ConfirmLogin from "~/modules/ConfirmLogin";
+import Settings from "~/modules/settings";
 
 const CustomRoutes = () => {
   return (
@@ -21,8 +22,8 @@ const CustomRoutes = () => {
       <Route path={config.dashboardRoutes.dashbard} element={<Dashboard />} />
       <Route path={config.routes.login} element={<LoginPage />} />
       <Route path={config.routes.register} element={<RegisterPage />} />
-      <Route path={config.routes.other} element={<div>Page Not Found</div>} />
       <Route path={config.cartRoutes.cart} element={<Cart />} />
+      <Route path={config.settingsRoutes.settings} element={<Settings />} />
       <Route
         path={config.routes.productDetails}
         element={
@@ -40,6 +41,7 @@ const CustomRoutes = () => {
         }
       />
       <Route path={config.routes.confirmLogin} element={<ConfirmLogin />} />
+      <Route path={config.routes.other} element={<div>Page Not Found</div>} />
     </Routes>
   );
 };

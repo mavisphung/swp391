@@ -3,14 +3,16 @@ import { toast } from "react-toastify";
 
 import api from "./AppApi";
 import {
+  connectError,
   loginSucess,
-  networkErrorMsg,
+  noNetwork,
   wrongEmail,
   wrongPassword,
 } from "~/system/Constants/ToastMessage";
 import {
   invalidPassword,
   networkError,
+  requestFailed500,
   userNotFound,
 } from "~/system/Constants/ErrorMessage";
 
@@ -46,8 +48,11 @@ export const UserAuthContextProvider = ({ children }) => {
         return response.data;
       }
     } catch (error) {
+      if (error.message === requestFailed500) {
+        toast.error(noNetwork);
+      }
       if (error.message === networkError) {
-        toast.error(networkErrorMsg);
+        toast.error(connectError);
       } else {
         const errData = error.response.data;
         if (errData.message === invalidPassword) {
@@ -60,6 +65,7 @@ export const UserAuthContextProvider = ({ children }) => {
   }
 
   function logOut() {
+    setUser();
     localStorage.removeItem("USER");
   }
 

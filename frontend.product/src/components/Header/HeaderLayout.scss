@@ -97,15 +97,14 @@
 .drop-content a {
   color: black;
   display: block;
-  margin: 10px 0;
   font-size: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 15px 10px;
 }
 
 .drop-content a:hover {
   text-decoration: none !important;
   color: #f2635f !important;
+  background-color: #92929233;
 }
 
 .drop:hover .drop-content {

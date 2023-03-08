@@ -19,10 +19,10 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(false);
   const [passwordType, setPasswordType] = useState("password");
-  const [validated, setValidated] = useState(true);
+  const [validated, setValidated] = useState(false);
 
   const navigate = useNavigate();
-  const requiredMark = <span style={{ color: "white" }}>*</span>;
+  const requiredMark = <span style={{ color: "red" }}>*</span>;
 
   const { loginWithEmail } = useUserAuth();
 
@@ -93,7 +93,6 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 minLength={6}
                 maxLength={20}
-                isInvalid={password && password.length < 6}
                 autoComplete="new-password"
                 placeholder="Vui lòng nhập mật khẩu"
                 required

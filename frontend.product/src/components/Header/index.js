@@ -13,7 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function Header() {
   const { cartAmount } = useUserCart();
-  const { getUser } = useUserAuth();
+  const { getUser, logOut } = useUserAuth();
   const user = getUser();
 
   return (
@@ -55,7 +55,9 @@ function Header() {
               <>
                 {user ? (
                   <div>
-                    <div style={{ textAlign: "end" }}>ChyStore kính chào,</div>
+                    <div style={{ textAlign: "end", marginRight: "16px" }}>
+                      ChyStore kính chào
+                    </div>
                     <div className="drop">
                       <button>
                         <img
@@ -70,8 +72,8 @@ function Header() {
                         </div>
                       </button>
                       <div className="drop-content">
-                        <Link>{user.fullname}</Link>
-                        <Link>{user.fullname}</Link>
+                        <Link to={config.routes.settings}>Cài đặt</Link>
+                        <Link onClick={logOut}>Đăng xuất</Link>
                       </div>
                     </div>
                   </div>
