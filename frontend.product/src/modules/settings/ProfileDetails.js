@@ -4,6 +4,8 @@ import { Button, Col, Form, Image, ProgressBar, Row } from "react-bootstrap";
 import "./ProfileDetailsLayout.scss";
 import { useUserAuth } from "~/context/UserAuthContext";
 import { checkEmail, checkFieldIsEmpty } from "~/common/Validation";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "~/firebase";
 
 function ProfileDetails() {
   const { getUser } = useUserAuth();
@@ -11,7 +13,8 @@ function ProfileDetails() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState(null);
+  const [avatarURL, setAvatarURL] = useState("");
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
   const [validated, setValidated] = useState(true);
@@ -20,9 +23,9 @@ function ProfileDetails() {
     if (user) {
       setName(user.fullname);
       setEmail(user.email);
-      setAvatar(user.avatar);
+      setAvatarURL(user.avatar);
     }
-  }, [user]);
+  }, []);
 
   const requiredMark = <span style={{ color: "red" }}>*</span>;
 
@@ -33,40 +36,40 @@ function ProfileDetails() {
     // setCheckEnableUpdateButton(true);
   };
 
-  // const handleUploadImage = () => {
-  //   const storageRef = ref(storage, `accountImages/${avatar.name}`);
-  //   const uploadTask = uploadBytesResumable(storageRef, avatar);
-  //   uploadTask.on(
-  //     'state_changed',
-  //     (snapshot) => {
-  //       const progress = Math.round(
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-  //       );
-  //       setProgress(progress);
-  //       setShowProgress(true);
+  const handleUploadImage = () => {
+    const storageRef = ref(storage, `accountImages/${avatar.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, avatar);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgress(progress);
+        setShowProgress(true);
 
-  //       switch (snapshot.state) {
-  //         case 'paused':
-  //           console.log('Upload is pause');
-  //           break;
-  //         case 'running':
-  //           console.log('Upload is running');
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //     },
-  //     () => {
-  //       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  //         setAvatarURL(downloadURL);
-  //       });
-  //       setShowProgress(false);
-  //     },
-  //   );
-  // };
+        switch (snapshot.state) {
+          case "paused":
+            console.log("Upload is pause");
+            break;
+          case "running":
+            console.log("Upload is running");
+            break;
+          default:
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setAvatarURL(downloadURL);
+        });
+        setShowProgress(false);
+      }
+    );
+  };
 
   return (
     <>
@@ -81,12 +84,12 @@ function ProfileDetails() {
             <span style={{ fontSize: "16px" }}>Cập nhật ảnh đại diện</span>
           </Col>
         </Row>
-        {avatar && (
+        {avatarURL && (
           <Row>
             <Col style={{ textAlign: "center" }}>
               <Image
                 className="account-image-file"
-                src={avatar}
+                src={avatarURL}
                 alt="User avatar"
                 roundedCircle={true}
               />
@@ -104,7 +107,7 @@ function ProfileDetails() {
           <Row>
             <Col className="account-image-file-content">
               <Form.Control
-                width={50}
+                width={100}
                 type="file"
                 onChange={handleChangeAvatar}
                 accept="image/*"
@@ -112,7 +115,7 @@ function ProfileDetails() {
               />
               <Button
                 variant="primary"
-                // onClick={handleUploadImage}
+                onClick={handleUploadImage}
                 disabled={avatar ? false : true}
               >
                 Tải ảnh lên
