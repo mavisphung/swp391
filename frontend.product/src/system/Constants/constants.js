@@ -14,7 +14,7 @@ export const locale = "vn";
 export const menuKeys = {
   dashboard: "dashboard",
   orderList: "order-list",
-  accountProfile: "account-profile",
+  accountProfile: "profile",
   changePassword: "change-password",
   viewCategoryList: "category-list",
   addCategory: "add-category",
