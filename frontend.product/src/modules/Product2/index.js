@@ -8,6 +8,7 @@ import ProductCarousel from "../Home/ProductCarousel";
 import ImageSlider from "../Product/widgets/ImageSlider";
 import ProductOrderPane2 from "./widgets/ProductOrderPane2";
 import AppTrace from "~/components/AppTrace";
+import CustomSpinner from "~/components/CustomSpinner";
 
 function BirdProductDetails() {
   const [searchParams] = useSearchParams();
@@ -60,7 +61,7 @@ function BirdProductDetails() {
     getProduct();
   }, [productId]);
 
-  if (!pro || isLoading) return <h1>Loading</h1>;
+  if (!pro || isLoading) return <CustomSpinner />;
 
   return (
     <div className="container pro2-ly">

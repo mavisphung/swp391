@@ -7,48 +7,15 @@ import ProductCarousel from "./ProductCarousel";
 import CategoryCard from "./CategoryCard";
 import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
 import api from "~/context/AppApi";
+import { getProductList } from "~/data/ProductRepository";
+import categoryType from "~/models/CategoryType";
 
 function HomePage() {
   const [birds, setBirds] = useState([]);
   const [foods, setFoods] = useState([]);
   const [popular, setPopular] = useState([]);
-  const [others, setOthers] = useState([]);
+  const [accessory, setAccessory] = useState([]);
   const [categories, setCategories] = useState([]);
-
-  const getProducts = async () => {
-    try {
-      const response = await api.get("/product", {
-        params: {
-          PageNumber: 1,
-          PageSize: 50,
-        },
-      });
-
-      // console.log("RES", response);
-      console.log("RES.DATA", response.data);
-      if (response.data) {
-        const tmp1 = [];
-        const tmp2 = [];
-        const tmp3 = [];
-        response.data.forEach((p) => {
-          if (p.categoryType === 1) {
-            tmp1.push(p);
-          } else if (p.categoryType === 2) {
-            tmp2.push(p);
-          } else {
-            tmp3.push(p);
-          }
-        });
-        const tmp4 = tmp1.concat(tmp2);
-        setBirds(tmp1);
-        setFoods(tmp2);
-        setOthers(tmp3);
-        setPopular(tmp4);
-      }
-    } catch (error) {
-      console.log("Get /product/ Error", error);
-    }
-  };
 
   useEffect(() => {
     const getCategory = async () => {
@@ -67,7 +34,23 @@ function HomePage() {
     };
 
     getCategory();
-    getProducts();
+
+    const getProductsByType = async (CategoryType, arr, setArr) => {
+      const data = await getProductList({
+        CategoryType,
+      });
+      if (data && data.length > 0) {
+        const tmp = arr.slice();
+        tmp.push(...data);
+        setArr(tmp);
+      }
+    };
+
+    getProductsByType(categoryType.bird, popular, setPopular);
+    getProductsByType(categoryType.bird, birds, setBirds);
+    getProductsByType(categoryType.accessory, accessory, setAccessory);
+    getProductsByType(categoryType.food, foods, setFoods);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -108,7 +91,7 @@ function HomePage() {
           <div className="d-flex justify-content-center home-title">
             Phụ kiện dành cho chim
           </div>
-          <ProductCarousel list={others} />
+          <ProductCarousel list={accessory} />
         </Row>
         <Row>
           <div className="d-flex justify-content-center home-title">
