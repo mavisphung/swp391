@@ -42,16 +42,6 @@ function Sidebar() {
 
   const renderMenu = () => {
     const menuItems = [
-      getItem(
-        `${menuKeys.dashboard}`,
-        null,
-        <Link to={config.routes.dashboard}>Chung</Link>
-      ),
-      getItem(
-        `${menuKeys.orderList}`,
-        null,
-        <Link to={config.routes.orderList}>Lịch sử đơn hàng</Link>
-      ),
       getItem("account", null, "Tài khoản", [
         getItem(
           `${menuKeys.accountProfile}`,
@@ -64,6 +54,11 @@ function Sidebar() {
           <Link to={config.routes.passwordManagement}>Thay đổi mật khẩu</Link>
         ),
       ]),
+      getItem(
+        `${menuKeys.orderList}`,
+        null,
+        <Link to={config.routes.orderList}>Lịch sử đơn hàng</Link>
+      ),
       {
         type: "divider",
       },
