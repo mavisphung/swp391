@@ -8,7 +8,7 @@ import CategoryCard from "./CategoryCard";
 import BirdCarousel from "~/components/BirdCarousel/BirdCarousel";
 import api from "~/context/AppApi";
 import { getProductList } from "~/data/ProductRepository";
-import categoryType from "~/models/CategoryType";
+import { categoryType } from "~/models/CategoryType";
 
 function HomePage() {
   const [birds, setBirds] = useState([]);

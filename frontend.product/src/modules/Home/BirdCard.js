@@ -86,7 +86,6 @@ const BirdCard = (props) => {
                               url: `/product?productId=${props.bird.id}`,
                             },
                           ],
-                          categoryType: props.bird.categoryType,
                         },
                       }
                     )
