@@ -8,10 +8,11 @@ import "./PaymentLayout.scss";
 import { toast } from "react-toastify";
 import config from "~/config";
 
-import { setLocalCart, useUserCart } from "~/context/UserCartContext";
+import { useUserCart } from "~/context/UserCartContext";
 import { vnpPayment } from "./PaymentFunctions";
 
 function PaymentPage() {
+  const { dispatch } = useUserCart();
   const location = useLocation();
   const userCart = useUserCart();
   const [ip, setIp] = useState("");
@@ -91,9 +92,17 @@ function PaymentPage() {
         "https://localhost:7179/api/order/unauth",
         order
       );
-      toast.success("Đặt hàng thành công!");
-      console.log(response.data);
-      setLocalCart([]);
+      if (response.status === 201) {
+        toast.success("Đặt hàng thành công!");
+        dispatch({
+          type: "EMPTY_CART",
+        });
+        console.log("Order success", response);
+      } else {
+        console.log("Why", response);
+        toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
+      }
+      // console.log(request.data);
     } catch (e) {
       toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
       console.log(e);
@@ -110,6 +119,9 @@ function PaymentPage() {
       await postOrder();
       vnpPayment(sum);
       // postOrder();
+    } else if (paymentMethod === 3) {
+      await postOrder();
+      vnpPayment(sum / 2);
     } else {
       // notify();
       await postOrder();

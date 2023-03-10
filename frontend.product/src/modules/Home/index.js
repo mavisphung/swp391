@@ -17,22 +17,22 @@ function HomePage() {
   const [accessory, setAccessory] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    const getCategory = async () => {
-      try {
-        const response = await api.get("/category", {
-          params: {
-            PageNumber: 2,
-            PageSize: 9,
-          },
-        });
-        setCategories(response.data);
-        console.log(categories);
-      } catch (e) {
-        console.log(`Fail to load category: ${e}`);
-      }
-    };
+  const getCategory = async () => {
+    try {
+      const response = await api.get("/category", {
+        params: {
+          PageNumber: 1,
+          PageSize: 8,
+        },
+      });
+      setCategories(response.data);
+      console.log(categories);
+    } catch (e) {
+      console.log(`Fail to load category: ${e}`);
+    }
+  };
 
+  useEffect(() => {
     getCategory();
 
     const getProductsByType = async (CategoryType, arr, setArr) => {

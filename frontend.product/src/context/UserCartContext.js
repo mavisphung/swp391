@@ -41,7 +41,6 @@ const CartReducer = (state, action) => {
           return e;
         });
         action.type = "DONE";
-        toast.success("Cập nhật số lượng sản phẩm đơn hàng thành công.");
       }
       return { ...state };
     case "REMOVE_FROM_CART":

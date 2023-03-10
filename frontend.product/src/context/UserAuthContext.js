@@ -64,6 +64,41 @@ export const UserAuthContextProvider = ({ children }) => {
     }
   }
 
+  async function register({
+    email,
+    fullName,
+    phoneNumber,
+    password,
+    confirmPassword,
+  }) {
+    try {
+      const response = await api.post("/auth/register", {
+        email,
+        fullName,
+        phoneNumber,
+        password,
+        confirmPassword,
+      });
+      if (response.status === 201) {
+        return response.data;
+      }
+    } catch (error) {
+      if (error.message === requestFailed500) {
+        toast.error(noNetwork);
+      }
+      if (error.message === networkError) {
+        toast.error(connectError);
+      } else {
+        const errData = error.response.data;
+        if (errData.message === invalidPassword) {
+          toast.error(wrongPassword);
+        } else if (errData.message === userNotFound) {
+          toast.error(wrongEmail);
+        }
+      }
+    }
+  }
+
   function logOut() {
     setUser();
     localStorage.removeItem("USER");
