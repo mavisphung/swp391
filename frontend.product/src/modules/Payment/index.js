@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { useLocation, useNavigate, Link, redirect } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
@@ -52,7 +52,7 @@ function PaymentPage() {
 
   let sum = 0;
 
-  cart.map((c) => {
+  cart.forEach((c) => {
     sum = sum + c.price * c.amount;
   });
 
@@ -62,10 +62,6 @@ function PaymentPage() {
 
     setIp("127.0.0.1");
     // return "127.0.0.1";
-  };
-
-  const notify = () => {
-    toast("Đặt hàng thành công!");
   };
 
   let items = userCart.cart.map((c) => {
@@ -95,11 +91,11 @@ function PaymentPage() {
         "https://localhost:7179/api/order/unauth",
         order
       );
-      toast("Đặt hàng thành công!");
-      console.log(request.data);
+      toast.success("Đặt hàng thành công!");
+      console.log(response.data);
       setLocalCart([]);
     } catch (e) {
-      toast("Đặt hàng không thành công! Vui lòng thử lại!");
+      toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
       console.log(e);
     }
   };
@@ -265,7 +261,7 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={postOrder}
+              onClick={checkout}
             >
               Thanh toán
             </Button>
