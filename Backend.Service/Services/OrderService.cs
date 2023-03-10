@@ -130,15 +130,15 @@ namespace Backend.Service.Services
 
             // TODO: trừ số lượng sản phẩm trong product
             // Kiểm tra xem tất cả product có cái nào có quantity <= 0 không
-            bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
-            if (isInsufficientQuantity)
-            {
-                throw new BaseException(
-                    errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
-                    statusCode: StatusCodes.Status409Conflict,
-                    httpStatus: HttpStatusCode.Conflict
-                );
-            }
+            //bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
+            //if (isInsufficientQuantity)
+            //{
+            //    throw new BaseException(
+            //        errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
+            //        statusCode: StatusCodes.Status409Conflict,
+            //        httpStatus: HttpStatusCode.Conflict
+            //    );
+            //}
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
