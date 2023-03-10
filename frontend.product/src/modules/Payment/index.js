@@ -220,7 +220,7 @@ function PaymentPage() {
           </Row>
         </Col>
         <Col xs lg="3" md>
-          <Row className="h5">Hình thức thanh toán</Row>
+          <Row className="h5">Phuơng thức thanh toán</Row>
           <Row>
             <Form>
               <Form.Check
