@@ -53,6 +53,21 @@ function Header() {
                 </Form>
               </Nav>
               <>
+                <Link to={config.routes.cart} className="px-2">
+                  <BsCartFill
+                    color="#ee3e6a"
+                    style={{ paddingBottom: "3px", fontSize: "20px" }}
+                  />{" "}
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      color: "black",
+                      paddingTop: "5px !important",
+                    }}
+                  >
+                    ({cartAmount})
+                  </span>
+                </Link>
                 {user ? (
                   <div>
                     <div style={{ textAlign: "end", marginRight: "16px" }}>
@@ -79,9 +94,6 @@ function Header() {
                   </div>
                 ) : (
                   <div className="d-flex header-link">
-                    <Link to={config.routes.cart} className="pl-2">
-                      <BsCartFill color="#ee3e6a" /> ({cartAmount})
-                    </Link>
                     <Link to={config.routes.login} className="px-2">
                       Đăng nhập
                     </Link>

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import config from "~/config";
 import ProfileDetails from "./ProfileDetails";
@@ -9,7 +9,10 @@ function Settings() {
   return (
     <Routes>
       <Route element={<DefaultLayout2 />}>
-        <Route path={config.routes.default} element={<ProfileDetails />} />
+        <Route
+          path={config.routes.default}
+          element={<Navigate to={config.routes.profile} />}
+        />
         <Route
           path={config.settingsRoutes.profile}
           element={

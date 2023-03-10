@@ -26,16 +26,20 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
             <div className="mt15 col-md-7">
               <span>Số lượng:</span>
               <input
-                className="no-spinner"
                 type="number"
+                min={1}
                 value={newAmount}
+                onKeyDown={(e) => e.preventDefault()}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value <= 0) {
-                    setAmount(1);
-                  } else {
-                    setAmount(e.target.value);
-                  }
+                  setAmount(value);
+                  dispatch({
+                    type: "UPDATE_AMOUNT",
+                    payload: {
+                      proId: id,
+                      amount: value,
+                    },
+                  });
                 }}
               />
             </div>
