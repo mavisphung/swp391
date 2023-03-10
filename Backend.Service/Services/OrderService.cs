@@ -130,15 +130,15 @@ namespace Backend.Service.Services
 
             // TODO: trừ số lượng sản phẩm trong product
             // Kiểm tra xem tất cả product có cái nào có quantity <= 0 không
-            bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
-            if (isInsufficientQuantity)
-            {
-                throw new BaseException(
-                    errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
-                    statusCode: StatusCodes.Status409Conflict,
-                    httpStatus: HttpStatusCode.Conflict
-                );
-            }
+            //bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
+            //if (isInsufficientQuantity)
+            //{
+            //    throw new BaseException(
+            //        errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
+            //        statusCode: StatusCodes.Status409Conflict,
+            //        httpStatus: HttpStatusCode.Conflict
+            //    );
+            //}
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
@@ -169,7 +169,7 @@ namespace Backend.Service.Services
             await _addressRepository.SaveDbChangeAsync(); // Cập nhật hoặc thêm mới địa chỉ ship
             //await _productRepository.SaveDbChangeAsync(); // Cập nhật lại số lượng sản phẩm
 
-            // TODO: Thêm payment vào version sau
+            // TODO: Thêm payment vào version sau - CHECKED
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
             Payment payment = new Payment
             {
@@ -276,15 +276,6 @@ namespace Backend.Service.Services
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
             return found;
-        }
-
-        internal dynamic GetStatisticAsync()
-        {
-            var query = _orderRepository.GetDbSet().GroupBy(ord => ord.CreatedDate.Date)
-                .Select(g => new { CreatedDate = g.Key, Orders = g.Count() })
-                .OrderBy(g => g.CreatedDate)
-                .ToList();
-            return query;
         }
     }
 }
