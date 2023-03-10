@@ -123,6 +123,11 @@ const OrdersList = () => {
       key: 'customer',
     },
     {
+      title: 'Điện thoại',
+      dataIndex: ['customerInfo', 'phoneNumber'],
+      key: 'phoneNumber',
+    },
+    {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
       key: 'orderDate',
@@ -154,6 +159,8 @@ const OrdersList = () => {
       title: 'Tổng tiền',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
+      align: 'right',
+      width: 100,
       render: (text, record) => {
         let price = new Intl.NumberFormat('vi-VN', {
           style: 'currency',

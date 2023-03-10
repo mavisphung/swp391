@@ -16,4 +16,16 @@ namespace Backend.Service.Helper
             return JsonSerializer.Serialize(this);
         }
     }
+
+    public class OrderHistoryParameter : OrderFilterParameter
+    {
+        public int? UserId { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+
+        public override string? ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
+    }
 }

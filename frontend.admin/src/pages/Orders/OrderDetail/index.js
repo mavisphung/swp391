@@ -20,11 +20,15 @@ import moment from 'moment';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
+  atStore,
   cancelled,
+  cod,
   dateTimeConvert,
   defaultDateTimePickerRange,
   finished,
+  payInAdvance,
   pending,
+  vnpay,
 } from '~/system/Constants/constants';
 import CustomModal from '~/components/Modal';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
@@ -41,46 +45,6 @@ import { getCustomerOrderDetailDataByOrderId, updateOrder } from '~/api/orders';
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
 import CustomSpinner from '~/ui/CustomSpinner';
-
-const orderDetailsData = {
-  id: 'OCH0123456',
-  customerInfo: {
-    id: 3,
-    fullname: 'Thái Đăng Linh',
-    email: 'linhtd@gmail.com.vn',
-    gender: true,
-    password: 'linhtd123',
-    dob: '1995-04-15',
-    roleId: 3,
-    status: true,
-    phone: '0901565565',
-    address: '250 Nguyễn Thị Minh Khai',
-    ward: '27139',
-    district: '770',
-    province: '79',
-  },
-  payment: [
-    {
-      id: 1232,
-      paymentCode: '12145',
-      amount: 1600000,
-      paymentMethod: 2,
-      paidDate: '2023-01-09T08:15:00',
-    },
-    {
-      id: 1235,
-      paymentCode: '12155',
-      amount: 2000000,
-      paymentMethod: 1,
-      paidDate: '',
-    },
-  ],
-  status: 1,
-  orderDate: '2023-01-09',
-  estimatedReceiveDate: '2023-01-12',
-  closeDate: '',
-  totalPrice: '3600000',
-};
 
 // Deny reason samples
 const reasonsList = [
@@ -103,6 +67,7 @@ const OrderDetail = () => {
   const { orderId } = useParams();
   const [customerOrder, setCustomerOrder] = useState({});
   const [orderDetails, setOrderDetails] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [communeObj, setCommuneObj] = useState({});
   const [districtObj, setDistrictObj] = useState({});
@@ -126,9 +91,9 @@ const OrderDetail = () => {
   const getOrderDataByOrderId = useCallback(async (orderId) => {
     try {
       const data = await getCustomerOrderDetailDataByOrderId(orderId);
-      console.log('apiData:', data);
       setCustomerOrder(data);
       setOrderDetails(data.orderDetails?.map((product) => product));
+      setPayments(data.payments?.map((payment) => payment));
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -186,6 +151,30 @@ const OrderDetail = () => {
     } else if (customerOrder.status === cancelled) {
       return 'Đã hủy';
     }
+  };
+
+  // Transform payment methods
+  const handlePaymentMethods = (payment) => {
+    if (payment === vnpay) {
+      return 'Vnpay';
+    } else if (payment === atStore) {
+      return 'Thanh toán tiền mặt tại quầy';
+    } else if (payment === cod) {
+      return 'Ship COD';
+    } else if (payment === payInAdvance) {
+      return 'Cọc';
+    }
+  };
+
+  // Tổng tiền đã thanh toán
+  const handleSumPaidAmount = () => {
+    let sum = 0;
+    payments?.forEach((element) => {
+      if (element.paymentMethod !== atStore && element.paymentMethod !== cod) {
+        sum += element.amount;
+      }
+    });
+    return sum;
   };
 
   // Render list
@@ -261,12 +250,49 @@ const OrderDetail = () => {
       title: 'Thanh toán',
       content: (
         <>
+          {payments[0]?.paymentMethod === 4 ? (
+            <>
+              <p>
+                <strong>Đặt cọc trước:</strong>
+              </p>
+              <p>
+                &emsp; <strong>Ngày cọc:</strong>{' '}
+                {moment(payments[0]?.paidDate, dateTimeConvert)
+                  .add(7, 'hours')
+                  .format(defaultDateTimePickerRange)}
+              </p>
+              <p>
+                &emsp; <strong>Số tiền đã cọc:</strong>{' '}
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(payments[0]?.amount)}
+              </p>
+              <hr />
+            </>
+          ) : (
+            <></>
+          )}
           <p>
-            <strong>Hình thức thanh toán:</strong> COD
+            <strong>Hình thức thanh toán:</strong>{' '}
+            {handlePaymentMethods(payments[payments.length - 1]?.paymentMethod)}
           </p>
-
+          {payments[payments.length - 1]?.paymentMethod === 1 ? (
+            <p>
+              <strong>Ngày thanh toán:</strong>{' '}
+              {moment(payments[payments.length - 1]?.paidDate, dateTimeConvert)
+                .add(7, 'hours')
+                .format(defaultDateTimePickerRange)}
+            </p>
+          ) : (
+            <></>
+          )}
           <p>
-            <strong>Số tiền đã cọc:</strong> Không có
+            <strong>Số tiền:</strong>{' '}
+            {new Intl.NumberFormat('vi-VN', {
+              style: 'currency',
+              currency: 'VND',
+            }).format(payments[payments.length - 1]?.amount)}
           </p>
         </>
       ),
@@ -289,7 +315,11 @@ const OrderDetail = () => {
         return (
           <div className="name-group">
             <div className="product-img">
-              <Image src={record.product.medias[1].url} />
+              <Image
+                src={
+                  record.product.medias[1]?.url || record.product.medias[2]?.url
+                }
+              />
             </div>
             <span className="mx-2">{record.product.name}</span>
           </div>
@@ -306,6 +336,7 @@ const OrderDetail = () => {
       title: 'Đơn giá',
       dataIndex: ['product', 'price'],
       key: 'price',
+      align: 'right',
       render: (text, record) =>
         new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -333,6 +364,7 @@ const OrderDetail = () => {
       title: 'Thành tiền',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
+      align: 'right',
       render: (text, record) => {
         let price = new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -525,7 +557,7 @@ const OrderDetail = () => {
                     title={item.title}
                     style={{
                       textAlign: 'left',
-                      height: 280,
+                      height: 300,
                     }}
                     className="card-content"
                   >
@@ -547,17 +579,54 @@ const OrderDetail = () => {
                 columns={columns}
                 pagination={false}
                 dataSource={orderDetails}
+                rowClassName={(record, index) =>
+                  record.product.quantity < record.quantity &&
+                  customerOrder.status === pending
+                    ? 'error'
+                    : 'allowed'
+                }
               />
-              <Row justify="end" className="mx-3">
-                <h4>
-                  Tổng cộng:
-                  <span className="mx-2">
-                    {new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                    }).format(customerOrder.totalPrice)}
-                  </span>
-                </h4>
+              <Row justify="end" className="mt-3 me-2">
+                <Col style={{ marginRight: 20 }}>
+                  <h6>Tổng tiền hàng:</h6>
+                  <h6>Giảm trừ thanh toán trước:</h6>
+                  <h4 style={{ color: '#099E2A' }}>Tổng thanh toán:</h4>
+                </Col>
+                <Col
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'end',
+                  }}
+                >
+                  <h6>
+                    <span className="mx-2">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(customerOrder.totalPrice)}
+                    </span>
+                  </h6>
+                  <h6>
+                    <span className="mx-2">
+                      -{' '}
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(handleSumPaidAmount())}
+                    </span>
+                  </h6>
+                  <h4 style={{ color: '#099E2A' }}>
+                    <span className="mx-2">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(
+                        customerOrder.totalPrice - handleSumPaidAmount(),
+                      )}
+                    </span>
+                  </h4>
+                </Col>
               </Row>
             </Card>
           </>

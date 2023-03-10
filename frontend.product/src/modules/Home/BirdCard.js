@@ -62,7 +62,6 @@ const BirdCard = (props) => {
                         preventScrollReset: false,
                         state: {
                           breadcrumb: [
-                            ...historyUrl,
                             {
                               name: props.bird.name,
                               url: `/product?productId=${props.bird.id}`,
@@ -80,13 +79,11 @@ const BirdCard = (props) => {
                         preventScrollReset: false,
                         state: {
                           breadcrumb: [
-                            ...historyUrl,
                             {
                               name: props.bird.name,
                               url: `/product?productId=${props.bird.id}`,
                             },
                           ],
-                          categoryType: props.bird.categoryType,
                         },
                       }
                     )

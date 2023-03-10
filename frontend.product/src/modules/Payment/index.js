@@ -1,17 +1,18 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { useLocation, useNavigate, Link, redirect } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 import { toast } from "react-toastify";
 import config from "~/config";
 
-import { setLocalCart, useUserCart } from "~/context/UserCartContext";
+import { useUserCart } from "~/context/UserCartContext";
 import { vnpPayment } from "./PaymentFunctions";
 
 function PaymentPage() {
+  const { dispatch } = useUserCart();
   const location = useLocation();
   const userCart = useUserCart();
   const [ip, setIp] = useState("");
@@ -52,7 +53,7 @@ function PaymentPage() {
 
   let sum = 0;
 
-  cart.map((c) => {
+  cart.forEach((c) => {
     sum = sum + c.price * c.amount;
   });
 
@@ -62,10 +63,6 @@ function PaymentPage() {
 
     setIp("127.0.0.1");
     // return "127.0.0.1";
-  };
-
-  const notify = () => {
-    toast("Đặt hàng thành công!");
   };
 
   let items = userCart.cart.map((c) => {
@@ -95,11 +92,19 @@ function PaymentPage() {
         "https://localhost:7179/api/order/unauth",
         order
       );
-      toast("Đặt hàng thành công!");
-      console.log(request.data);
-      setLocalCart([]);
+      if (response.status === 201) {
+        toast.success("Đặt hàng thành công!");
+        dispatch({
+          type: "EMPTY_CART",
+        });
+        console.log("Order success", response);
+      } else {
+        console.log("Why", response);
+        toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
+      }
+      // console.log(request.data);
     } catch (e) {
-      toast("Đặt hàng không thành công! Vui lòng thử lại!");
+      toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
       console.log(e);
     }
   };
@@ -114,6 +119,9 @@ function PaymentPage() {
       await postOrder();
       vnpPayment(sum);
       // postOrder();
+    } else if (paymentMethod === 3) {
+      await postOrder();
+      vnpPayment(sum / 2);
     } else {
       // notify();
       await postOrder();
@@ -265,7 +273,7 @@ function PaymentPage() {
             <Button
               variant="primary"
               className="btn-pay mt-3"
-              onClick={postOrder}
+              onClick={checkout}
             >
               Thanh toán
             </Button>

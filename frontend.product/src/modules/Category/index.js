@@ -9,6 +9,7 @@ import api from "~/context/AppApi";
 import AppTrace from "~/components/AppTrace";
 import BirdCard from "../Home/BirdCard";
 import { formatPrice } from "~/common/Helper";
+import CustomSpinner from "~/components/CustomSpinner";
 
 function CategoryPage() {
   const [searchParams] = useSearchParams();
@@ -26,9 +27,12 @@ function CategoryPage() {
 
   const location = useLocation();
   let breadcrumb;
+  let cateId = location.state.cateId;
   if (location.state) {
     breadcrumb = location.state.breadcrumb;
   }
+
+  console.log("CategoryID", cateId);
 
   const showModal = () => {
     const modal = document.getElementById("filter-modal");
@@ -49,8 +53,6 @@ function CategoryPage() {
 
   const getProductsWithCategoryId = async (id) => {
     try {
-      console.log("MINDATE", minDate);
-      console.log("MAXDATE", maxDate);
       const response = await api.get("/product", {
         params: {
           CategoryId: id,
@@ -199,16 +201,18 @@ function CategoryPage() {
 
       {productList ? (
         <div className="row">
-          {productList.map((b) => {
-            return (
-              <div className="cate-bird-card col-4" key={b.id}>
-                <BirdCard bird={b} historyUrl={breadcrumb} />
-              </div>
-            );
-          })}
+          {productList
+            .filter((prod) => prod.categoryId === cateId)
+            .map((b) => {
+              return (
+                <div className="cate-bird-card col-4" key={b.id}>
+                  <BirdCard bird={b} historyUrl={breadcrumb} />
+                </div>
+              );
+            })}
         </div>
       ) : (
-        <h1>Loading</h1>
+        <CustomSpinner />
       )}
     </div>
   );

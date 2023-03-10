@@ -105,7 +105,7 @@ namespace Backend.Service.Services
                 Medias = model.Medias ?? new List<Media>(),
                 CategoryId = category.Id,
                 Category = category,
-                Gender = model.Gender ?? true,
+                Gender = model.Gender,
                 Age = model.Age
             };
 
@@ -153,10 +153,25 @@ namespace Backend.Service.Services
                 found.GetType().GetProperty(prop.Name)?.SetValue(found, value);
             }
 
-            //_productRepository.Update(found);
-            //await _productRepository.SaveDbChangeAsync();
+            _productRepository.Update(found);
+            await _productRepository.SaveDbChangeAsync();
             _logger.LogInformation($"Updated product {id} successfully");
             return new ProductResponseModel(found);
+        }
+
+        internal async Task<PagedList<ProductResponseModel>> GetRelativeProductsAsync(
+            int productId, 
+            FilterParameter filter)
+        {
+            var product = await _productRepository.GetAsync(productId);
+            var relatedCategories = product.Category.RelativeCategories?.ToList();
+            var relatedProducts = await _productRepository.GetAllAsync(
+                prod => relatedCategories!.Contains(prod.CategoryId));
+            
+            return PagedList<ProductResponseModel>.ToPagedList(
+                relatedProducts.Select(p => new ProductResponseModel(p)),
+                filter.PageNumber,
+                filter.PageSize);
         }
     }
 }

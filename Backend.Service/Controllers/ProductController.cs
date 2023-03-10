@@ -116,12 +116,14 @@ namespace Backend.Service.Controllers
         /// <summary>
         /// Lấy các sản phẩm liên quan
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
         [HttpGet("{productId}/relatives")]
-        public async Task<IActionResult> GetRelativeProduct(int productId)
+        public async Task<IActionResult> GetRelativeProduct(int productId, [FromQuery] FilterParameter filter)
         {
-            return Ok();
+            _logger.LogInformation($"{nameof(GetRelativeProduct)} invoked...");
+            var response = await _productService.GetRelativeProductsAsync(productId, filter);
+            return Ok(response);
         }
 
         // TODO: Them API cho activate/deactivate product

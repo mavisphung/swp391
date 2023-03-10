@@ -1,8 +1,10 @@
 ﻿using Backend.Service.Consts;
 using Backend.Service.Helper;
 using Backend.Service.Models.Order;
+using Backend.Service.Models.Payment;
 using Backend.Service.Models.Validation;
 using Backend.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,9 +17,11 @@ namespace Backend.Service.Controllers
     public class OrderController : PagedController
     {
         private readonly OrderService _orderService;
-        public OrderController(OrderService orderService)
+        private readonly PaymentService _paymentService;
+        public OrderController(OrderService orderService, PaymentService paymentService)
         {
             _orderService = orderService;
+            _paymentService = paymentService;
         }
 
         /// <summary>
@@ -91,6 +95,15 @@ namespace Backend.Service.Controllers
         {
             var response = await _orderService.ProcessAddToCartUnauth(model);
             return Created("", response);
+        }
+
+        [HttpPost("{id}/pay")]
+        [ValidateModel]
+        public async Task<IActionResult> PayOnOrder(int id, [FromBody] PaymentRequestModel model)
+        {
+            model.OrderId = id;
+            var response = await _paymentService.CreatePayment(model);
+            return Accepted(response);
         }
     }
 }
