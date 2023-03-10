@@ -80,11 +80,6 @@ export const UserAuthContextProvider = ({ children }) => {
         confirmPassword,
       });
       if (response.status === 201) {
-        setUser(response.data);
-        if (saveLogin) {
-          localStorage.setItem("USER", JSON.stringify(response.data));
-        }
-        toast.success(loginSucess);
         return response.data;
       }
     } catch (error) {

@@ -27,9 +27,12 @@ function CategoryPage() {
 
   const location = useLocation();
   let breadcrumb;
+  let cateId = location.state.cateId;
   if (location.state) {
     breadcrumb = location.state.breadcrumb;
   }
+
+  console.log("CategoryID", cateId);
 
   const showModal = () => {
     const modal = document.getElementById("filter-modal");
@@ -198,13 +201,15 @@ function CategoryPage() {
 
       {productList ? (
         <div className="row">
-          {productList.map((b) => {
-            return (
-              <div className="cate-bird-card col-4" key={b.id}>
-                <BirdCard bird={b} historyUrl={breadcrumb} />
-              </div>
-            );
-          })}
+          {productList
+            .filter((prod) => prod.categoryId === cateId)
+            .map((b) => {
+              return (
+                <div className="cate-bird-card col-4" key={b.id}>
+                  <BirdCard bird={b} historyUrl={breadcrumb} />
+                </div>
+              );
+            })}
         </div>
       ) : (
         <CustomSpinner />

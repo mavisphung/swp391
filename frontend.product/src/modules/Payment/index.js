@@ -92,7 +92,7 @@ function PaymentPage() {
         order
       );
       toast.success("Đặt hàng thành công!");
-      console.log(response.data);
+      // console.log(request.data);
       setLocalCart([]);
     } catch (e) {
       toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
