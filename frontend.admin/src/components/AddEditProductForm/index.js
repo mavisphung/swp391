@@ -58,7 +58,7 @@ import CustomSpinner from '~/ui/CustomSpinner';
 const shortDescriptionListData = [
   {
     id: 1,
-    name: 'Chim bổi',
+    name: 'Chim non',
   },
   {
     id: 2,
@@ -70,7 +70,7 @@ const shortDescriptionListData = [
   },
   {
     id: 4,
-    name: 'Chim non',
+    name: 'Chim bổi',
   },
 ];
 
@@ -103,7 +103,7 @@ const AddEditProductForm = () => {
   const [productName, setProductName] = useState('');
   const [productCategories, setProductCategories] = useState([]);
   const [productSubCategories, setProductSubCategories] = useState([]);
-  const [productCategory, setProductCategory] = useState('1'); // Main category
+  const [productCategory, setProductCategory] = useState(''); // Main category
   const [productCategoryId, setProductCategoryId] = useState(''); // Sub Category
   const [shortDescriptionList, setShortDescriptionList] = useState([]);
   const [shortDescription, setShortDescription] = useState('');
@@ -126,10 +126,8 @@ const AddEditProductForm = () => {
   //Get product by id
   const getProductById = useCallback(async (productId) => {
     try {
-      console.log('Run get...');
       const data = await getProductDetailsById(productId);
       setProduct(data);
-      console.log('Product:', product);
 
       // setRelativeProducts(product?.relativeProducts);
       setLoading(false);
@@ -168,6 +166,7 @@ const AddEditProductForm = () => {
         product?.medias?.filter((media) => {
           if (media.type === png || media.type === jpeg || media.type === jpg)
             return media.url;
+          return null;
         }),
       );
       setUrls(imagesList?.map((url) => url.url));
@@ -183,6 +182,8 @@ const AddEditProductForm = () => {
       setProductCategoryId('');
       setDescription('');
       setShortDescription('');
+      setGender('');
+      setAge('');
       setQuantity('');
       setProductPrice('');
       setProductVideoURL('');
@@ -573,7 +574,7 @@ const AddEditProductForm = () => {
                   >
                     <Form.Label>Loại sản phẩm {redStart}</Form.Label>
                     <Form.Select
-                      value={productCategory}
+                      value={productCategory || ''}
                       onChange={(e) => {
                         setProductCategory(e.target.value);
                         handleResetField();
@@ -604,7 +605,7 @@ const AddEditProductForm = () => {
                         <Form.Control
                           type="text"
                           maxLength={100}
-                          value={productName}
+                          value={productName || ''}
                           onChange={(e) => {
                             setProductName(e.target.value);
                             setCheckEnableUpdateButton(true);
@@ -710,7 +711,7 @@ const AddEditProductForm = () => {
                             <Form.Control
                               type="text"
                               maxLength={100}
-                              value={age}
+                              value={age || ''}
                               isInvalid={age && !birdAgePattern.test(age)}
                               onChange={(e) => {
                                 setAge(e.target.value);
@@ -773,7 +774,7 @@ const AddEditProductForm = () => {
                         <Form.Control
                           type="text"
                           maxLength={100}
-                          value={productName}
+                          value={productName || ''}
                           onChange={(e) => {
                             setProductName(e.target.value);
                             setCheckEnableUpdateButton(true);
@@ -823,7 +824,7 @@ const AddEditProductForm = () => {
                         <Form.Control
                           type="text"
                           maxLength={100}
-                          value={shortDescription}
+                          value={shortDescription || ''}
                           onChange={(e) => {
                             setShortDescription(e.target.value);
                             setCheckEnableUpdateButton(true);
@@ -849,7 +850,7 @@ const AddEditProductForm = () => {
                         as="textarea"
                         maxLength={1000}
                         style={{ height: '150px' }}
-                        value={description}
+                        value={description || ''}
                         onChange={(e) => {
                           setDescription(e.target.value);
                           setCheckEnableUpdateButton(true);
@@ -870,12 +871,16 @@ const AddEditProductForm = () => {
                       <Form.Label>Số lượng {redStart}</Form.Label>
                       <Form.Control
                         type="number"
-                        value={quantity}
+                        value={quantity || setQuantity('1')}
+                        max={age ? '1' : ''}
                         isInvalid={quantity && parseInt(quantity) <= 0}
                         onChange={(e) => {
                           setQuantity(e.target.value);
                           setCheckEnableUpdateButton(true);
                         }}
+                        disabled={
+                          sellMethod === '1' && !productId ? true : false
+                        }
                         required
                       />
                       <Form.Control.Feedback type="invalid">
@@ -894,7 +899,7 @@ const AddEditProductForm = () => {
                         type="number"
                         min="0"
                         step="1000"
-                        value={productPrice}
+                        value={productPrice || 0}
                         isInvalid={productPrice && parseInt(productPrice) <= 0}
                         onChange={(e) => {
                           setProductPrice(e.target.value);

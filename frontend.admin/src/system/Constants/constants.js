@@ -35,10 +35,10 @@ export const dateTimeConvert = 'YYYY-MM-DDTHH:mm:ss';
 export const defaultDateTimePickerRange = 'DD/MM/YYYY HH:mm';
 
 // Payment Method
-export const vnpay = 0;
-export const atStore = 1;
-export const payInAdvance50 = 2;
+export const vnpay = 1;
+export const atStore = 2;
 export const cod = 3;
+export const payInAdvance = 4;
 
 // Media Type
 export const png = 0;

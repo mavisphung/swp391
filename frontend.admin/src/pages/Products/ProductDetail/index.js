@@ -31,34 +31,36 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
 
   //Get product by id
-  const getProductById = useCallback(
-    async (productId) => {
-      try {
-        const data = await getProductDetailsById(productId);
-        setProduct(data);
-        setImages(
-          product?.medias?.filter(
-            (media) =>
-              media.type === png || media.type === jpeg || media.type === jpg,
-          ),
-        );
-        setVideo(
-          product?.medias?.find(
-            (media) => media.type === mp4 || media.type === mov,
-          ),
-        );
-        setRelativeProducts(product?.relativeProducts);
-        setLoading(false);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    [product],
-  );
+  const getProductById = useCallback(async (productId) => {
+    try {
+      const data = await getProductDetailsById(productId);
+      setProduct(data);
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
   useEffect(() => {
     getProductById(productId);
   }, [getProductById, productId]);
+
+  useEffect(() => {
+    if (product) {
+      setImages(
+        product?.medias?.filter(
+          (media) =>
+            media.type === png || media.type === jpeg || media.type === jpg,
+        ),
+      );
+      setVideo(
+        product?.medias?.find(
+          (media) => media.type === mp4 || media.type === mov,
+        ),
+      );
+      setRelativeProducts(product?.relativeProducts);
+    }
+  }, [product]);
 
   return (
     <>
