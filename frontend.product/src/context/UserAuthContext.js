@@ -1,5 +1,20 @@
 import { createContext, useContext, useState } from "react";
+import { toast } from "react-toastify";
+
 import api from "./AppApi";
+import {
+  connectError,
+  loginSucess,
+  noNetwork,
+  wrongEmail,
+  wrongPassword,
+} from "~/system/Constants/ToastMessage";
+import {
+  invalidPassword,
+  networkError,
+  requestFailed500,
+  userNotFound,
+} from "~/system/Constants/ErrorMessage";
 
 const userAuthContext = createContext();
 
@@ -10,7 +25,7 @@ export const useUserAuth = () => {
 export const UserAuthContextProvider = ({ children }) => {
   const [user, setUser] = useState();
 
-  async function loginWithEmail(email, password) {
+  async function loginWithEmail(email, password, saveLogin) {
     try {
       const response = await api.post(
         "/auth/sign-en",
@@ -24,29 +39,43 @@ export const UserAuthContextProvider = ({ children }) => {
           },
         }
       );
-
-      //   localStorage.setItem('user', JSON.stringify(response.data))
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
-      setUser(response.data);
-      return response.data;
+      if (response.status === 201) {
+        setUser(response.data);
+        if (saveLogin) {
+          localStorage.setItem("USER", JSON.stringify(response.data));
+        }
+        toast.success(loginSucess);
+        return response.data;
+      }
     } catch (error) {
-      console.log("Error", error);
+      if (error.message === requestFailed500) {
+        toast.error(noNetwork);
+      }
+      if (error.message === networkError) {
+        toast.error(connectError);
+      } else {
+        const errData = error.response.data;
+        if (errData.message === invalidPassword) {
+          toast.error(wrongPassword);
+        } else if (errData.message === userNotFound) {
+          toast.error(wrongEmail);
+        }
+      }
     }
   }
 
   function logOut() {
     setUser();
-    // localStorage.removeItem('user');
+    localStorage.removeItem("USER");
   }
 
   function getUser() {
-    return user;
-    // return JSON.parse(localStorage.getItem("user"));
+    const localUser = JSON.parse(localStorage.getItem("USER"));
+    return localUser ?? user;
   }
 
   return (
-    <userAuthContext.Provider value={{ user, logOut, loginWithEmail, getUser }}>
+    <userAuthContext.Provider value={{ logOut, loginWithEmail, getUser }}>
       {children}
     </userAuthContext.Provider>
   );

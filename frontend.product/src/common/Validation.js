@@ -1,4 +1,12 @@
-import { phonePattern } from "~/system/Constants/constants";
+import { emailCommonPattern, phonePattern } from "~/system/Constants/constants";
+
+export function checkEmail(value) {
+  if (!value || value === "") {
+    return "Email không được để trống";
+  } else if (!emailCommonPattern.test(value)) {
+    return "Sai định dạng email";
+  }
+}
 
 export function checkFieldIsEmpty(value, message) {
   if (!value || value === "") {

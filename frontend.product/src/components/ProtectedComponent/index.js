@@ -4,9 +4,8 @@ import config from "~/config";
 import { useUserAuth } from "~/context/UserAuthContext";
 
 const Protected = (props) => {
-  const { user } = useUserAuth();
-
-  console.log("Protected: " + user);
+  const { getUser } = useUserAuth();
+  const user = getUser();
 
   if (!user) {
     return <Navigate to={config.routes.login} replace={true} />;

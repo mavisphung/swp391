@@ -6,13 +6,15 @@ const routes = {
   dashboard: "/dashboard",
   home: "/dashboard/home",
   aboutUs: "/dashboard/aboutUs",
-  productDetails: "/dashboard/:category?/:productId",
   paymentMethods: "/dashboard/payments",
   category: "/dashboard/category",
   productDetails: "/product",
   birdDetails: "/bird",
   cart: "/cart",
   confirmLogin: "/cart/confirm-login",
+  settings: "/settings",
+  profile: "/settings/profile",
+  passwordManagement: "/settings/change-password",
 };
 
 const dashboardRoutes = {
@@ -28,9 +30,10 @@ const cartRoutes = {
   cart: "/cart/*",
 };
 
-const personalRoutes = {
+const settingsRoutes = {
+  settings: "/settings/*",
   profile: "/profile",
-  passwordManagement: "/passwordManagement",
+  passwordManagement: "/change-password",
 };
 
-export { routes, dashboardRoutes, cartRoutes, personalRoutes };
+export { routes, dashboardRoutes, cartRoutes, settingsRoutes };

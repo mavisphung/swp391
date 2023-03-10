@@ -17,7 +17,7 @@ function CartDetails() {
 
   const handleClick = (e) => {
     e.preventDefault();
-    if (cartList.length == 0) {
+    if (cartList.length === 0) {
       alert(
         "Giỏ hàng của bạn đang trống! Bạn hãy quay lại trang chủ và chọn món hàng muốn đặt nhé."
       );
