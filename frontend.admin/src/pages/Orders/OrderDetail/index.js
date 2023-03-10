@@ -170,7 +170,7 @@ const OrderDetail = () => {
   const handleSumPaidAmount = () => {
     let sum = 0;
     payments?.forEach((element) => {
-      if (element.paymentMethod !== atStore || element.paymentMethod !== cod) {
+      if (element.paymentMethod !== atStore && element.paymentMethod !== cod) {
         sum += element.amount;
       }
     });
@@ -253,13 +253,16 @@ const OrderDetail = () => {
           {payments[0]?.paymentMethod === 4 ? (
             <>
               <p>
-                <strong>Ngày cọc:</strong>{' '}
+                <strong>Đặt cọc trước:</strong>
+              </p>
+              <p>
+                &emsp; <strong>Ngày cọc:</strong>{' '}
                 {moment(payments[0]?.paidDate, dateTimeConvert)
                   .add(7, 'hours')
                   .format(defaultDateTimePickerRange)}
               </p>
               <p>
-                <strong>Số tiền đã cọc:</strong>{' '}
+                &emsp; <strong>Số tiền đã cọc:</strong>{' '}
                 {new Intl.NumberFormat('vi-VN', {
                   style: 'currency',
                   currency: 'VND',
@@ -333,6 +336,7 @@ const OrderDetail = () => {
       title: 'Đơn giá',
       dataIndex: ['product', 'price'],
       key: 'price',
+      align: 'right',
       render: (text, record) =>
         new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -360,6 +364,7 @@ const OrderDetail = () => {
       title: 'Thành tiền',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
+      align: 'right',
       render: (text, record) => {
         let price = new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -581,7 +586,7 @@ const OrderDetail = () => {
                     : 'allowed'
                 }
               />
-              <Row justify="end" className="mx-3">
+              <Row justify="end" className="mt-3 me-2">
                 <Col style={{ marginRight: 20 }}>
                   <h6>Tổng tiền hàng:</h6>
                   <h6>Giảm trừ thanh toán trước:</h6>

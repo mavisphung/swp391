@@ -182,6 +182,8 @@ const AddEditProductForm = () => {
       setProductCategoryId('');
       setDescription('');
       setShortDescription('');
+      setGender('');
+      setAge('');
       setQuantity('');
       setProductPrice('');
       setProductVideoURL('');
@@ -869,7 +871,7 @@ const AddEditProductForm = () => {
                       <Form.Label>Số lượng {redStart}</Form.Label>
                       <Form.Control
                         type="number"
-                        value={quantity || 1}
+                        value={quantity || setQuantity('1')}
                         max={age ? '1' : ''}
                         isInvalid={quantity && parseInt(quantity) <= 0}
                         onChange={(e) => {
