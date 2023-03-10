@@ -164,6 +164,7 @@ builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 builder.Services.AddTransient<VNPayConst, VNPayConst>();
 builder.Services.AddTransient<PaymentService, PaymentService>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<StatisticService, StatisticService>();
 
 
 // Add Exception handler
