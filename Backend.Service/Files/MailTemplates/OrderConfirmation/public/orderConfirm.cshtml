@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="application/xhtml+html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        body {
+            font-family: sans-serif;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main-body {
+            padding: 0 50px 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 5px !important;
+        }
+
+        .txt-welcome {
+            font-size: 14px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+            table th,
+            td {
+                font-size: 14px;
+                padding: 5px 10px;
+            }
+
+        /* -------------------------------- */
+        /* -----------Order Table --------- */
+        .w100 {
+            table-layout: auto;
+            width: 100%;
+        }
+
+            .w100 th {
+                background-color: #ffadab;
+                font-weight: normal;
+            }
+
+            .w100 tr {
+                background-color: #dffce9;
+                text-align: center;
+            }
+
+        /* --------------------------- */
+        /* -----------Total --------- */
+        .total {
+            margin: 30px 0;
+        }
+
+            .total div {
+                font-size: 14px;
+                margin: 5px 0;
+            }
+
+            .total .total-price {
+                color: #f2635f;
+                font-size: 20px;
+            }
+
+        /* --------------------------- */
+        /* -----------Footer --------- */
+        footer {
+            padding: 20px 50px 10px;
+            background-color: black;
+            color: white;
+        }
+
+        .h5 {
+            font-size: 17px;
+            font-weight: 100 !important;
+        }
+
+        .column {
+            float: left;
+            width: 30%;
+            margin-right: 50px;
+        }
+
+        .col-1 {
+            padding-top: 10px;
+            padding-bottom: 80px;
+            font-size: 14px;
+            color: #c4c4c4;
+        }
+
+            .col-1 > div {
+                padding: 5px 0;
+            }
+
+        .col-2 > a {
+            padding: 5px 0;
+        }
+
+        .col-2 {
+            padding-top: 10px;
+            padding-bottom: 80px;
+            font-size: 14px;
+        }
+
+            .col-2 a {
+                display: block;
+                color: #c4c4c4 !important;
+                text-decoration: none;
+            }
+
+                .col-2 a:hover {
+                    text-decoration: underline;
+                }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+    </style>
+    <title>Xác nhận đơn hàng</title>
+</head>
+
+<body>
+    <div class="main-body">
+
+        <div>
+            <img src="https://firebasestorage.googleapis.com/v0/b/capstone-project-edc2a.appspot.com/o/Capture.PNG?alt=media&token=528ee383-754b-4432-9e1f-2fdc0b197f1f" />
+        </div>
+        <h1>Xác nhận đơn hàng</h1>
+        <h3>Mã đơn hàng: <span>@Model.Id</span></h3>
+        <div class="txt-welcome">
+            <h3>Kính gửi khách hàng <span>Welcome @Model?.ShippingAddress.FullName</span>,</h3>
+            <span>Cửa hàng chim cảnh ChyStore vui mừng thông báo cho bạn biết rằng chúng tôi đã nhận được đơn đặt hàng
+                của
+                bạn.</span>
+            <span>Chúng tôi sẽ gửi email cho bạn về trạng thái chấp thuận và vận chuyển của đơn hàng.</span>
+        </div>
+        <h3>Thông tin vận chuyển</h3>
+        <div>
+            <table class="tbl-delivery">
+                <tr>
+                    <td>Tên người nhận:</td>
+                    <td>@Model?.ShippingAddress.FullName</td>
+                </tr>
+                <tr>
+                    <td>Số điện thoại:</td>
+                    <td>@Model?.ShippingAddress.PhoneNumber</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td>@Model?.ShippingAddress.Email</td>
+                </tr>
+                <tr>
+                    <td>Địa chỉ giao hàng:</td>
+                    <td>@Model?.ShippingAddress.Address</td>
+                </tr>
+            </table>
+        </div>
+        <h3>Chi tiết đơn hàng</h3>
+        <table class="w100">
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Phân loại</th>
+                <th>Mô tả</th>
+                <th>Số lượng</th>
+                <th>Đơn giá (VNĐ)</th>
+            </tr>
+                @foreach (var item in @Model?.OrderDetails)
+                {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Product.Category.Name</td>
+                    <td>@item.Product.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td>
+                </tr>
+                }
+<!--            <tr>
+                <td>Model.OrderDetails[0].Product.Name</td>
+                <td>Model.OrderDetails[0].Product.Category.Name</td>
+                <td>Model.OrderDetails[0].Product.Description</td>
+                <td>Model.OrderDetails[0].Quantity</td>
+                <td>Model.OrderDetails[0].Price</td>
+            </tr>-->
+        </table>
+        <div class="total">
+            <div>Ngày đặt hàng: <span>@Model?.OrderDate</span></div>
+            <h3>Tổng thanh toán (VNĐ): <span class="total-price">@Model?.TotalPrice</span></h3>
+        </div>
+
+    </div>
+</body>
+
+<footer>
+    <div class="row">
+        <div class="column">
+            <div class="h5">Công ty Cổ Phần ChyTech</div>
+            <div class="col-1">
+                <div>
+                    Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức,
+                    Thành phố Hồ Chí Minh 700000, Việt Nam
+                </div>
+                <div>ĐT: 0934.434.434</div>
+                <div>Email: chystore.vn@chytech.com.vn</div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="h5">Chăm sóc khách hàng</div>
+            <div class="col-2">
+                <a href="#">Chytech Blog</a>
+                <a href="#">Hướng dẫn mua hàng</a>
+                <a href="#">Hướng dẫn thanh toán</a>
+                <a href="#">Trả hàng và hoàn tiền</a>
+            </div>
+        </div>
+    </div>
+    <div style="font-size: 14px">
+        © 2023 - ChyTech Co.op
+    </div>
+</footer>
+
+</html>

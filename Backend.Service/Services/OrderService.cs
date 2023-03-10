@@ -3,6 +3,7 @@ using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
+using Backend.Service.Models.Email;
 using Backend.Service.Models.Order;
 using Backend.Service.Models.Product;
 using Backend.Service.Repositories;
@@ -17,17 +18,23 @@ namespace Backend.Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IShippingAddressRepository _addressRepository;
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly EmailService _emailService;
 
         public OrderService(
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             IShippingAddressRepository shippingAddressRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            ICategoryRepository categoryRepository,
+            EmailService emailService)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _addressRepository = shippingAddressRepository;
             _productRepository = productRepository;
+            _emailService = emailService;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
@@ -121,15 +128,18 @@ namespace Backend.Service.Services
             IEnumerable<Product> products = await _productRepository.GetAllAsync(
                 p => !p.IsDeleted 
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
-
+            IEnumerable<Category> categories = await _categoryRepository.GetAllAsync();
             // TODO: trừ số lượng sản phẩm trong product
 
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
+                var foundCate = categories.Where(c => c.Id == foundProd.CategoryId).First();
+                foundProd.Category = foundCate;
                 return new OrderDetail()
                 {
                     ProductId = ci.ProductId.GetValueOrDefault(),
+                    Product = foundProd,
                     Quantity = ci.Quantity.GetValueOrDefault(),
                     Price = ci.Quantity.GetValueOrDefault() * foundProd.Price,
                 };
@@ -148,6 +158,20 @@ namespace Backend.Service.Services
                 _addressRepository.Update(shippingAddress);
             }
             await _addressRepository.SaveDbChangeAsync();
+
+            // Create MailData object
+            EmailModel mailData = new EmailModel(
+                new List<string> { newOrder.ShippingAddress.Email },
+                "Welcome to the MailKit Demo",
+                _emailService.GetEmailTemplate("OrderConfirmation/public/orderConfirm", newOrder));
+
+
+            bool sendResult = await _emailService.SendAsync(mailData, new CancellationToken());
+
+            if (!sendResult)
+            {
+                throw new BaseException(BaseError.INTERNAL_SERVER_ERROR);
+            }
 
             // TODO: Thêm payment vào version sau
 

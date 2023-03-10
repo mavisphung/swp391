@@ -6,6 +6,7 @@ using Backend.Service.Examples;
 using Backend.Service.Extensions;
 using Backend.Service.Helper.Authentication;
 using Backend.Service.Helper.GlobalErrorHanding;
+using Backend.Service.Models.Email;
 using Backend.Service.Models.Validation;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
@@ -164,6 +165,8 @@ builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 builder.Services.AddTransient<VNPayConst, VNPayConst>();
 builder.Services.AddTransient<PaymentService, PaymentService>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("AppSettings:MailSettings"));
+builder.Services.AddTransient<EmailService, EmailService>();
 
 
 // Add Exception handler

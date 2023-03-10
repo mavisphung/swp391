@@ -16,9 +16,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Files\MailTemplates\OrderConfirmation\public\orderConfirm.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Files\MailTemplates\OrderConfirmation\public\orderConfirm.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="Diacritics" Version="3.3.14" />
 	  <PackageReference Include="FirebaseAuthentication.net" Version="3.7.2" />
 	  <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="6.1.3" />
+	  <PackageReference Include="MailKit" Version="3.6.0" />
 	  <PackageReference Include="Microsoft.AspNet.Cors" Version="5.2.9" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="6.0.5" />
@@ -34,7 +43,9 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  <PackageReference Include="MimeKit" Version="3.6.0" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
+	  <PackageReference Include="RazorEngineCore" Version="2022.8.1" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	  <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
   </ItemGroup>
