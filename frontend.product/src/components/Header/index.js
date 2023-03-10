@@ -34,8 +34,8 @@ function Header() {
 
       // console.log("RES", response);
       if (response.data) {
-        await setProdList(response.data);
-        console.log("Prod.DATA", prodList);
+        setProdList(response.data);
+        console.log("Prod.DATA", response.data);
       }
     } catch (error) {
       console.log("Get /product/ Error", error);
@@ -104,7 +104,6 @@ function Header() {
                         .map((p) => (
                           <div
                             className="dropdown-item"
-                            // onClick={() => onSearch(p.name)}
                             onClick={() => {
                               onSearch(p.name);
                               const params = {

@@ -110,6 +110,9 @@ function PaymentPage() {
       await postOrder();
       vnpPayment(sum);
       // postOrder();
+    } else if (paymentMethod === 3) {
+      await postOrder();
+      vnpPayment(sum / 2);
     } else {
       // notify();
       await postOrder();
