@@ -7,11 +7,15 @@ import "./HeaderLayout.scss";
 import config from "~/config";
 import AppIcons from "~/assets/icons";
 import { useUserCart } from "~/context/UserCartContext";
+import { useUserAuth } from "~/context/UserAuthContext";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Header() {
   const { cartAmount } = useUserCart();
+  const { getUser, logOut } = useUserAuth();
+  const user = getUser();
+
   return (
     <div>
       <Container>
@@ -45,21 +49,61 @@ function Header() {
                     aria-label="Search"
                     htmlSize={40}
                   />
-                  {/* <Button variant="outline-success">Search</Button> */}
+                  <button className="btn-search-2">Search</button>
                 </Form>
               </Nav>
-              <div className="d-flex header-link">
-                <Link to={config.routes.cart} className="pl-2">
-                  <BsCartFill color="#ee3e6a" /> ({cartAmount})
+              <>
+                <Link to={config.routes.cart} className="px-2">
+                  <BsCartFill
+                    color="#ee3e6a"
+                    style={{ paddingBottom: "3px", fontSize: "20px" }}
+                  />{" "}
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      color: "black",
+                      paddingTop: "5px !important",
+                    }}
+                  >
+                    ({cartAmount})
+                  </span>
                 </Link>
-                <Link to={config.routes.login} className="px-2">
-                  Đăng nhập
-                </Link>
-                <div className="px-1">|</div>
-                <Link to={config.routes.register} className="px-2">
-                  Đăng ký
-                </Link>
-              </div>
+                {user ? (
+                  <div>
+                    <div style={{ textAlign: "end", marginRight: "16px" }}>
+                      ChyStore kính chào
+                    </div>
+                    <div className="drop">
+                      <button>
+                        <img
+                          src={user.avatar}
+                          alt="User avatar"
+                          className="user-avatar"
+                        />
+                        <div style={{ display: "inline-block" }}>
+                          <span style={{ marginLeft: "10px" }}>
+                            {user.fullname}
+                          </span>
+                        </div>
+                      </button>
+                      <div className="drop-content">
+                        <Link to={config.routes.settings}>Cài đặt</Link>
+                        <Link onClick={logOut}>Đăng xuất</Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="d-flex header-link">
+                    <Link to={config.routes.login} className="px-2">
+                      Đăng nhập
+                    </Link>
+                    <div className="px-1">|</div>
+                    <Link to={config.routes.register} className="px-2">
+                      Đăng ký
+                    </Link>
+                  </div>
+                )}
+              </>
             </Navbar.Collapse>
           </Container>
         </Navbar>

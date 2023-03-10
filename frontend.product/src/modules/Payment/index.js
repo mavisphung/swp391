@@ -1,47 +1,70 @@
-import { HomeFilled, RightOutlined } from "@ant-design/icons";
-import { Alert } from "antd";
 import axios from "axios";
-import React, { useState } from "react";
-import { Breadcrumb, Button, Col, Container, Form, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "~/common/Helper";
 import CartItems from "./components/CartItems";
 import "./PaymentLayout.scss";
 import { toast } from "react-toastify";
 import config from "~/config";
-import { emptyCart, getCart } from "~/common/LocalStorageUtil";
+
+import { setLocalCart, useUserCart } from "~/context/UserCartContext";
+import { vnpPayment } from "./PaymentFunctions";
 
 function PaymentPage() {
   const location = useLocation();
-  const { name, tel, email, address, commune, district, province, cart } =
-    location.state;
+  const userCart = useUserCart();
+  const [ip, setIp] = useState("");
+  const {
+    name,
+    tel,
+    email,
+    address,
+    commune,
+    district,
+    province,
+    cart,
+    communeId,
+    districtId,
+    provinceId,
+  } = location.state;
 
   const [isPayAdvanced, setPayAdvanced] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState(2);
   const [note, setNote] = useState("");
 
-  console.log("NAME", name);
-  console.log("TEL", tel);
-  console.log("EMAIL", email);
-  console.log("COMMUNE", commune);
-  console.log("DISTRICT", district);
-  console.log("PROVINCE", province);
-  console.log("ADDRESS", address);
-  console.log("CART", cart);
+  // console.log("NAME", name);
+  // console.log("TEL", tel);
+  // console.log("EMAIL", email);
+  // console.log("COMMUNE", commune);
+  // console.log("DISTRICT", district);
+  // console.log("PROVINCE", province);
+  // console.log("ADDRESS", address);
+  // console.log("CART", cart);
+  // console.log("UserCart", userCart.cart);
+  // console.log("COMMUNE_ID", communeId);
+  console.log(`Commune ID: ${communeId}`);
+  console.log(`District ID: ${districtId}`);
+
+  console.log(`Province ID: ${provinceId}`);
 
   const navigate = useNavigate();
 
   let sum = 0;
 
-  cart.map((c) => {
-    sum = sum + c.price;
+  cart.forEach((c) => {
+    sum = sum + c.price * c.amount;
   });
 
-  const notify = () => {
-    toast("Đặt hàng thành công!");
+  const getIp = () => {
+    // const res = await axios.get("https://geolocation-db.com/json/");
+    // console.log(res.data);
+
+    setIp("127.0.0.1");
+    // return "127.0.0.1";
   };
 
-  let items = cart.map((c) => {
+  let items = userCart.cart.map((c) => {
     return {
       productId: c.id,
       quantity: c.amount,
@@ -58,20 +81,21 @@ function PaymentPage() {
           fullname: name,
           phoneNumber: tel,
           address: address,
+          ward: communeId,
+          district: districtId,
+          province: provinceId,
         },
       };
 
-      const request = await axios.post(
+      const response = await axios.post(
         "https://localhost:7179/api/order/unauth",
         order
       );
-      // toast("Successfully!!!");
-      console.log(request.data);
-      emptyCart();
-      // window.location.reload(false);
-      navigate(config.routes.home);
+      toast.success("Đặt hàng thành công!");
+      console.log(response.data);
+      setLocalCart([]);
     } catch (e) {
-      // toast("Error!!!");
+      toast.error("Đặt hàng không thành công! Vui lòng thử lại!");
       console.log(e);
     }
   };
@@ -81,31 +105,27 @@ function PaymentPage() {
     console.log(event.target.value);
   };
 
-  function checkout() {
-    notify();
-    postOrder();
+  async function checkout() {
+    if (paymentMethod === 1) {
+      await postOrder();
+      vnpPayment(sum);
+      // postOrder();
+    } else {
+      // notify();
+      await postOrder();
+      navigate(config.routes.home);
+    }
   }
+
+  useEffect(() => {
+    getIp();
+  }, []);
 
   return (
     <Container>
-      <div>
-        <Breadcrumb separator={<RightOutlined />}>
-          <Breadcrumb.Item href="">
-            <HomeFilled />
-            <span>Trang chủ</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="">
-            <span>Giỏ hàng của bạn</span>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="">
-            <span>Phương thức thanh toán</span>
-          </Breadcrumb.Item>
-        </Breadcrumb>
-      </div>
-
       <h3 style={{ fontWeight: "bold" }}>Đơn hàng</h3>
       <Col className="pb-3">
-        <Container className="square rounded border border-2 border-dark">
+        <Container>
           <Container className="d-flex py-2 mx-2 fs-5">
             <Col>
               <Row className="fw-bold">Thông tin tài khoản</Row>
@@ -118,7 +138,7 @@ function PaymentPage() {
               <Row>{`Tên khách hàng: ${name}`}</Row>
               <Row>{`Email: ${email}`}</Row>
               <Row>{`Số điện thoại: ${tel}`}</Row>
-              <Row>{`Địa chỉ: ${address}`}</Row>
+              <Row>{`Địa chỉ: ${address}, ${commune}, ${district}, ${province}`}</Row>
             </Col>
           </Container>
         </Container>
@@ -131,7 +151,7 @@ function PaymentPage() {
               productName={c.name}
               productImage={c.medias[1].url}
               productType={c.categoryName}
-              productPrice={formatPrice(c.price)}
+              productPrice={c.price}
               productAmount={c.amount}
             />
           ))}
@@ -207,6 +227,7 @@ function PaymentPage() {
                 name="paymentGroup"
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
+                defaultChecked={true}
                 // checked={payAdvanced === "CashPay"}
                 onClick={() => {
                   setPayAdvanced(false);
@@ -244,7 +265,7 @@ function PaymentPage() {
             >
               Thanh toán
             </Button>
-            <Button onClick={notify}>Toast</Button>
+            {/* <Button onClick={notify}>Toast</Button> */}
           </Row>
         </Col>
       </Container>

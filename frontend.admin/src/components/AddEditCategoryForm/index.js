@@ -204,7 +204,9 @@ const AddEditCategoryForm = () => {
         description: description,
         categoryType: categoryType,
         image: categoryImageURL,
-        relativeCategories: selectedCategory.map((category) => category.value),
+        relativeCategories: Array.from(
+          new Set(selectedCategory.map((category) => category.value)),
+        ),
         // UpdatedDate: moment().format('YYYY-MM-DD'),
         // UpdatedBy: user.id,
       };

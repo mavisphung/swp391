@@ -417,13 +417,13 @@ namespace Backend.Service.Migrations
                     b.Property<DateTime>("PaidDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("PayInAdvance")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("PaymentCode")
                         .HasColumnType("uuid");
 
                     b.Property<int>("PaymentMethod")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PaymentType")
                         .HasColumnType("integer");
 
                     b.Property<string>("UpdatedBy")
