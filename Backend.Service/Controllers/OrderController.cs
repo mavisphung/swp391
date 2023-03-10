@@ -1,6 +1,7 @@
 ﻿using Backend.Service.Consts;
 using Backend.Service.Helper;
 using Backend.Service.Models.Order;
+using Backend.Service.Models.Payment;
 using Backend.Service.Models.Validation;
 using Backend.Service.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +17,11 @@ namespace Backend.Service.Controllers
     public class OrderController : PagedController
     {
         private readonly OrderService _orderService;
-        public OrderController(OrderService orderService)
+        private readonly PaymentService _paymentService;
+        public OrderController(OrderService orderService, PaymentService paymentService)
         {
             _orderService = orderService;
+            _paymentService = paymentService;
         }
 
         /// <summary>
@@ -94,12 +97,13 @@ namespace Backend.Service.Controllers
             return Created("", response);
         }
 
-        [HttpGet("stats")]
-        //[Authorize(Roles = "1")]
-        public IActionResult GetStatisticInfo()
+        [HttpPost("{id}/pay")]
+        [ValidateModel]
+        public async Task<IActionResult> PayOnOrder(int id, [FromBody] PaymentRequestModel model)
         {
-            var data = _orderService.GetStatisticAsync();
-            return Ok(data);
+            model.OrderId = id;
+            var response = await _paymentService.CreatePayment(model);
+            return Accepted(response);
         }
     }
 }
