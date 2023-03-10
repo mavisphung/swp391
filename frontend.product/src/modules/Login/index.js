@@ -84,7 +84,7 @@ function LoginPage() {
               {checkEmail(email)}
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="" controlId="loginValidationPassword">
+          <Form.Group controlId="loginValidationPassword">
             <Form.Label>Mật khẩu {requiredMark}</Form.Label>
             <div className="login-input-group">
               <Form.Control
