@@ -25,6 +25,14 @@ namespace Backend.Service.Controllers
             return Ok(data);
         }
 
+        [HttpGet("cities")]
+        //[Authorize(Roles = "1")]
+        public async Task<IActionResult> GetProductCountByCity()
+        {
+            var data = await _statisticService.GetProductCountByCities();
+            return Ok(data);
+        }
+
         [HttpGet("counts")]
         public async Task<IActionResult> GetCounts([FromQuery] StatisticFilterParameter filter)
         {

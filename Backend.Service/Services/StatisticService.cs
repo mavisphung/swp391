@@ -108,5 +108,13 @@ namespace Backend.Service.Services
             }
         }
 
+        // Số đơn hàng đã được thanh toán trong 1 thành phố
+        public async Task<dynamic> GetProductCountByCities()
+        {
+            var data = await _db.Orders.GroupBy(ord => ord.ShippingAddress.Province)
+                .Select(group => new { province = group.Key, count = group.Count() })
+                .ToListAsync();
+            return data;
+        }
     }
 }
