@@ -200,6 +200,7 @@ function RecentOrders() {
             title: 'Hoàn thành',
             dataIndex: 'closeDate',
             key: 'closeDate',
+            align: 'center',
             render: (text, record) => {
               return record.closeDate
                 ? moment(record.closeDate, dateConvert).format(
@@ -212,6 +213,7 @@ function RecentOrders() {
             title: 'Tổng tiền',
             dataIndex: 'totalPrice',
             key: 'totalPrice',
+            align: 'right',
             render: (text, record) => {
               let price = new Intl.NumberFormat('vi-VN', {
                 style: 'currency',

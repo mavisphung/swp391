@@ -311,6 +311,7 @@ function ViewAccountsList() {
             pagination={{
               pageSize: pageSize,
               total: totalCount,
+              showSizeChanger: false,
               position: ['none', 'bottomCenter'],
               onChange: (page) => {
                 setPageIndex(page);
