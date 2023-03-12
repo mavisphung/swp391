@@ -35,7 +35,7 @@ namespace Backend.Service.Services
         }
 
         public async Task<PagedList<User>> GetAllAsync(FilterParameter pagingParameter)
-        {
+        {   
             IEnumerable<User> query = await _userRepository.GetAllAsync();
 
             return PagedList<User>.ToPagedList(
