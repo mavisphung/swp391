@@ -1,41 +1,24 @@
 import { Pie } from '@ant-design/plots';
+import { useCallback, useEffect, useState } from 'react';
+import { getCitiesRecordsData } from '~/api/statistics';
+import { PROVINCEVN } from '~/system/Constants/provinceVN';
+import CustomSpinner from '~/ui/CustomSpinner';
+
 function PieChart() {
+  const [cities, setCities] = useState([]);
+  const [chartConfig, setChartConfig] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   // Pie chart config
-  const data = [
-    {
-      type: 'Hồ Chí Minh',
-      value: 31,
-    },
-    {
-      type: 'Hà Nội',
-      value: 21,
-    },
-    {
-      type: 'Đà Nẵng',
-      value: 18,
-    },
-    {
-      type: 'Hải Phòng',
-      value: 15,
-    },
-    {
-      type: 'Cần Thơ',
-      value: 10,
-    },
-    {
-      type: 'Khác',
-      value: 5,
-    },
-  ];
   const config = {
     appendPadding: 10,
-    data,
+    data: cities.map((c) => c),
     angleField: 'value',
     colorField: 'type',
     radius: 0.8,
     label: {
-      type: 'outer',
-      content: '{name} {percentage}',
+      type: 'inner',
+      content: '{percentage}',
     },
     interactions: [
       {
@@ -46,10 +29,49 @@ function PieChart() {
       },
     ],
   };
+
+  // Get Cities records
+  const getCitiesRecordList = useCallback(async () => {
+    try {
+      const data = await getCitiesRecordsData();
+      setCities(
+        data.data.map((province) => ({
+          type: handleRenderProvince(province.province),
+          value: province.count,
+        })),
+      );
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCitiesRecordList();
+  }, [getCitiesRecordList]);
+
+  useEffect(() => {
+    cities && setChartConfig(config);
+  }, [cities]);
+
+  // Get province name by id
+  const handleRenderProvince = (id) => {
+    let province = PROVINCEVN.province.find(
+      (province) => province.idProvince === id,
+    );
+    return province ? province.name : 'Khác';
+  };
+
   return (
     <>
-      <h5 style={{ marginBottom: 10 }}>Tỉnh thành</h5>
-      <Pie {...config} />
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <h5 style={{ marginBottom: 10, paddingLeft: 20 }}>Tỉnh thành</h5>
+          <Pie {...chartConfig} />
+        </>
+      )}
     </>
   );
 }
