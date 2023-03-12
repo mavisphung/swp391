@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Service.Controllers
 {
-    [Route("api/statistic")]
+    [Route("api/stats")]
     [ApiController]
     public class StatisticController : ControllerBase
     {
@@ -17,11 +17,26 @@ namespace Backend.Service.Controllers
             _statisticService = statisticService;
         }
 
-        [HttpGet]
+        [HttpGet("products")]
         //[Authorize(Roles = "1")]
-        public IActionResult GetStatisticInfo([FromQuery] StatisticFilterParameter filter)
+        public IActionResult GetProductCountByDate([FromQuery] StatisticFilterParameter filter)
         {
-            var data = _statisticService.GetOrderStatistic(filter);
+            var data = _statisticService.GetProductCountByDate(filter);
+            return Ok(data);
+        }
+
+        [HttpGet("cities")]
+        //[Authorize(Roles = "1")]
+        public async Task<IActionResult> GetProductCountByCity()
+        {
+            var data = await _statisticService.GetProductCountByCities();
+            return Ok(data);
+        }
+
+        [HttpGet("counts")]
+        public async Task<IActionResult> GetCounts([FromQuery] StatisticFilterParameter filter)
+        {
+            var data = await _statisticService.GetCountAsync();
             return Ok(data);
         }
     }
