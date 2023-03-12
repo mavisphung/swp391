@@ -1,7 +1,9 @@
 ﻿using Backend.Service.Entities;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
+using Backend.Service.Consts;
 using LinqKit;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Service.Services
 {
@@ -14,7 +16,7 @@ namespace Backend.Service.Services
             _db = db;
         }
 
-        public PagedList<dynamic> GetOrderStatistic(StatisticFilterParameter filter)
+        public PagedList<dynamic> GetProductCountByDate(StatisticFilterParameter filter)
         {
             var predicate = PredicateBuilder.New<Order>();
             if (filter.From.HasValue)
@@ -33,5 +35,78 @@ namespace Backend.Service.Services
             var pagedList = PagedList<dynamic>.ToPagedList(query, filter.PageNumber, filter.PageSize);
             return pagedList;
         }
+
+
+
+        public async Task<Dictionary<string, double>> GetCountAsync()
+        {
+            var orderCountTask = GetOrderCountByStatusAsync(null);
+            var productCountTask = GetProductsCountAsync();
+            var customerCountTask = GetCustomerCountAsync();
+            var profitTask = GetProfitAsync();
+
+            var orderFinishedCountTask = GetOrderCountByStatusAsync(OrderStatus.Finished);
+            var orderCancelledCountTask = GetOrderCountByStatusAsync(OrderStatus.Cancelled);
+            var orderPendingCountTask = GetOrderCountByStatusAsync(OrderStatus.Pending);
+
+            await Task.WhenAll(
+                orderCountTask, 
+                productCountTask, 
+                customerCountTask, 
+                profitTask, 
+                orderFinishedCountTask,
+                orderCancelledCountTask,
+                orderPendingCountTask);
+
+            var dict = new Dictionary<string, double>()
+            {
+                { "orders", orderCountTask.Result },
+                { "ordersFinished", orderFinishedCountTask.Result },
+                { "ordersCancelled", orderCancelledCountTask.Result },
+                { "ordersPending", orderPendingCountTask.Result },
+                { "products", productCountTask.Result },
+                { "customers", customerCountTask.Result },
+                { "profit", profitTask.Result }
+            };
+
+            return dict;
+        }
+
+        private async Task<int> GetOrderCountByStatusAsync(OrderStatus? status)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                if (status.HasValue)
+                {
+                    return await context.Orders.Where(ord => ord.Status == status).CountAsync();
+                }
+                return await context.Orders.CountAsync();
+            }
+        }
+
+        private async Task<int> GetProductsCountAsync()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return await context.Products.Where(p => p.Status == ProductStatus.Available).CountAsync();
+            }
+        }
+
+        private async Task<int> GetCustomerCountAsync()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return await context.ShippingAddresses.CountAsync();
+            }
+        }
+
+        private async Task<double> GetProfitAsync()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return await context.Orders.Where(ord => ord.Status == OrderStatus.Finished).Select(ord => ord.TotalPrice).SumAsync();
+            }
+        }
+
     }
 }
