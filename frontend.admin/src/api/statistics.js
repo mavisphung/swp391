@@ -3,6 +3,7 @@ import api from './api';
 const statURL = 'stats';
 const city = 'cities';
 const briefRecord = 'counts';
+const orders = 'products';
 
 // Get store brief records
 export const getStoreBriefRecordsData = async () => {
@@ -27,6 +28,23 @@ export const getCitiesRecordsData = async () => {
     const response = await api.get(`/${statURL}/${city}`);
     if (response.status !== 200) {
       throw new Error('Cities records has the problem');
+    }
+    const data = await response;
+    if (data) {
+      return data;
+    }
+    return false;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// Get all orders records
+export const getOrdersRecordsData = async () => {
+  try {
+    const response = await api.get(`/${statURL}/${orders}`);
+    if (response.status !== 200) {
+      throw new Error('Orders records has the problem');
     }
     const data = await response;
     if (data) {
