@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 
 import config from "~/config";
 import CustomSpinner from "~/components/CustomSpinner";
@@ -8,6 +8,7 @@ import { createOrder } from "~/data/OrderRepository";
 import { useUserCart } from "~/context/UserCartContext";
 
 function PaymentInfo() {
+  const navigate = useNavigate();
   const { dispatch, cart } = useUserCart();
 
   const [isSuccess, setIsSucess] = useState();
@@ -28,47 +29,58 @@ function PaymentInfo() {
   const vnp_SecureHashType = searchParams.get("vnp_SecureHashType");
   const vnp_SecureHash = searchParams.get("vnp_SecureHash");
 
-  const postOrder = async () => {
-    const paymentInfo = getLocalPaymentInfo();
-    const data = await createOrder({
-      paymentMethod: paymentInfo.paymentMethod,
-      note: paymentInfo.note,
-      customer: paymentInfo.customer,
-      cart,
-      dispatch,
-    });
-    if (data) {
-      console.log("ORDER SUCCESS INFORMATION", data);
-      setOrderData(data);
-      setIsSucess(true);
-    }
-  };
+  const shouldLog = useRef(true);
 
   useEffect(() => {
-    console.log("USE EFFECT ALERT!!!!!!!!!!");
-    if (vnp_TransactionStatus === "00" || vnp_ResponseCode === "00") {
-      postOrder();
-    }
-  });
+    if (shouldLog.current) {
+      shouldLog.current = false;
+      const postOrder = async () => {
+        const paymentInfo = getLocalPaymentInfo();
+        const data = await createOrder({
+          paymentMethod: paymentInfo.paymentMethod,
+          note: paymentInfo.note,
+          customer: paymentInfo.customer,
+          cart,
+          dispatch,
+        });
+        if (data) {
+          console.log("ORDER SUCCESS INFORMATION", data);
+          // setOrderData(data);
+          // setIsSucess(true);
+          navigate(config.routes.orderNotification, {
+            state: {
+              order: data,
+              payment: {
+                vnp_Amount,
+                vnp_BankCode,
+                vnp_BankTranNo,
+                vnp_CardType,
+                vnp_PayDate,
+                vnp_OrderInfo,
+                vnp_TransactionNo,
+              },
+            },
+          });
+          return;
+        }
+      };
 
-  if (isSuccess && orderData)
-    return (
-      <Navigate
-        to={config.routes.orderNotification}
-        state={{
-          order: orderData,
-          payment: {
-            vnp_Amount,
-            vnp_BankCode,
-            vnp_BankTranNo,
-            vnp_CardType,
-            vnp_PayDate,
-            vnp_OrderInfo,
-            vnp_TransactionNo,
-          },
-        }}
-      />
-    );
+      if (vnp_TransactionStatus === "00" && vnp_ResponseCode === "00") {
+        if (!orderData) {
+          console.log("ORDER DATAAAAAAAAAAAAA", orderData);
+          postOrder();
+        }
+      }
+    }
+  }, []);
+
+  // if (isSuccess && orderData)
+  //   return (
+  //     <Navigate
+  //       to={config.routes.orderNotification}
+  //       state={}
+  //     />
+  //   );
 
   return <CustomSpinner text="Đang xử lý giao dịch và đặt hàng.." />;
 }

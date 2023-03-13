@@ -2,6 +2,7 @@ import "./BillLayout.scss";
 import { formatPrice } from "~/common/Helper";
 
 function Bill({ data }) {
+  console.log("PAYMENT INFO", data);
   return (
     <div className="bill-container">
       <h3>Thông tin thanh toán</h3>
@@ -26,7 +27,8 @@ function Bill({ data }) {
           Nội dung thanh toán: <span>{data.vnp_OrderInfo}</span>
         </div>
         <div>
-          Số tiền thanh toán: <span>{formatPrice(data.vnp_Amount)} đ</span>
+          Số tiền thanh toán:{" "}
+          <span>{formatPrice(data.vnp_Amount / 100)} đ</span>
         </div>
       </div>
     </div>
