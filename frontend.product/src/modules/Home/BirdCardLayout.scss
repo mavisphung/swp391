@@ -4,10 +4,6 @@
   padding: 0 !important;
 }
 
-.card:hover {
-  cursor: pointer !important;
-}
-
 .card img {
   height: 262px;
   border-top-left-radius: inherit;
@@ -44,6 +40,12 @@
 
 .card .price {
   margin: 0 0 6px 0;
+}
+
+.fake-price {
+  font-size: 20px !important;
+  text-decoration: line-through !important;
+  margin-left: 10px;
 }
 
 .pro-card-ctr {

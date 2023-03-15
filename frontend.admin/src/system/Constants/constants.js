@@ -6,6 +6,7 @@ export const emailCommonPattern =
 export const fullNamePattern =
   /^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/;
 export const phonePattern = /^((\+)84|0)[1-9](\d{2}){4}$/;
+export const birdAgePattern = /^\d+\s{1}(năm|tháng)$/;
 
 // Role Id
 export const Admin = 1;
@@ -23,8 +24,8 @@ export const cancelled = 3;
 export const pending = 4;
 
 // Status of product
-export const outOfStock = 0;
-export const available = 1;
+export const outOfStock = 1;
+export const available = 2;
 
 // Date format
 export const defaultDBDateFormatter = 'DD-MM-YYYY HH:mm';
@@ -34,10 +35,10 @@ export const dateTimeConvert = 'YYYY-MM-DDTHH:mm:ss';
 export const defaultDateTimePickerRange = 'DD/MM/YYYY HH:mm';
 
 // Payment Method
-export const vnpay = 0;
-export const atStore = 1;
-export const payInAdvance50 = 2;
+export const vnpay = 1;
+export const atStore = 2;
 export const cod = 3;
+export const payInAdvance = 4;
 
 // Media Type
 export const png = 0;

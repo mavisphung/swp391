@@ -1,4 +1,12 @@
-import { phonePattern } from "~/system/Constants/constants";
+import { emailCommonPattern, phonePattern } from "~/system/Constants/constants";
+
+export function checkEmail(value) {
+  if (!value || value === "") {
+    return "Email không được để trống";
+  } else if (!emailCommonPattern.test(value)) {
+    return "Sai định dạng email";
+  }
+}
 
 export function checkFieldIsEmpty(value, message) {
   if (!value || value === "") {
@@ -14,9 +22,11 @@ export function checkPhoneNumber(phone) {
   }
 }
 
-export function checkPassword(password) {
+export function checkPassword(password, isConfirm) {
   if (!password || password === "") {
-    return "Mật khẩu không được để trống";
+    return isConfirm
+      ? "Xác nhận mật khẩu không được để trống"
+      : "Mật khẩu không được để trống";
   } else if (password.length < 6 || password.length > 20) {
     return "Mật khẩu phải chứa từ 6 đến 20 ký tự";
   }

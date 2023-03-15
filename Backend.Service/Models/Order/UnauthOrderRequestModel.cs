@@ -28,6 +28,9 @@ namespace Backend.Service.Models.Order
         [EnumDataType(typeof(PaymentMethod))]
         public PaymentMethod PaymentMethod { get; set; }
 
+        [Range(0, 100)]
+        public int? PayInAdvance { get; set; } = 100;
+
         [RequiredCollection(ErrorMessage = "This can not be empty")]
         public IEnumerable<AddCartModel> CartItems { get; set; } = new HashSet<AddCartModel>();
     }

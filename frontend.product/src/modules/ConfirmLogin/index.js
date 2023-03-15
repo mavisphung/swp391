@@ -50,7 +50,6 @@ function ConfirmLogin() {
   const navigate = useNavigate();
 
   const { cart } = useUserCart();
-  const cartList = cart;
 
   useEffect(() => {
     setListProvince(PROVINCEVN.province.map((p) => p));
@@ -101,9 +100,12 @@ function ConfirmLogin() {
           email: email1,
           address: address,
           commune: communeObj.name,
+          communeId: wardId,
           district: districtObj.name,
+          districtId: districtId,
           province: provinceObj.name,
-          cart: cartList,
+          provinceId: provinceId,
+          cart,
         },
       });
     }
@@ -148,12 +150,7 @@ function ConfirmLogin() {
             Vui lòng nhập họ tên, email, số điện thoại và địa chỉ để tiếp tục
             thanh toán
           </h4>
-          <Form
-            noValidate
-            onSubmit={handleSubmit1}
-            className="form-cl-1"
-            validated={validated1}
-          >
+          <Form noValidate onSubmit={handleSubmit1} validated={validated1}>
             <Form.Group className="mb-3" controlId="validationFullName">
               <Form.Label>Họ tên {requiredMark}</Form.Label>
               <Form.Control
@@ -272,7 +269,7 @@ function ConfirmLogin() {
               />
               <CustomControlFeedback>
                 {checkFieldIsEmpty(
-                  name,
+                  address,
                   "Số nhà và tên đường không được để trống"
                 )}
               </CustomControlFeedback>

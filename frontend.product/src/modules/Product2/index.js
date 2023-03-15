@@ -2,74 +2,82 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import "./Product2Layout.scss";
-import api from "~/context/AppApi";
 import { des1 } from "~/data/Descriptions";
 import ProductCarousel from "../Home/ProductCarousel";
 import ImageSlider from "../Product/widgets/ImageSlider";
 import ProductOrderPane2 from "./widgets/ProductOrderPane2";
 import AppTrace from "~/components/AppTrace";
+import CustomSpinner from "~/components/CustomSpinner";
+import {
+  getProductList,
+  getProductWithId,
+  getRelativeList,
+} from "~/data/ProductRepository";
+import { mediaType } from "~/models/CategoryType";
+import { getEmbedUrl } from "~/common/Helper";
+import { loadingText } from "~/system/Constants/constants";
 
 function BirdProductDetails() {
   const [searchParams] = useSearchParams();
   const productId = parseInt(searchParams.get("productId"));
 
   const [pro, setPro] = useState();
-  const [relate, setRelate] = useState();
+  const [videoUrl, setVideoUrl] = useState("");
+  const [relate, setRelate] = useState([]);
+  const [proSameCate, setProSameCate] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const getProductWithId = async (id) => {
-    try {
-      const response = await api.get(`/product/${id}`);
+  const getProductById = async (productId) => {
+    const data = await getProductWithId(productId);
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
-      if (response.data) {
-        setPro(response.data);
+    if (data) {
+      setPro(data);
+      if (
+        data.medias[0].type === mediaType.mp4 ||
+        data.medias[0].type === mediaType.svg
+      ) {
+        setVideoUrl(getEmbedUrl(data.medias[0].url));
       }
-    } catch (error) {
-      console.log("Get /product/:id Error", error);
+
+      getRelativeProducts(productId, data.categoryType);
     }
   };
 
-  const getProduct = async () => {
-    try {
-      const response = await api.get("/product", {
-        params: {
-          PageNumber: 1,
-          PageSize: 10,
-        },
-      });
+  const getRelativeProducts = async (productId, CategoryType) => {
+    const data = await getRelativeList({
+      productId,
+    });
+    if (data && data.length > 0) {
+      const tmp = relate.slice();
+      tmp.push(...data);
+      setRelate(tmp);
+    }
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
-      if (response.data) {
-        const tmp1 = [];
-        response.data.map((p) => {
-          if (p.categoryType === 1) {
-            tmp1.push(p);
-          }
-        });
-        setRelate(tmp1);
-      }
-    } catch (error) {
-      console.log("Get /product/ Error", error);
+    const data1 = await getProductList({
+      CategoryType,
+    });
+    if (data1 && data1.length > 0) {
+      const tmp = proSameCate.slice();
+      tmp.push(...data1);
+      setProSameCate(tmp);
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
-    getProductWithId(productId);
-    getProduct();
-  }, []);
+    getProductById(productId);
+  }, [productId]);
 
-  if (!pro || isLoading) return <h1>Loading</h1>;
+  if (!pro || isLoading) return <CustomSpinner text={loadingText} />;
 
   return (
     <div className="container pro2-ly">
       <AppTrace />
       <div className="row">
         <div className="col-6">
-          <ImageSlider imgs={pro.medias.filter((_, index) => index !== 0)} />
+          <ImageSlider
+            imgs={pro.medias.filter((media) => media.type <= mediaType.jpg)}
+          />
         </div>
         <div className="col-6">
           <ProductOrderPane2 bird={pro} />
@@ -78,19 +86,23 @@ function BirdProductDetails() {
       <div>
         <h5>Mô tả sản phẩm</h5>
         <div className="my-hr"></div>
-        <div
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <iframe
-            title="chim chao mao"
-            width="540"
-            height="305"
-            allowFullScreen={true}
-            src="https://www.youtube.com/embed/OAnU9XPM5Ms"
-          ></iframe>
-        </div>
+
+        {videoUrl && (
+          <div
+            style={{
+              textAlign: "center",
+            }}
+          >
+            <iframe
+              title="Product description video"
+              width="540"
+              height="305"
+              allowFullScreen={true}
+              src={videoUrl}
+            ></iframe>
+          </div>
+        )}
+
         <div>
           <h6>Thông tin chi tiết</h6>
           {des1.map((e, index) => {
@@ -103,10 +115,14 @@ function BirdProductDetails() {
           })}
         </div>
       </div>
+      <div className="product-block">
+        <h5>Mọi người thường mua kèm với</h5>
+        <ProductCarousel list={relate} />
+      </div>
       <div>
         <h5>Sản phẩm tương tự</h5>
         <div className="my-hr"></div>
-        <ProductCarousel list={relate} />
+        <ProductCarousel list={proSameCate} />
       </div>
       <div style={{ paddingBottom: "150px" }}></div>
     </div>

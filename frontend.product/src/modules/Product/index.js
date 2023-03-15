@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useLocation, Link } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
 import "./ProductLayout.scss";
 import ProductCarousel from "../Home/ProductCarousel";
@@ -9,72 +9,68 @@ import ProductInfo from "./widgets/ProductInfo";
 import ProductOrderPane from "./widgets/ProductOrderPane";
 import AppTrace from "~/components/AppTrace";
 import config from "~/config";
-import api from "~/context/AppApi";
+import CustomSpinner from "~/components/CustomSpinner";
+import {
+  getProductList,
+  getProductWithId,
+  getRelativeList,
+} from "~/data/ProductRepository";
+import { mediaType } from "~/models/CategoryType";
+import { getEmbedUrl } from "~/common/Helper";
+import { loadingText } from "~/system/Constants/constants";
 
 function ProductDetails() {
   const [searchParams] = useSearchParams();
   const productId = parseInt(searchParams.get("productId"));
 
   const [pro, setPro] = useState();
+  const [videoUrl, setVideoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [relate, setRelate] = useState();
-  const [others, setOthers] = useState();
-  const [count, setCount] = useState(1);
+  const [relate, setRelate] = useState([]);
+  const [proSameCate, setProSameCate] = useState([]);
 
-  const location = useLocation();
-  const { categoryType } = location.state;
+  const getProductById = async (productId) => {
+    const data = await getProductWithId(productId);
 
-  const getProductWithId = async (id) => {
-    try {
-      const response = await api.get(`/product/${id}`);
-
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
-      if (response.data) {
-        setPro(response.data);
+    if (data) {
+      setPro(data);
+      if (
+        data.medias[0].type === mediaType.mp4 ||
+        data.medias[0].type === mediaType.svg
+      ) {
+        setVideoUrl(getEmbedUrl(data.medias[0].url));
       }
-    } catch (error) {
-      console.log("Get /product/:id Error", error);
+
+      getRelativeProducts(productId, data.categoryType);
     }
   };
 
-  const getProduct = async () => {
-    try {
-      const response = await api.get("/product", {
-        params: {
-          PageNumber: count,
-          PageSize: 10,
-        },
-      });
+  const getRelativeProducts = async (productId, CategoryType) => {
+    const data = await getRelativeList({
+      productId,
+    });
+    if (data && data.length > 0) {
+      const tmp = relate.slice();
+      tmp.push(...data);
+      setRelate(tmp);
+    }
 
-      console.log("RES", response);
-      console.log("RES.DATA", response.data);
-      if (response.data) {
-        setCount(count + 1);
-        const tmp1 = [];
-        const tmp2 = [];
-        response.data.map((p) => {
-          if (p.categoryType === categoryType) {
-            tmp1.push(p);
-          } else {
-            tmp2.push(p);
-          }
-        });
-        setRelate(tmp1);
-        setOthers(tmp2);
-      }
-    } catch (error) {
-      console.log("Get /product/ Error", error);
+    const data1 = await getProductList({
+      CategoryType,
+    });
+    if (data1 && data1.length > 0) {
+      const tmp = proSameCate.slice();
+      tmp.push(...data1);
+      setProSameCate(tmp);
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
-    getProductWithId(productId);
-    getProduct();
-  }, []);
+    getProductById(productId);
+  }, [productId]);
 
-  if (!pro || isLoading) return <h1>Loading</h1>;
+  if (!pro || isLoading) return <CustomSpinner text={loadingText} />;
 
   return (
     <div className="container">
@@ -88,9 +84,27 @@ function ProductDetails() {
         </div>
       </div>
       <ProductInfo />
+      <br />
+
+      {videoUrl && (
+        <div
+          style={{
+            textAlign: "center",
+          }}
+        >
+          <iframe
+            title="Product description video"
+            width="540"
+            height="305"
+            allowFullScreen={true}
+            src={videoUrl}
+          ></iframe>
+        </div>
+      )}
+
       <div className="product-block">
         <h5>Mọi người thường mua kèm với</h5>
-        <ProductCarousel list={others} />
+        <ProductCarousel list={relate} />
       </div>
       <div className="product-block">
         <div className="d-flex justify-content-between">
@@ -101,7 +115,7 @@ function ProductDetails() {
       </div>
       <div className="product-block">
         <h5>Sản phẩm tương tự</h5>
-        <ProductCarousel list={relate} />
+        <ProductCarousel list={proSameCate} />
       </div>
       <div style={{ paddingBottom: "150px" }}></div>
     </div>

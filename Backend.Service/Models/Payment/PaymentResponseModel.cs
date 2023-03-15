@@ -8,7 +8,7 @@
         public DateTime OrderDate { get; set; }
         public bool IsSuccess { get; set; }
         public int PaymentMethod { get; set; }
-        public int PaymentType { get; set; }
+        public int PayInAdvance { get; set; }
 
         public PaymentResponseModel(Entities.Payment entity) : base(entity)
         {
@@ -18,7 +18,7 @@
             OrderDate = entity.PaidDate;
             IsSuccess = entity.IsSuccess;
             PaymentMethod = (int) entity.PaymentMethod;
-            PaymentType = (int) entity.PaymentType;
+            PayInAdvance = entity.PayInAdvance;
         }
     }
 }

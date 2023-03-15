@@ -7,6 +7,10 @@
   margin-inline-end: 0px !important;
 }
 
+.pro-des-label {
+  font-weight: 700;
+}
+
 #cb-cate {
   font-size: 18px;
   margin-left: 15px;
@@ -73,6 +77,10 @@
 
 #order-pane {
   margin-left: 30px;
+  font-size: 16px;
+  p {
+    margin-bottom: 5px;
+  }
 }
 
 .product-block {

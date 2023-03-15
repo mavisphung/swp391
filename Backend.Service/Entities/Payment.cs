@@ -8,12 +8,12 @@ namespace Backend.Service.Entities
     [Index(nameof(PaymentCode), IsUnique = true)]
     public class Payment : BaseEntity
     {
-        public Guid PaymentCode { get; set; }
+        public Guid PaymentCode { get; set; } = Guid.NewGuid();
         
         // Giá tiền
         public int Amount { get; set; }
         public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Vnpay;
-        public PaymentType PaymentType { get; set; } = PaymentType.Full;
+        public int PayInAdvance { get; set; } = 100;
         public DateTime PaidDate { get; set; } = DateTime.UtcNow;
         public bool IsSuccess { get; set; }
 

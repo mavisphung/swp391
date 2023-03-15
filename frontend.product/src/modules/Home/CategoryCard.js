@@ -12,7 +12,7 @@ const CategoryCard = ({ cate }) => {
 
   return (
     <Figure
-      className="px-2"
+      className="px-2 cate-card"
       onClick={() =>
         navigate(
           {
@@ -28,6 +28,7 @@ const CategoryCard = ({ cate }) => {
                   url: `/dashboard/category?categoryId=${cate.id}`,
                 },
               ],
+              cateId: cate.id,
             },
           }
         )

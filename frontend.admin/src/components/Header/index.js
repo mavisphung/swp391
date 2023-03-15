@@ -21,6 +21,25 @@ function HeaderContent() {
         <>
           <Space>
             <Row style={{ color: 'white' }}>Xin chào {user.fullname}</Row>
+            <Row
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                overflow: 'hidden',
+              }}
+            >
+              <Image
+                style={{
+                  width: 'auto',
+                  height: 'auto',
+                  maxWidth: 40,
+                  maxHeight: 60,
+                }}
+                src={user.avatar}
+                alt={user.fullname}
+              />
+            </Row>
           </Space>
         </>
       );
