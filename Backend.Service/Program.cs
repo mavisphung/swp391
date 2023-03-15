@@ -151,6 +151,7 @@ builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddTransient<ICartItemRepository, CartItemRepository>();
 builder.Services.AddTransient<IShippingAddressRepository, ShippingAddressRepository>();
 builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
+builder.Services.AddTransient<IFeedbackRepository, FeedbackRepository>();
 
 // Add services
 builder.Services.AddTransient<UserService, UserService>();
@@ -164,6 +165,7 @@ builder.Services.AddTransient<BirdStoreConst, BirdStoreConst>();
 builder.Services.AddTransient<VNPayConst, VNPayConst>();
 builder.Services.AddTransient<PaymentService, PaymentService>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<FeedbackService, FeedbackService>();
 builder.Services.AddTransient<StatisticService, StatisticService>();
 
 
