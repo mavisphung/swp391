@@ -10,6 +10,7 @@ import AppTrace from "~/components/AppTrace";
 import BirdCard from "../Home/BirdCard";
 import { formatPrice } from "~/common/Helper";
 import CustomSpinner from "~/components/CustomSpinner";
+import { loadingText } from "~/system/Constants/constants";
 
 function CategoryPage() {
   const [searchParams] = useSearchParams();
@@ -212,7 +213,7 @@ function CategoryPage() {
             })}
         </div>
       ) : (
-        <CustomSpinner />
+        <CustomSpinner text={loadingText} />
       )}
     </div>
   );

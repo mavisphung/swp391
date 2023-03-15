@@ -15,6 +15,8 @@ const routes = {
   settings: "/settings",
   profile: "/settings/profile",
   passwordManagement: "/settings/change-password",
+  paymentInfo: "/payment-info",
+  orderNotification: "/order-notification",
 };
 
 const dashboardRoutes = {

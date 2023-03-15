@@ -17,6 +17,7 @@ import {
 } from "~/data/ProductRepository";
 import { mediaType } from "~/models/CategoryType";
 import { getEmbedUrl } from "~/common/Helper";
+import { loadingText } from "~/system/Constants/constants";
 
 function ProductDetails() {
   const [searchParams] = useSearchParams();
@@ -69,7 +70,7 @@ function ProductDetails() {
     getProductById(productId);
   }, [productId]);
 
-  if (!pro || isLoading) return <CustomSpinner />;
+  if (!pro || isLoading) return <CustomSpinner text={loadingText} />;
 
   return (
     <div className="container">

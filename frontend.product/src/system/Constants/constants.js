@@ -22,3 +22,5 @@ export const menuKeys = {
   addProduct: "add-product",
   addAccount: "add-account",
 };
+
+export const loadingText = "Đang tải dữ liệu..";
