@@ -50,7 +50,6 @@ function ConfirmLogin() {
   const navigate = useNavigate();
 
   const { cart } = useUserCart();
-  const cartList = cart;
 
   useEffect(() => {
     setListProvince(PROVINCEVN.province.map((p) => p));
@@ -106,7 +105,7 @@ function ConfirmLogin() {
           districtId: districtId,
           province: provinceObj.name,
           provinceId: provinceId,
-          cart: cartList,
+          cart,
         },
       });
     }

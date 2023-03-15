@@ -12,6 +12,8 @@ import BirdProductDetails from "~/modules/Product2";
 import ConfirmLogin from "~/modules/ConfirmLogin";
 import Settings from "~/modules/settings";
 import Protected from "~/components/ProtectedComponent";
+import PaymentInfo from "~/modules/Payment/PaymentInfo";
+import OrderInform from "~/modules/Payment/OrderInform";
 
 const CustomRoutes = () => {
   return (
@@ -49,6 +51,22 @@ const CustomRoutes = () => {
         }
       />
       <Route path={config.routes.confirmLogin} element={<ConfirmLogin />} />
+      <Route
+        path={config.routes.paymentInfo}
+        element={
+          <DefaultLayout>
+            <PaymentInfo />
+          </DefaultLayout>
+        }
+      />
+      <Route
+        path={config.routes.orderNotification}
+        element={
+          <DefaultLayout>
+            <OrderInform />
+          </DefaultLayout>
+        }
+      />
       <Route path={config.routes.other} element={<div>Page Not Found</div>} />
     </Routes>
   );

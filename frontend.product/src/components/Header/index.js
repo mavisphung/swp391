@@ -101,8 +101,9 @@ function Header() {
                           return prodName && prodName.startsWith(searchTerm);
                         })
                         .slice(0, 10)
-                        .map((p) => (
+                        .map((p, index) => (
                           <div
+                            key={index}
                             className="dropdown-item"
                             onClick={() => {
                               onSearch(p.name);

@@ -6,6 +6,8 @@ import {
   secureHashType,
 } from "~/system/Constants/constants";
 
+import config from "~/config";
+
 function createHmacSHA512(data) {
   const hmac512 = require("crypto-js/hmac-sha512");
   const hashed = hmac512(data, vnpHashSecret);
@@ -23,7 +25,7 @@ export async function vnpPayment(sumPrice) {
   let vnpCurrCode = "VND";
   let vnpLocale = locale;
   let vnpOrderInfo = `Thanh toan don hang ${orderId}, so tien ${sumPrice}`;
-  let vnpReturnUrl = `http://localhost:3002`;
+  let vnpReturnUrl = `http://localhost:3002${config.routes.paymentInfo}`;
 
   const myUrlWithParams = new URL(vnpUrl);
   myUrlWithParams.searchParams.append("vnp_Version", vnpVersion);
@@ -41,12 +43,13 @@ export async function vnpPayment(sumPrice) {
   myUrlWithParams.searchParams.append("vnp_OrderType", "other");
   myUrlWithParams.searchParams.sort();
   // TODO: Code mẫu
-  let hashed = await createHmacSHA512(myUrlWithParams.searchParams.toString());
+  let hashed = createHmacSHA512(myUrlWithParams.searchParams.toString());
   myUrlWithParams.searchParams.append("vnp_SecureHashType", secureHashType);
   myUrlWithParams.searchParams.append("vnp_SecureHash", hashed);
   console.log(
     "payment url",
     myUrlWithParams.searchParams.toString().split("&")
   );
+
   window.location.href = myUrlWithParams.href;
 }

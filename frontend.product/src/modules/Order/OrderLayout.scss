@@ -1,0 +1,33 @@
+.order-container {
+  border: 1px solid;
+  padding: 15px;
+  box-shadow: 5px 8px #ffb1ae;
+  margin-top: 20px;
+
+  h3 {
+    font-size: 24px;
+  }
+}
+
+.payment-row {
+  background-color: #f0f0f0;
+  padding: 8px;
+  margin-bottom: 5px;
+}
+
+.tbl-products {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+
+  td,
+  th {
+    border: 1px solid #ffb1ae;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f0f0f0;
+  }
+}

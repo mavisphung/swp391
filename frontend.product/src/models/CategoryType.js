@@ -18,3 +18,70 @@ export const mediaType = {
   avi: 7,
   wmv: 8,
 };
+
+export const paymentMethodType = {
+  vnpay: 1,
+  atStore: 2,
+  payInAdvance50: 3,
+  cod: 4,
+};
+
+export function getPaymentMethodStr(type) {
+  if (type === paymentMethodType.vnpay) {
+    return "Bằng VNPay";
+  } else if (type === paymentMethodType.atStore) {
+    return "Thanh toán tại cửa hàng";
+  } else if (type === paymentMethodType.payInAdvance50) {
+    return "Đặt cọc trước 50%";
+  } else if (type === paymentMethodType.cod) {
+    return "Thanh toán trực tiếp cho nhân viên giao hàng";
+  }
+}
+
+export const productStatusType = {
+  outOfStock: 0,
+  available: 1,
+};
+
+export const orderStatusType = {
+  accept: 1,
+  finished: 2,
+  cancelled: 3,
+  pending: 4,
+};
+
+export function getOrderStatusStr(status) {
+  if (status === orderStatusType.accept) {
+    return (
+      <span style={{ fontWeight: "bolder", color: "#27b2f3" }}>
+        Đã được chấp nhận
+      </span>
+    );
+  } else if (status === orderStatusType.finished) {
+    return (
+      <span style={{ fontWeight: "bolder", color: "#15b700" }}>Hoàn thành</span>
+    );
+  } else if (status === orderStatusType.cancelled) {
+    return (
+      <span style={{ fontWeight: "bolder", color: "#ef4a4a" }}>Hủy bỏ</span>
+    );
+  } else if (status === orderStatusType.pending) {
+    return (
+      <span style={{ fontWeight: "bolder", color: "#ffcc00" }}>
+        Đang chờ chấp nhận
+      </span>
+    );
+  }
+}
+
+export function getIsSucessStr(isSucess) {
+  if (isSucess) {
+    return (
+      <span style={{ fontWeight: "bolder", color: "#15b700" }}>Thành công</span>
+    );
+  } else {
+    return (
+      <span style={{ fontWeight: "bolder", color: "#ef4a4a" }}>Thất bại</span>
+    );
+  }
+}
