@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Backend.Service.Consts;
 
 namespace Backend.Service.Helper

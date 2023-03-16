@@ -37,6 +37,7 @@ namespace Backend.Service.Services
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
         {
+            Console.WriteLine($"Ascending: {filter.Ascending}");
             var predicate = PredicateBuilder.New<Order>(o => !o.IsDeleted);
             if (filter.OrderStatus != null)
             {

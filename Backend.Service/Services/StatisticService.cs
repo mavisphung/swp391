@@ -38,7 +38,7 @@ namespace Backend.Service.Services
 
 
 
-        public async Task<Dictionary<string, double>> GetCountAsync()
+        public async Task<Dictionary<string, double>> GetCountAsync(StatisticFilterParameter filter)
         {
             var orderCountTask = GetOrderCountByStatusAsync(null);
             var productCountTask = GetProductsCountAsync();
@@ -48,6 +48,8 @@ namespace Backend.Service.Services
             var orderFinishedCountTask = GetOrderCountByStatusAsync(OrderStatus.Finished);
             var orderCancelledCountTask = GetOrderCountByStatusAsync(OrderStatus.Cancelled);
             var orderPendingCountTask = GetOrderCountByStatusAsync(OrderStatus.Pending);
+
+            // nều cần thì thêm cái from to
 
             await Task.WhenAll(
                 orderCountTask, 

@@ -27,7 +27,8 @@ namespace Backend.Service.Services
 
         public IEnumerable<User> GetAll(FilterParameter pagingParameter)
         {
-            IEnumerable<User> query = _userRepository.GetAll();
+            IEnumerable<User> query = _userRepository.GetAll(
+                includeProperties: "Role");
             return PagedList<User>.ToPagedList(
                 query.AsQueryable().OrderBy(u => u.Id),
                 pagingParameter.PageNumber,
@@ -35,8 +36,9 @@ namespace Backend.Service.Services
         }
 
         public async Task<PagedList<User>> GetAllAsync(FilterParameter pagingParameter)
-        {   
-            IEnumerable<User> query = await _userRepository.GetAllAsync();
+        {
+            IEnumerable<User> query = await _userRepository.GetAllAsync(
+                includeProperties: "Role");
 
             return PagedList<User>.ToPagedList(
                 query.AsQueryable().OrderBy(u => u.Id), 
