@@ -1,4 +1,4 @@
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Carousel, Rate } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
@@ -9,8 +9,8 @@ import { jpeg, jpg, png, mp4, mov } from '~/system/Constants/constants';
 import { updateProduct } from '~/system/Constants/LinkURL';
 import CustomSpinner from '~/ui/CustomSpinner';
 import CustomTooltip from '~/ui/CustomTooltip';
-
 import CustomWrapper from '~/ui/CustomWrapper';
+import './ProductDetail.scss';
 
 const contentStyle = {
   color: '#fff',
@@ -62,6 +62,12 @@ function ProductDetail() {
     }
   }, [product]);
 
+  const [isDisplay, setIsDisplay] = useState(false);
+  // Hiện đánh giá sản phẩm
+  const handleDisplayProductFeedback = () => {
+    setIsDisplay(!isDisplay);
+  };
+
   return (
     <>
       {loading ? (
@@ -70,7 +76,11 @@ function ProductDetail() {
         <CustomWrapper>
           <h2 style={{ textAlign: 'center' }}>Thông tin sản phẩm</h2>
           <Row className="my-3">
-            <Col md={6}>
+            <Col
+              md={6}
+              id="product-media"
+              className={isDisplay && 'product-info-hidden'}
+            >
               <Card style={{ backgroundColor: '#001529' }}>
                 <Card.Body>
                   <Carousel autoplay>
@@ -164,14 +174,6 @@ function ProductDetail() {
                         }).format(product.price)}
                       </Card.Text>
                     </Col>
-                    {/* <Col md={8}>
-                    <Card.Text>{product.productCode}</Card.Text>
-                    <Card.Text>
-                      {product?.shortDescription}, {product?.categoryId}
-                    </Card.Text>
-                    <Card.Text>{product.gender || 'giới tính'}</Card.Text>
-                    <Card.Text>{product.age || 'tuổi'}</Card.Text>
-                  </Col> */}
                   </Row>
 
                   <br />
@@ -191,6 +193,23 @@ function ProductDetail() {
                       ) : (
                         ''
                       )}
+                      <CustomTooltip
+                        title={
+                          isDisplay
+                            ? 'Đóng đánh giá sản phẩm'
+                            : 'Chi tiết đánh giá sản phẩm'
+                        }
+                        color="#001529"
+                      >
+                        <Button
+                          style={{ marginLeft: 5 }}
+                          variant="outline-dark"
+                          size="sm"
+                          onClick={handleDisplayProductFeedback}
+                        >
+                          <FontAwesomeIcon icon={faEye} />
+                        </Button>
+                      </CustomTooltip>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -210,6 +229,18 @@ function ProductDetail() {
                   </Col>
                 </Card.Body>
               </Card>
+            </Col>
+
+            <Col
+              md={6}
+              id="product-feedback"
+              className={!isDisplay && 'product-info-hidden'}
+            >
+              <div style={{ border: '1px solid black', minHeight: '70vh' }}>
+                <h4 style={{ paddingLeft: 20, paddingTop: 10 }}>
+                  Đánh giá sản phẩm
+                </h4>
+              </div>
             </Col>
           </Row>
 
