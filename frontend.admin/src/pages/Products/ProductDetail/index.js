@@ -1,8 +1,9 @@
-import { faEye, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Carousel, Rate } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Card, CardGroup, Col, Image, Row } from 'react-bootstrap';
+import CardHeader from 'react-bootstrap/esm/CardHeader';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getProductDetailsById } from '~/api/products';
 import { jpeg, jpg, png, mp4, mov } from '~/system/Constants/constants';
@@ -10,6 +11,7 @@ import { updateProduct } from '~/system/Constants/LinkURL';
 import CustomSpinner from '~/ui/CustomSpinner';
 import CustomTooltip from '~/ui/CustomTooltip';
 import CustomWrapper from '~/ui/CustomWrapper';
+import Feedback from './Feedback';
 import './ProductDetail.scss';
 
 const contentStyle = {
@@ -28,6 +30,7 @@ function ProductDetail() {
   const [video, setVideo] = useState('');
   const [relativeProducts, setRelativeProducts] = useState([]);
   const [value, setValue] = useState(3.5);
+  const [isDisplay, setIsDisplay] = useState(false);
   const [loading, setLoading] = useState(true);
 
   //Get product by id
@@ -62,7 +65,6 @@ function ProductDetail() {
     }
   }, [product]);
 
-  const [isDisplay, setIsDisplay] = useState(false);
   // Hiện đánh giá sản phẩm
   const handleDisplayProductFeedback = () => {
     setIsDisplay(!isDisplay);
@@ -110,7 +112,7 @@ function ProductDetail() {
             </Col>
 
             <Col md={6}>
-              <Card>
+              <Card className="card-content">
                 <Card.Header>
                   <Row>
                     <Col md={10}>
@@ -142,7 +144,8 @@ function ProductDetail() {
                       </Card.Text>
                       <Card.Text>
                         <strong>Loại sản phẩm: &nbsp;</strong>
-                        {product?.shortDescription}, {product?.categoryName}
+                        {product?.categoryName} &nbsp;{' '}
+                        {product?.shortDescription}
                       </Card.Text>
                       {product.gender && (
                         <Card.Text>
@@ -197,17 +200,21 @@ function ProductDetail() {
                         title={
                           isDisplay
                             ? 'Đóng đánh giá sản phẩm'
-                            : 'Chi tiết đánh giá sản phẩm'
+                            : 'Danh sách đánh giá sản phẩm'
                         }
                         color="#001529"
                       >
                         <Button
-                          style={{ marginLeft: 5 }}
+                          style={{ marginLeft: 10 }}
                           variant="outline-dark"
                           size="sm"
                           onClick={handleDisplayProductFeedback}
                         >
-                          <FontAwesomeIcon icon={faEye} />
+                          {!isDisplay ? (
+                            <FontAwesomeIcon icon={faEye} />
+                          ) : (
+                            <FontAwesomeIcon icon={faEyeSlash} />
+                          )}
                         </Button>
                       </CustomTooltip>
                     </Col>
@@ -215,7 +222,7 @@ function ProductDetail() {
                 </Card.Body>
               </Card>
 
-              <Card style={{ marginTop: 20 }}>
+              <Card style={{ marginTop: 20 }} className="card-content">
                 <Card.Header>
                   <Row>
                     <Col>
@@ -236,10 +243,17 @@ function ProductDetail() {
               id="product-feedback"
               className={!isDisplay && 'product-info-hidden'}
             >
-              <div style={{ border: '1px solid black', minHeight: '70vh' }}>
-                <h4 style={{ paddingLeft: 20, paddingTop: 10 }}>
-                  Đánh giá sản phẩm
-                </h4>
+              <div style={{ minHeight: '70vh' }}>
+                <Card className="card-content">
+                  <Card.Header>
+                    <h4 style={{ paddingLeft: 5, paddingTop: 10 }}>
+                      Đánh giá sản phẩm
+                    </h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <Feedback id={productId} />
+                  </Card.Body>
+                </Card>
               </div>
             </Col>
           </Row>

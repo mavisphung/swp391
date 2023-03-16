@@ -111,6 +111,10 @@ function Dashboard() {
               path={`${viewProductsList}/${viewProductDetail}/${productId}`}
               element={<ProductDetail />}
             />
+            <Route
+              path={`${viewProductsList}/${viewProductDetail}/${productId}/${viewOrderDetail}/${orderId}`}
+              element={<OrderDetail />}
+            />
             <Route path={`${addProduct}`} element={<AddEditProduct />} />
             <Route
               path={`${viewProductsList}/${viewProductDetail}/${productId}/${updateProduct}`}
