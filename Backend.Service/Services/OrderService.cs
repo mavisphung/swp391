@@ -5,6 +5,7 @@ using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
+using Backend.Service.Models.Email;
 using Backend.Service.Models.Order;
 using Backend.Service.Models.Product;
 using Backend.Service.Repositories;
@@ -20,19 +21,25 @@ namespace Backend.Service.Services
         private readonly IShippingAddressRepository _addressRepository;
         private readonly IProductRepository _productRepository;
         private readonly IPaymentRepository _paymentRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly EmailService _emailService;
 
         public OrderService(
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             IShippingAddressRepository shippingAddressRepository,
             IProductRepository productRepository,
-            IPaymentRepository paymentRepository)
+            IPaymentRepository paymentRepository,
+            ICategoryRepository categoryRepository,
+            EmailService emailService)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _addressRepository = shippingAddressRepository;
             _productRepository = productRepository;
             _paymentRepository = paymentRepository;
+            _emailService = emailService;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
@@ -53,7 +60,7 @@ namespace Backend.Service.Services
             {
                 predicate = predicate.And(o => o.OrderDate <= filter.To.SetKindUtc());
             }
-            
+
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
                 orderBy: que => filter.Ascending == false
@@ -125,7 +132,7 @@ namespace Backend.Service.Services
             // Tạo order details
             // Lấy sản phẩm
             IEnumerable<Product> products = await _productRepository.GetAllAsync(
-                p => !p.IsDeleted 
+                p => !p.IsDeleted
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
             products = products.ToList(); //cached
 
@@ -140,12 +147,20 @@ namespace Backend.Service.Services
             //        httpStatus: HttpStatusCode.Conflict
             //    );
             //}
+
+            // Get all category
+            IEnumerable<Category> categories = await _categoryRepository.GetAllAsync();
+
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
+                // found category for curent product
+                var foundCate = categories.Where(c => c.Id == foundProd.CategoryId).First();
+                foundProd.Category = foundCate;
                 return new OrderDetail()
                 {
                     ProductId = ci.ProductId.GetValueOrDefault(),
+                    Product = foundProd,
                     Quantity = ci.Quantity.GetValueOrDefault(),
                     Price = ci.Quantity.GetValueOrDefault() * foundProd.Price,
                 };
@@ -187,6 +202,8 @@ namespace Backend.Service.Services
             _orderRepository.Update(newOrder);
             await _orderRepository.SaveDbChangeAsync();
 
+            await this.SendMailAsync(newOrder);
+
             return new OrderResponseModel(newOrder);
         }
 
@@ -218,6 +235,9 @@ namespace Backend.Service.Services
 
             //await _orderRepository.SaveDbChangeAsync();
             // TODO: Gửi email sau khi admin chấp nhận đơn hàng
+
+            await this.SendMailAsync(order);
+
             return order;
         }
 
@@ -233,6 +253,9 @@ namespace Backend.Service.Services
             order.CancelledReason = model.Reason;
             order.CloseDate = DateTime.UtcNow;
             order.Status = OrderStatus.Cancelled;
+
+            await this.SendMailAsync(order);
+
             return order;
         }
 
@@ -247,6 +270,9 @@ namespace Backend.Service.Services
             }
             order.CloseDate = DateTime.UtcNow;
             order.Status = OrderStatus.Finished;
+
+            await this.SendMailAsync(order);
+            
             return order;
         }
 
@@ -276,7 +302,56 @@ namespace Backend.Service.Services
 
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
+
             return found;
+        }
+
+        private async Task SendMailAsync(Order order)
+        {
+            EmailModel mailData = null;
+            switch (order.Status)
+            {
+                case OrderStatus.Accepted:
+                    mailData = new EmailModel(
+                        new List<string> { 
+                            order.ShippingAddress.Email 
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_ACCEPT,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_ACCEPT,
+                        order));
+                    break;
+                case OrderStatus.Finished:
+                    mailData = new EmailModel(
+                        new List<string> {
+                            order.ShippingAddress.Email
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_FINISH,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_FINISH,
+                        order));
+                    break;
+                case OrderStatus.Cancelled:
+                    mailData = new EmailModel(
+                        new List<string> {
+                            order.ShippingAddress.Email
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_CANCEL,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_CANCEL,
+                        order));
+                    break;
+                case OrderStatus.Pending:
+                    mailData = new EmailModel(
+                        new List<string> {
+                            order.ShippingAddress.Email
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_CREATE,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_CREATE,
+                        order));
+                    break;
+            }
+            if (mailData != null)
+            {
+                bool sendResult = await _emailService.SendAsync(mailData, new CancellationToken());
+            }
         }
     }
 }

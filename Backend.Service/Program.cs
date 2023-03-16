@@ -6,6 +6,7 @@ using Backend.Service.Examples;
 using Backend.Service.Extensions;
 using Backend.Service.Helper.Authentication;
 using Backend.Service.Helper.GlobalErrorHanding;
+using Backend.Service.Models.Email;
 using Backend.Service.Models.Validation;
 using Backend.Service.Repositories;
 using Backend.Service.Repositories.IRepositories;
@@ -140,6 +141,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton(FirebaseApp.Create());
 builder.Services.AddSingleton(new FirebaseAuthProvider(new FirebaseConfig("AIzaSyAqKQm1-vM6I2CTbLajrgmnf4DwUt8-bXo")));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("AppSettings:MailSettings"));
 
 // Add repositories
 builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -167,6 +169,7 @@ builder.Services.AddTransient<PaymentService, PaymentService>();
 builder.Services.AddScoped<PasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<FeedbackService, FeedbackService>();
 builder.Services.AddTransient<StatisticService, StatisticService>();
+builder.Services.AddTransient<EmailService, EmailService>();
 
 
 // Add Exception handler
