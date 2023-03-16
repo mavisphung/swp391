@@ -4,6 +4,7 @@ const statURL = 'stats';
 const city = 'cities';
 const briefRecord = 'counts';
 const orders = 'products';
+const profit = 'profits';
 
 // Get store brief records
 export const getStoreBriefRecordsData = async () => {
@@ -45,6 +46,23 @@ export const getOrdersRecordsData = async () => {
     const response = await api.get(`/${statURL}/${orders}`);
     if (response.status !== 200) {
       throw new Error('Orders records has the problem');
+    }
+    const data = await response;
+    if (data) {
+      return data;
+    }
+    return false;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// Get store profit records
+export const getProfitRecordsData = async () => {
+  try {
+    const response = await api.get(`/${statURL}/${profit}`);
+    if (response.status !== 200) {
+      throw new Error('Store profit records has the problem');
     }
     const data = await response;
     if (data) {
