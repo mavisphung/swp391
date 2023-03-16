@@ -1,25 +1,19 @@
 import { Line } from '@ant-design/plots';
-import { useEffect, useState } from 'react';
+import moment from 'moment';
+import { useCallback, useEffect, useState } from 'react';
+import { getProfitRecordsData } from '~/api/statistics';
+import {
+  dateConvert,
+  defaultDatePickerRange,
+} from '~/system/Constants/constants';
+import CustomSpinner from '~/ui/CustomSpinner';
 
 function LineChart() {
-  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [profit, setProfit] = useState([]);
 
-  useEffect(() => {
-    asyncFetch();
-  }, []);
-
-  const asyncFetch = () => {
-    fetch(
-      'https://gw.alipayobjects.com/os/bmw-prod/1d565782-dde4-4bb6-8946-ea6a38ccf184.json',
-    )
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => {
-        console.log('fetch data failed', error);
-      });
-  };
   const config = {
-    data,
+    data: profit.map((p) => p),
     padding: 'auto',
     xField: 'Date',
     yField: 'scales',
@@ -27,16 +21,44 @@ function LineChart() {
       tickCount: 5,
     },
     slider: {
-      start: 0.1,
+      start: 0,
       end: 0.5,
     },
   };
 
+  // Get Profit records
+  const getProfitRecordList = useCallback(async () => {
+    try {
+      const data = await getProfitRecordsData();
+      setProfit(
+        data.data.map((profit) => ({
+          Date: moment(profit.createdDate, dateConvert).format(
+            defaultDatePickerRange,
+          ),
+          scales: profit.total,
+        })),
+      );
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getProfitRecordList();
+  }, [getProfitRecordList]);
+
   return (
-    <div>
-      <h5 style={{ marginBottom: 10 }}>Doanh số</h5>
-      <Line {...config} />
-    </div>
+    <>
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <div>
+          <h5 style={{ marginBottom: 10 }}>Doanh số</h5>
+          <Line {...config} />
+        </div>
+      )}
+    </>
   );
 }
 

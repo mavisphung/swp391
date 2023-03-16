@@ -22,7 +22,7 @@ import CustomSpinner from '~/ui/CustomSpinner';
 function Statistics() {
   const { RangePicker } = DatePicker;
   const [brief, setBrief] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [startPeriod, setStartPeriod] = useState('');
   const [endPeriod, setEndPeriod] = useState('');
 
