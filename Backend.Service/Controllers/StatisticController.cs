@@ -37,8 +37,7 @@ namespace Backend.Service.Controllers
         [HttpGet("counts")]
         public async Task<IActionResult> GetCounts([FromQuery] StatisticFilterParameter filter)
         {
-            var data = await _statisticService.GetCountAsync();
-            AddPaginationToHeader(data);
+            var data = await _statisticService.GetCountAsync(filter);
             return Ok(data);
         }
 
