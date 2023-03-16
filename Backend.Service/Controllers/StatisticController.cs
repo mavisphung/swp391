@@ -7,7 +7,7 @@ namespace Backend.Service.Controllers
 {
     [Route("api/stats")]
     [ApiController]
-    public class StatisticController : ControllerBase
+    public class StatisticController : PagedController
     {
 
         private readonly StatisticService _statisticService;
@@ -22,6 +22,7 @@ namespace Backend.Service.Controllers
         public IActionResult GetProductCountByDate([FromQuery] StatisticFilterParameter filter)
         {
             var data = _statisticService.GetProductCountByDate(filter);
+            AddPaginationToHeader(data);
             return Ok(data);
         }
 
@@ -37,6 +38,15 @@ namespace Backend.Service.Controllers
         public async Task<IActionResult> GetCounts([FromQuery] StatisticFilterParameter filter)
         {
             var data = await _statisticService.GetCountAsync();
+            AddPaginationToHeader(data);
+            return Ok(data);
+        }
+
+        [HttpGet("profits")]
+        public async Task<IActionResult> GetProfits([FromQuery] StatisticFilterParameter filter)
+        {
+            var data = await _statisticService.GetProfitsByDate(filter);
+            AddPaginationToHeader(data);
             return Ok(data);
         }
     }

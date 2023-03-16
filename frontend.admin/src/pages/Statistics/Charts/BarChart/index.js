@@ -1,49 +1,49 @@
 import { Column } from '@ant-design/plots';
+import moment from 'moment';
+import { useCallback, useEffect, useState } from 'react';
+import { getOrdersRecordsData } from '~/api/statistics';
+import {
+  dateConvert,
+  defaultDatePickerRange,
+} from '~/system/Constants/constants';
+import CustomSpinner from '~/ui/CustomSpinner';
 
 function BarChart() {
-  const data = [
-    {
-      type: '1-3 đơn',
-      value: 0.16,
-    },
-    {
-      type: '4-10 đơn',
-      value: 0.125,
-    },
-    {
-      type: '11-30 đơn',
-      value: 0.24,
-    },
-    {
-      type: '31-60 đơn',
-      value: 0.19,
-    },
-    {
-      type: '1-3 đơn',
-      value: 0.22,
-    },
-    {
-      type: '3-10 đơn',
-      value: 0.05,
-    },
-    {
-      type: '10-30 đơn',
-      value: 0.01,
-    },
-    {
-      type: '30+ đơn',
-      value: 0.015,
-    },
-  ];
-  const paletteSemanticRed = '#F4664A';
+  const [orders, setOrders] = useState([]);
+  console.log('🚀 ~ file: index.js:12 ~ BarChart ~ orders:', orders);
+  const [loading, setLoading] = useState(true);
+
+  // Get Orders records
+  const getOrdersRecordList = useCallback(async () => {
+    try {
+      const data = await getOrdersRecordsData();
+      setOrders(
+        data.data.map((order) => ({
+          type: moment(order.createdDate, dateConvert).format(
+            defaultDatePickerRange,
+          ),
+          value: parseInt(order.orders),
+        })),
+      );
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getOrdersRecordList();
+  }, [getOrdersRecordList]);
+
+  const paletteSemanticRed = '#61d9aa';
   const brandColor = '#5B8FF9';
   const config = {
-    data,
+    data: orders.map((o) => o),
     xField: 'type',
     yField: 'value',
     seriesField: '',
     color: ({ type }) => {
-      if (type === '10-30 đơn' || type === '30+ đơn') {
+      if (type.startsWith('01/')) {
         return paletteSemanticRed;
       }
 
@@ -51,11 +51,7 @@ function BarChart() {
     },
     label: {
       content: (originData) => {
-        const val = parseFloat(originData.value);
-
-        if (val < 0.05) {
-          return (val * 100).toFixed(1) + '%';
-        }
+        return originData.value;
       },
       offset: 10,
     },
@@ -63,14 +59,20 @@ function BarChart() {
     xAxis: {
       label: {
         autoHide: true,
-        autoRotate: false,
+        autoRotate: true,
       },
     },
   };
   return (
     <>
-      <h5 style={{ marginBottom: 10 }}>Đơn hàng</h5>
-      <Column {...config} />
+      {loading ? (
+        <CustomSpinner />
+      ) : (
+        <>
+          <h5 style={{ marginBottom: 10 }}>Đơn hàng</h5>
+          <Column {...config} />
+        </>
+      )}
     </>
   );
 }

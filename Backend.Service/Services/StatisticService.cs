@@ -116,5 +116,31 @@ namespace Backend.Service.Services
                 .ToListAsync();
             return data;
         }
+
+        public async Task<dynamic> GetProfitsByDate(StatisticFilterParameter filter)
+        {
+            var predicate = PredicateBuilder.New<Order>();
+            if (filter.From.HasValue)
+            {
+                predicate = predicate.And(ord => ord.CreatedDate >= filter.From.Value.SetKindUtc());
+            } else
+            {
+                predicate = predicate.And(ord => ord.CreatedDate >= DateTime.UtcNow);
+            }
+
+            if (filter.To.HasValue)
+            {
+                predicate = predicate.And(ord => ord.CreatedDate <= filter.To.Value.SetKindUtc());
+            } else
+            {
+                predicate = predicate.And(ord => ord.CreatedDate <= DateTime.UtcNow.AddDays(30));
+            }
+
+            var query = _db.Orders.GroupBy(ord => ord.CreatedDate.Date)
+                .Select(g => new { CreatedDate = g.Key, total = g.Where(el => el.Status == OrderStatus.Finished).Sum(sel => sel.TotalPrice) })
+                .OrderBy(g => g.CreatedDate);
+            var pagedList = PagedList<dynamic>.ToPagedList(query, filter.PageNumber, filter.PageSize);
+            return pagedList;
+        }
     }
 }

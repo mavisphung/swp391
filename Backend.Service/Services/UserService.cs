@@ -155,7 +155,7 @@ namespace Backend.Service.Services
                 orderBy: que => filter.Ascending == false
                                     ? que.OrderByDescending(order => order.OrderDate)
                                     : que.OrderBy(order => order.OrderDate),
-                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category");
+                includeProperties: "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category,Payments");
 
             return PagedList<OrderResponseModel>.ToPagedList(
                 query.Select(entity => new OrderResponseModel(entity)),

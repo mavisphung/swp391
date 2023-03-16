@@ -131,6 +131,7 @@ const OrdersList = () => {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
       key: 'orderDate',
+      align: 'center',
       render: (text, record) => {
         return moment(record.orderDate, dateConvert).format(
           defaultDatePickerRange,
@@ -141,6 +142,7 @@ const OrdersList = () => {
       title: 'Ngày dự kiến giao',
       dataIndex: 'estimatedReceiveDate',
       key: 'estimatedReceiveDate',
+      align: 'center',
       render: (text, record) => {
         if (record.estimatedReceiveDate) {
           if (record.status === cancelled) {
@@ -285,6 +287,7 @@ const OrdersList = () => {
                 current: pageIndex,
                 pageSize: pageSize,
                 total: totalCount,
+                showSizeChanger: false,
                 position: ['none', 'bottomCenter'],
                 onChange: (page) => {
                   setPageIndex(page);

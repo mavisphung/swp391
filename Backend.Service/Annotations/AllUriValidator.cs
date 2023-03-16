@@ -11,7 +11,7 @@ namespace Backend.Service.Annotations
             if (list == null) 
                 return false;
 
-            return list.All(item =>
+            return !list.Any() || list.All(item =>
             {
                 Uri uriResult;
                 bool result = Uri.TryCreate(item.Url, UriKind.Absolute, out uriResult)
