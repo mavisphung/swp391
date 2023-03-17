@@ -53,22 +53,20 @@ export const orderStatusType = {
 export function getOrderStatusStr(status) {
   if (status === orderStatusType.accept) {
     return (
-      <span style={{ fontWeight: "bolder", color: "#27b2f3" }}>
-        Đã được chấp nhận
-      </span>
+      <span style={{ fontWeight: "bolder", color: "#27b2f3" }}>Đang xử lý</span>
     );
   } else if (status === orderStatusType.finished) {
     return (
-      <span style={{ fontWeight: "bolder", color: "#15b700" }}>Hoàn thành</span>
+      <span style={{ fontWeight: "bolder", color: "#15b700" }}>Thành công</span>
     );
   } else if (status === orderStatusType.cancelled) {
     return (
-      <span style={{ fontWeight: "bolder", color: "#ef4a4a" }}>Hủy bỏ</span>
+      <span style={{ fontWeight: "bolder", color: "#ef4a4a" }}>Đã hủy</span>
     );
   } else if (status === orderStatusType.pending) {
     return (
       <span style={{ fontWeight: "bolder", color: "#ffcc00" }}>
-        Đang chờ chấp nhận
+        Chờ xác nhận
       </span>
     );
   }

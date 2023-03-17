@@ -31,3 +31,44 @@
     background-color: #f0f0f0;
   }
 }
+
+.c-label {
+  display: inline-block;
+  padding: 0.4rem 0;
+  width: 90%;
+  font-size: 16px;
+  font-weight: 500 !important;
+  line-height: 1;
+  text-align: center;
+  white-space: pre-line;
+  vertical-align: baseline;
+  border-radius: 0.25em;
+}
+
+label {
+  float: left;
+}
+
+.c-label-success {
+  border: 1px solid #15b700;
+  color: #15b700;
+}
+
+.c-label-danger {
+  border: 1px solid #ef4a4a;
+  color: #ef4a4a;
+}
+
+.c-label-waiting {
+  border: 1px solid #ffcc00;
+  color: #ffcc00;
+}
+
+.c-label-inprogress {
+  border: 1px solid #27b2f3;
+  color: #27b2f3;
+}
+
+.filter-label {
+  float: none;
+}

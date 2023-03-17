@@ -42,3 +42,47 @@ export async function createOrder({
     console.log("createOrder catch Error", e);
   }
 }
+
+export async function getListOrder({
+  OrderStatus,
+  From,
+  To,
+  Ascending,
+  PageNumber,
+  PageSize,
+  Search,
+}) {
+  try {
+    const response = await api.get("/order", {
+      params: {
+        OrderStatus,
+        From,
+        To,
+        Ascending,
+        PageNumber,
+        PageSize,
+        Search,
+      },
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    console.log("getListOrder Error", e);
+  }
+}
+
+export async function getOrderWithId({ id }) {
+  try {
+    const response = await api.get(`/order/${id}`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    console.log("getOrderWithId Error", e);
+  }
+}
