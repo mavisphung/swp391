@@ -30,7 +30,9 @@ function ProductOrderPane2({ bird }) {
           <span>{`LT0${bird.id}`}</span>
           <br />
           <span className="pro2-des-label">Tuổi: </span>
-          <span>{bird.age}</span>
+          <span>
+            {bird.age} ({bird.shortDescription})
+          </span>
           <br />
         </div>
       ) : (
@@ -44,7 +46,7 @@ function ProductOrderPane2({ bird }) {
       <br />
       <span className="pro2-des-label">Mô tả: </span>
       <div>
-        <p>{bird.shortDescription}</p>
+        {/* <p>{bird.shortDescription}</p> */}
         <p>{bird.description}</p>
       </div>
       <br />
