@@ -58,3 +58,5 @@ export const MSG56 = 'Giá thành phải theo đơn vị hàng nghìn';
 export const MSG57 = 'Tuổi không được để trống';
 export const MSG58 = 'Tuổi nhập vào theo định dạng: X năm / X tháng';
 export const MSG59 = 'Vui lòng chọn khoảng thời gian khác';
+export const MSG60 = 'Thêm phương thức thanh toán cho đơn hàng';
+export const MSG61 = 'Thêm phương thức thanh toán cho đơn hàng thành công';
