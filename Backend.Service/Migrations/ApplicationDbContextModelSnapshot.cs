@@ -399,8 +399,8 @@ namespace Backend.Service.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
+                    b.Property<double>("Amount")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -793,7 +793,7 @@ namespace Backend.Service.Migrations
             modelBuilder.Entity("Backend.Service.Entities.Payment", b =>
                 {
                     b.HasOne("Backend.Service.Entities.Order", "Order")
-                        .WithMany()
+                        .WithMany("Payments")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
