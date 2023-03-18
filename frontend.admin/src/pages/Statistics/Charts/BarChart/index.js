@@ -2,6 +2,7 @@ import { Column } from '@ant-design/plots';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { getOrdersRecordsData } from '~/api/statistics';
+import NoData from '~/components/NoData';
 import {
   dateConvert,
   defaultDatePickerRange,
@@ -70,7 +71,7 @@ function BarChart() {
       ) : (
         <>
           <h5 style={{ marginBottom: 10 }}>Đơn hàng</h5>
-          <Column {...config} />
+          {orders.length !== 0 ? <Column {...config} /> : <NoData />}
         </>
       )}
     </>

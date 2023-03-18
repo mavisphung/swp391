@@ -57,3 +57,4 @@ export const MSG55 = 'Giá thành phải lớn hơn 0';
 export const MSG56 = 'Giá thành phải theo đơn vị hàng nghìn';
 export const MSG57 = 'Tuổi không được để trống';
 export const MSG58 = 'Tuổi nhập vào theo định dạng: X năm / X tháng';
+export const MSG59 = 'Vui lòng chọn khoảng thời gian khác';
