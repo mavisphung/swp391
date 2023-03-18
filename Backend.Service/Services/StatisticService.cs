@@ -29,7 +29,7 @@ namespace Backend.Service.Services
             }
 
 
-            var query = _db.Orders.GroupBy(ord => ord.CreatedDate.Date)
+            var query = _db.Orders.Where(predicate).GroupBy(ord => ord.CreatedDate.Date)
                 .Select(g => new { CreatedDate = g.Key, Orders = g.Count() })
                 .OrderBy(g => g.CreatedDate);
             var pagedList = PagedList<dynamic>.ToPagedList(query, filter.PageNumber, filter.PageSize);
