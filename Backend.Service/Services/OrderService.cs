@@ -189,7 +189,7 @@ namespace Backend.Service.Services
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
             Payment payment = new Payment
             {
-                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+                Amount = model.PayInAdvance == 100 ? newOrder.TotalPrice : newOrder.TotalPrice / model.PayInAdvance!.Value, // TODO: Sua Amount trong payment thanh int
                 IsSuccess = true,
                 PaymentMethod = model.PaymentMethod,
             };

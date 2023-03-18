@@ -35,7 +35,7 @@ namespace Backend.Service.Models.Order
     public class PaymentRM : BaseModel<Entities.Payment>
     {
         // TODO: ve sau sua thanh double
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         // TODO: map them OrderInfo, OrderType cua vnpay thanh PaymentInfo, PaymentType (neu can PaymentType)
         public bool IsSuccess { get; set; } = true;
