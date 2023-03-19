@@ -298,27 +298,34 @@ const OrderDetail = () => {
           ) : (
             <></>
           )}
-          <p>
-            <strong>Phương thức thức thanh toán:</strong>{' '}
-            {handlePaymentMethods(payments[payments.length - 1]?.paymentMethod)}
-          </p>
-          {payments[payments.length - 1]?.paymentMethod === 1 ? (
-            <p>
-              <strong>Ngày thanh toán:</strong>{' '}
-              {moment(payments[payments.length - 1]?.paidDate, dateTimeConvert)
-                .add(7, 'hours')
-                .format(defaultDateTimePickerRange)}
-            </p>
-          ) : (
-            <></>
-          )}
-          <p>
-            <strong>Số tiền:</strong>{' '}
-            {new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND',
-            }).format(payments[payments.length - 1]?.amount)}
-          </p>
+          {payments.map((payment, index) => {
+            if (payment.paymentMethod !== 4) {
+              return (
+                <div key={index} style={{ display: 'flex' }}>
+                  <p>{'#' + parseInt(index + 1)}</p>
+                  <div style={{ paddingLeft: 10 }}>
+                    <p>
+                      <strong>Phương thức thức thanh toán:</strong>{' '}
+                      {handlePaymentMethods(payment?.paymentMethod)}
+                    </p>
+                    <p>
+                      <strong>Ngày tạo:</strong>{' '}
+                      {moment(payment?.paidDate, dateTimeConvert)
+                        .add(7, 'hours')
+                        .format(defaultDateTimePickerRange)}
+                    </p>
+                    <p>
+                      <strong>Số tiền:</strong>{' '}
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(payment?.amount)}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+          })}
         </>
       ),
     },
@@ -625,7 +632,7 @@ const OrderDetail = () => {
                     title={item.title}
                     style={{
                       textAlign: 'left',
-                      height: 300,
+                      height: 350,
                     }}
                     className="card-content"
                   >
@@ -709,19 +716,8 @@ const OrderDetail = () => {
               <>
                 {customerOrder.status === accepted ? (
                   <>
-                    {payments[payments.length - 1]?.paymentMethod !== 3 ? (
-                      <Col className="mx-2">
-                        <Button
-                          type="primary"
-                          disabled={!enoughQuantity}
-                          onClick={() =>
-                            handleShowPayment(customerOrder.orderId)
-                          }
-                        >
-                          Thêm thanh toán
-                        </Button>
-                      </Col>
-                    ) : (
+                    {payments[0]?.paymentMethod === 3 ||
+                    payments.length !== 1 ? (
                       <Col className="mx-2">
                         <Button
                           className="success-btn"
@@ -731,6 +727,18 @@ const OrderDetail = () => {
                           }
                         >
                           Hoàn thành
+                        </Button>
+                      </Col>
+                    ) : (
+                      <Col className="mx-2">
+                        <Button
+                          type="primary"
+                          disabled={!enoughQuantity}
+                          onClick={() =>
+                            handleShowPayment(customerOrder.orderId)
+                          }
+                        >
+                          Thêm thanh toán
                         </Button>
                       </Col>
                     )}
