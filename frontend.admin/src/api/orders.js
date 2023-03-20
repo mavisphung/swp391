@@ -85,3 +85,8 @@ export const getCustomerOrderDetailDataByOrderId = async (orderId) => {
 export const updateOrder = async (orderId, body) => {
   await api.put(`/${orderURL}/${orderId}`, body);
 };
+
+// Add payment to customer order status
+export const addPaymentOrder = async (orderId, body) => {
+  await api.post(`/${orderURL}/${orderId}/pay`, body);
+};

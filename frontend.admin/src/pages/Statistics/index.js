@@ -173,7 +173,7 @@ function Statistics() {
               <RecentOrders />
             </Col>
             <Col span={16} style={{ paddingLeft: 30 }}>
-              <BarChart />
+              <BarChart start={startPeriod} end={endPeriod} />
             </Col>
           </Row>
           <br />

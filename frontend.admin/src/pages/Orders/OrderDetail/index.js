@@ -40,8 +40,14 @@ import {
   MSG28,
   MSG43,
   MSG44,
+  MSG60,
+  MSG61,
 } from '~/system/Messages/messages';
-import { getCustomerOrderDetailDataByOrderId, updateOrder } from '~/api/orders';
+import {
+  addPaymentOrder,
+  getCustomerOrderDetailDataByOrderId,
+  updateOrder,
+} from '~/api/orders';
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
 import CustomSpinner from '~/ui/CustomSpinner';
@@ -59,6 +65,22 @@ const reasonsList = [
   {
     id: 3,
     name: 'Không có nhân viên gói hàng',
+  },
+];
+
+// Payment methods
+const paymentMethodList = [
+  {
+    id: 1,
+    name: 'Chuyển khoản qua Vnpay',
+  },
+  {
+    id: 2,
+    name: 'Thanh toán tiền mặt',
+  },
+  {
+    id: 3,
+    name: 'Ship COD',
   },
 ];
 
@@ -82,6 +104,9 @@ const OrderDetail = () => {
   const [errorDeny, setErrorDeny] = useState(false);
   const [enoughQuantity, setEnoughQuantity] = useState(true);
   const [showFinish, setShowFinish] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [errorPayment, setErrorPayment] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState('');
 
   //Get current user
   const { getCurrentUser } = useUserAuth();
@@ -273,27 +298,34 @@ const OrderDetail = () => {
           ) : (
             <></>
           )}
-          <p>
-            <strong>Hình thức thanh toán:</strong>{' '}
-            {handlePaymentMethods(payments[payments.length - 1]?.paymentMethod)}
-          </p>
-          {payments[payments.length - 1]?.paymentMethod === 1 ? (
-            <p>
-              <strong>Ngày thanh toán:</strong>{' '}
-              {moment(payments[payments.length - 1]?.paidDate, dateTimeConvert)
-                .add(7, 'hours')
-                .format(defaultDateTimePickerRange)}
-            </p>
-          ) : (
-            <></>
-          )}
-          <p>
-            <strong>Số tiền:</strong>{' '}
-            {new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND',
-            }).format(payments[payments.length - 1]?.amount)}
-          </p>
+          {payments.map((payment, index) => {
+            if (payment.paymentMethod !== 4) {
+              return (
+                <div key={index} style={{ display: 'flex' }}>
+                  <p>{'#' + parseInt(index + 1)}</p>
+                  <div style={{ paddingLeft: 10 }}>
+                    <p>
+                      <strong>Phương thức thức thanh toán:</strong>{' '}
+                      {handlePaymentMethods(payment?.paymentMethod)}
+                    </p>
+                    <p>
+                      <strong>Ngày tạo:</strong>{' '}
+                      {moment(payment?.paidDate, dateTimeConvert)
+                        .add(7, 'hours')
+                        .format(defaultDateTimePickerRange)}
+                    </p>
+                    <p>
+                      <strong>Số tiền:</strong>{' '}
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(payment?.amount)}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+          })}
         </>
       ),
     },
@@ -475,6 +507,49 @@ const OrderDetail = () => {
     setShow(true);
   };
 
+  //At Order Payment Modal
+  const handleClosePayment = () => {
+    setShowPayment(false);
+    setSelectedPayment('');
+    setErrorPayment(false);
+  };
+
+  const handleShowPayment = () => {
+    setShowPayment(true);
+  };
+
+  // Add payment
+  const addPaymentOrderById = async (orderId) => {
+    try {
+      const body = {
+        amount: parseInt(customerOrder.totalPrice - payments[0]?.amount),
+        paymentMethod: parseInt(selectedPayment),
+        orderId: parseInt(orderId),
+        payInAdvance: parseInt(
+          100 - (payments[0]?.amount / customerOrder.totalPrice) * 100,
+        ),
+      };
+      console.log('Payment Body: ', body);
+      // call api payment
+      await addPaymentOrder(orderId, body);
+      handleClosePayment();
+      getOrderDataByOrderId(orderId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddPaymentToOrder = (orderId) => {
+    if (selectedPayment === '') {
+      setErrorPayment(true);
+      return;
+    } else if (selectedPayment) {
+      addPaymentOrderById(orderId);
+      toast.success(MSG61, { autoClose: 1500 });
+      handleCloseDeny();
+    }
+  };
+
   // Finish order modal
   const handleCloseFinish = () => {
     setShowFinish(false);
@@ -557,7 +632,7 @@ const OrderDetail = () => {
                     title={item.title}
                     style={{
                       textAlign: 'left',
-                      height: 300,
+                      height: 350,
                     }}
                     className="card-content"
                   >
@@ -641,15 +716,32 @@ const OrderDetail = () => {
               <>
                 {customerOrder.status === accepted ? (
                   <>
-                    <Col className="mx-2">
-                      <Button
-                        className="success-btn"
-                        type="primary"
-                        onClick={() => handleShowFinish(customerOrder.orderId)}
-                      >
-                        Hoàn thành
-                      </Button>
-                    </Col>
+                    {payments[0]?.paymentMethod === 3 ||
+                    payments.length !== 1 ? (
+                      <Col className="mx-2">
+                        <Button
+                          className="success-btn"
+                          type="primary"
+                          onClick={() =>
+                            handleShowFinish(customerOrder.orderId)
+                          }
+                        >
+                          Hoàn thành
+                        </Button>
+                      </Col>
+                    ) : (
+                      <Col className="mx-2">
+                        <Button
+                          type="primary"
+                          disabled={!enoughQuantity}
+                          onClick={() =>
+                            handleShowPayment(customerOrder.orderId)
+                          }
+                        >
+                          Thêm thanh toán
+                        </Button>
+                      </Col>
+                    )}
                     <Col>
                       <Button danger onClick={() => handleShowDeny()}>
                         Từ chối
@@ -807,6 +899,46 @@ const OrderDetail = () => {
             }
             handleClose={handleCloseDeny}
             handleSubmit={() => handleDenyOrder(orderId)}
+          />
+
+          <CustomModal
+            show={showPayment}
+            title="Thêm thanh toán"
+            body={
+              <>
+                {MSG60 + ' ' + orderId}
+                <br />
+                <br />
+                <Form.Group className="mb-3">
+                  <Form.Select
+                    value={selectedPayment}
+                    onChange={(e) => {
+                      setSelectedPayment(e.target.value);
+                      setErrorPayment(false);
+                    }}
+                    aria-label="Chọn phương thức thanh toán"
+                    required
+                  >
+                    <option value="">Chọn phương thức thanh toán</option>
+                    {paymentMethodList.map((method, index) => (
+                      <option key={index} value={method.id}>
+                        {method.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                {errorPayment && (
+                  <Alert
+                    banner
+                    message="Vui lòng chọn phương thức thanh toán"
+                    type="error"
+                    className="my-2"
+                  />
+                )}
+              </>
+            }
+            handleClose={handleClosePayment}
+            handleSubmit={() => handleAddPaymentToOrder(orderId)}
           />
         </>
       )}
