@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Column } from '@ant-design/plots';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
@@ -12,13 +13,11 @@ import CustomSpinner from '~/ui/CustomSpinner';
 function BarChart({ start, end }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [startPeriod, setStartPeriod] = useState('');
-  const [endPeriod, setEndPeriod] = useState('');
 
   // Get Orders records
-  const getOrdersRecordList = useCallback(async (startPeriod, endPeriod) => {
+  const getOrdersRecordList = useCallback(async (start, end) => {
     try {
-      const data = await getOrdersRecordsData(startPeriod, endPeriod);
+      const data = await getOrdersRecordsData(start, end);
       setOrders(
         data.data.map((order) => ({
           type: moment(order.createdDate, dateConvert).format(
@@ -34,16 +33,9 @@ function BarChart({ start, end }) {
   }, []);
 
   useEffect(() => {
-    if (start && end) {
-      setStartPeriod(start);
-      setEndPeriod(end);
-    }
-  }, [start, end]);
-
-  useEffect(() => {
     setLoading(true);
-    getOrdersRecordList(startPeriod, endPeriod);
-  }, [getOrdersRecordList, startPeriod, endPeriod]);
+    getOrdersRecordList(start, end);
+  }, [getOrdersRecordList, start, end]);
 
   const paletteSemanticRed = '#61d9aa';
   const brandColor = '#5B8FF9';
@@ -86,5 +78,10 @@ function BarChart({ start, end }) {
     </>
   );
 }
+
+BarChart.propTypes = {
+  start: PropTypes.string,
+  end: PropTypes.string,
+};
 
 export default BarChart;
