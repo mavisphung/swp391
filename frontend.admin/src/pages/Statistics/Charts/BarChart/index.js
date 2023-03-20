@@ -9,15 +9,16 @@ import {
 } from '~/system/Constants/constants';
 import CustomSpinner from '~/ui/CustomSpinner';
 
-function BarChart() {
+function BarChart({ start, end }) {
   const [orders, setOrders] = useState([]);
-  console.log('🚀 ~ file: index.js:12 ~ BarChart ~ orders:', orders);
   const [loading, setLoading] = useState(true);
+  const [startPeriod, setStartPeriod] = useState('');
+  const [endPeriod, setEndPeriod] = useState('');
 
   // Get Orders records
-  const getOrdersRecordList = useCallback(async () => {
+  const getOrdersRecordList = useCallback(async (startPeriod, endPeriod) => {
     try {
-      const data = await getOrdersRecordsData();
+      const data = await getOrdersRecordsData(startPeriod, endPeriod);
       setOrders(
         data.data.map((order) => ({
           type: moment(order.createdDate, dateConvert).format(
@@ -33,8 +34,16 @@ function BarChart() {
   }, []);
 
   useEffect(() => {
-    getOrdersRecordList();
-  }, [getOrdersRecordList]);
+    if (start && end) {
+      setStartPeriod(start);
+      setEndPeriod(end);
+    }
+  }, [start, end]);
+
+  useEffect(() => {
+    setLoading(true);
+    getOrdersRecordList(startPeriod, endPeriod);
+  }, [getOrdersRecordList, startPeriod, endPeriod]);
 
   const paletteSemanticRed = '#61d9aa';
   const brandColor = '#5B8FF9';
