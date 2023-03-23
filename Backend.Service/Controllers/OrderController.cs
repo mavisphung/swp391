@@ -47,8 +47,8 @@ namespace Backend.Service.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var entity = await _orderService.GetOneAsync(id);
-            return Ok(new OrderResponseModel(entity));
+            var resposne = await _orderService.GetOrderResponseAsync(id);
+            return Ok(resposne);
         }
 
         // POST api/<OrderController>
