@@ -17,8 +17,8 @@ function OrderHistory() {
   useEffect(() => {
     const getOrderHistory = async () => {
       const data = await getListOrder({
-        PageNumber: 1,
-        PageSize: 10,
+        PageNumber: 4,
+        PageSize: 50,
       });
       if (data) {
         setOrderHistory(data);
