@@ -1,22 +1,23 @@
+import PropTypes from 'prop-types';
 import { Column } from '@ant-design/plots';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { getOrdersRecordsData } from '~/api/statistics';
+import NoData from '~/components/NoData';
 import {
   dateConvert,
   defaultDatePickerRange,
 } from '~/system/Constants/constants';
 import CustomSpinner from '~/ui/CustomSpinner';
 
-function BarChart() {
+function BarChart({ start, end }) {
   const [orders, setOrders] = useState([]);
-  console.log('🚀 ~ file: index.js:12 ~ BarChart ~ orders:', orders);
   const [loading, setLoading] = useState(true);
 
   // Get Orders records
-  const getOrdersRecordList = useCallback(async () => {
+  const getOrdersRecordList = useCallback(async (start, end) => {
     try {
-      const data = await getOrdersRecordsData();
+      const data = await getOrdersRecordsData(start, end);
       setOrders(
         data.data.map((order) => ({
           type: moment(order.createdDate, dateConvert).format(
@@ -32,8 +33,9 @@ function BarChart() {
   }, []);
 
   useEffect(() => {
-    getOrdersRecordList();
-  }, [getOrdersRecordList]);
+    setLoading(true);
+    getOrdersRecordList(start, end);
+  }, [getOrdersRecordList, start, end]);
 
   const paletteSemanticRed = '#61d9aa';
   const brandColor = '#5B8FF9';
@@ -70,11 +72,16 @@ function BarChart() {
       ) : (
         <>
           <h5 style={{ marginBottom: 10 }}>Đơn hàng</h5>
-          <Column {...config} />
+          {orders.length !== 0 ? <Column {...config} /> : <NoData />}
         </>
       )}
     </>
   );
 }
+
+BarChart.propTypes = {
+  start: PropTypes.string,
+  end: PropTypes.string,
+};
 
 export default BarChart;

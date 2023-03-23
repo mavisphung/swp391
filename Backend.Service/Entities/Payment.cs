@@ -11,7 +11,7 @@ namespace Backend.Service.Entities
         public Guid PaymentCode { get; set; } = Guid.NewGuid();
         
         // Giá tiền
-        public int Amount { get; set; }
+        public double Amount { get; set; }
         public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Vnpay;
         public int PayInAdvance { get; set; } = 100;
         public DateTime PaidDate { get; set; } = DateTime.UtcNow;
@@ -20,6 +20,6 @@ namespace Backend.Service.Entities
         // Order foreign key
         public int OrderId { get; set; }
         public Order Order { get; set; }
-     
+
     }
 }

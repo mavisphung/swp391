@@ -14,6 +14,7 @@ namespace Backend.Service.Models.Order
         public string? CancelReason { get; set; }
         public ICollection<OrderDetailRM> OrderDetails { get; set; }
         public ICollection<PaymentRM> Payments { get; set; }
+        public int TotalPayInAdvance { get; set; }
 
         public SAddressRM CustomerInfo { get; set; }
 
@@ -35,13 +36,15 @@ namespace Backend.Service.Models.Order
     public class PaymentRM : BaseModel<Entities.Payment>
     {
         // TODO: ve sau sua thanh double
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         // TODO: map them OrderInfo, OrderType cua vnpay thanh PaymentInfo, PaymentType (neu can PaymentType)
         public bool IsSuccess { get; set; } = true;
         public int OrderId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public DateTime PaidDate { get; set; }
+
+        public int PayInAdvance { get; set; }
 
         public PaymentRM(Entities.Payment entity) : base(entity)
         {
@@ -50,6 +53,7 @@ namespace Backend.Service.Models.Order
             OrderId = entity.OrderId;
             PaymentMethod = entity.PaymentMethod;
             PaidDate = entity.PaidDate;
+            PayInAdvance = entity.PayInAdvance;
         }
     }
 

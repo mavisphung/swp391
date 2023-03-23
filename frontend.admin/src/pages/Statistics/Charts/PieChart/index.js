@@ -1,6 +1,7 @@
 import { Pie } from '@ant-design/plots';
 import { useCallback, useEffect, useState } from 'react';
 import { getCitiesRecordsData } from '~/api/statistics';
+import NoData from '~/components/NoData';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
 import CustomSpinner from '~/ui/CustomSpinner';
 
@@ -69,7 +70,8 @@ function PieChart() {
       ) : (
         <>
           <h5 style={{ marginBottom: 10, paddingLeft: 20 }}>Tỉnh thành</h5>
-          <Pie {...chartConfig} />
+
+          {cities.length !== 0 ? <Pie {...chartConfig} /> : <NoData />}
         </>
       )}
     </>

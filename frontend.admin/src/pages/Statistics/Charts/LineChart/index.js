@@ -2,6 +2,7 @@ import { Line } from '@ant-design/plots';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { getProfitRecordsData } from '~/api/statistics';
+import NoData from '~/components/NoData';
 import {
   dateConvert,
   defaultDatePickerRange,
@@ -55,7 +56,7 @@ function LineChart() {
       ) : (
         <div>
           <h5 style={{ marginBottom: 10 }}>Doanh số</h5>
-          <Line {...config} />
+          {profit.length !== 0 ? <Line {...config} /> : <NoData />}
         </div>
       )}
     </>

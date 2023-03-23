@@ -84,6 +84,15 @@ namespace Backend.Service.Services
             return found;
         }
 
+        public async Task<OrderResponseModel> GetOrderResponseAsync(int id)
+        {
+            var found = await GetOneAsync(id);
+
+            int totalPayInAdvance = found.Payments.Sum(p => p.PayInAdvance);
+
+            return new OrderResponseModel(found) { TotalPayInAdvance = totalPayInAdvance };
+        }
+
         public async Task<OrderResponseModel> ProcessAddToCartUnauth(UnauthOrderRequestModel model)
         {
             // kiểm tra user đã tồn tại hay chưa
@@ -189,7 +198,7 @@ namespace Backend.Service.Services
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
             Payment payment = new Payment
             {
-                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+                Amount = model.PayInAdvance == 100 ? newOrder.TotalPrice : newOrder.TotalPrice * model.PayInAdvance!.Value / 100,
                 IsSuccess = true,
                 PaymentMethod = model.PaymentMethod,
             };
@@ -202,7 +211,7 @@ namespace Backend.Service.Services
             _orderRepository.Update(newOrder);
             await _orderRepository.SaveDbChangeAsync();
 
-            await this.SendMailAsync(newOrder);
+            _ = Task.Run(() => SendMailAsync(newOrder));
 
             return new OrderResponseModel(newOrder);
         }
@@ -236,7 +245,7 @@ namespace Backend.Service.Services
             //await _orderRepository.SaveDbChangeAsync();
             // TODO: Gửi email sau khi admin chấp nhận đơn hàng
 
-            await this.SendMailAsync(order);
+            _ = Task.Run(() => SendMailAsync(order));
 
             return order;
         }
@@ -254,7 +263,7 @@ namespace Backend.Service.Services
             order.CloseDate = DateTime.UtcNow;
             order.Status = OrderStatus.Cancelled;
 
-            await this.SendMailAsync(order);
+            _ = Task.Run(() => SendMailAsync(order));
 
             return order;
         }
@@ -271,8 +280,8 @@ namespace Backend.Service.Services
             order.CloseDate = DateTime.UtcNow;
             order.Status = OrderStatus.Finished;
 
-            await this.SendMailAsync(order);
-            
+            _ = Task.Run(() => SendMailAsync(order));
+
             return order;
         }
 
@@ -350,7 +359,7 @@ namespace Backend.Service.Services
             }
             if (mailData != null)
             {
-                bool sendResult = await _emailService.SendAsync(mailData, new CancellationToken());
+                _ = Task.Run(() => _emailService.SendAsync(mailData, new CancellationToken()));
             }
         }
     }

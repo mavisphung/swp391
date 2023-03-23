@@ -41,9 +41,21 @@ export const getCitiesRecordsData = async () => {
 };
 
 // Get all orders records
-export const getOrdersRecordsData = async () => {
+export const getOrdersRecordsData = async (fromDate, toDate) => {
+  let url = `/${statURL}/${orders}`;
   try {
-    const response = await api.get(`/${statURL}/${orders}`);
+    // Create url
+    if (
+      fromDate &&
+      toDate &&
+      fromDate !== 'Invalid date' &&
+      toDate !== 'Invalid date'
+    ) {
+      url = `${url}?From=${fromDate}&To=${toDate}`;
+    }
+
+    // Call api
+    const response = await api.get(`${url}`);
     if (response.status !== 200) {
       throw new Error('Orders records has the problem');
     }
