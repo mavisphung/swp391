@@ -197,9 +197,10 @@ const OrderDetail = () => {
   const handleSumPaidAmount = () => {
     let sum = 0;
     payments?.forEach((element) => {
-      if (element.paymentMethod !== atStore && element.paymentMethod !== cod) {
-        sum += element.amount;
-      }
+      // if (element.paymentMethod !== atStore && element.paymentMethod !== cod) {
+      //   sum += element.amount;
+      // }
+      sum += element.amount;
     });
     return sum;
   };
@@ -511,6 +512,7 @@ const OrderDetail = () => {
   const handleClosePayment = () => {
     setShowPayment(false);
     setSelectedPayment('');
+    setPaidAmount('');
     setErrorPayment(false);
   };
 
@@ -525,7 +527,7 @@ const OrderDetail = () => {
         amount: parseInt(paidAmount),
         paymentMethod: parseInt(selectedPayment),
         orderId: parseInt(orderId),
-        payInAdvance: parseInt(100 - customerOrder.totalPayInAdvance),
+        payInAdvance: (parseInt(paidAmount) / customerOrder.totalPrice) * 100,
       };
       console.log('Payment Body: ', body);
       // call api payment
@@ -667,7 +669,7 @@ const OrderDetail = () => {
               <Row justify="end" className="mt-3 me-2">
                 <Col style={{ marginRight: 20 }}>
                   <h6>Tổng tiền hàng:</h6>
-                  <h6>Giảm trừ thanh toán trước:</h6>
+                  <h6>Tổng tiền đã thanh toán:</h6>
                   <h4 style={{ color: '#099E2A' }}>Tổng thanh toán:</h4>
                 </Col>
                 <Col
@@ -939,7 +941,7 @@ const OrderDetail = () => {
                     ).toString()}
                     isInvalid={
                       paidAmount &&
-                      paidAmount >
+                      parseInt(paidAmount) >
                         customerOrder.totalPrice - handleSumPaidAmount()
                     }
                     onChange={(e) => {
