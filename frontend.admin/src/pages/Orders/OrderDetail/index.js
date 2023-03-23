@@ -51,6 +51,7 @@ import {
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
 import CustomSpinner from '~/ui/CustomSpinner';
+import { checkPaidAmount } from '~/components/Validation';
 
 // Deny reason samples
 const reasonsList = [
@@ -107,6 +108,7 @@ const OrderDetail = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [errorPayment, setErrorPayment] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('');
+  const [paidAmount, setPaidAmount] = useState('');
 
   //Get current user
   const { getCurrentUser } = useUserAuth();
@@ -275,7 +277,7 @@ const OrderDetail = () => {
       title: 'Thanh toán',
       content: (
         <>
-          {payments[0]?.paymentMethod === 4 ? (
+          {/* {payments[0]?.paymentMethod === 4 ? (
             <>
               <p>
                 <strong>Đặt cọc trước:</strong>
@@ -297,34 +299,32 @@ const OrderDetail = () => {
             </>
           ) : (
             <></>
-          )}
+          )} */}
           {payments.map((payment, index) => {
-            if (payment.paymentMethod !== 4) {
-              return (
-                <div key={index} style={{ display: 'flex' }}>
-                  <p>{'#' + parseInt(index + 1)}</p>
-                  <div style={{ paddingLeft: 10 }}>
-                    <p>
-                      <strong>Phương thức thức thanh toán:</strong>{' '}
-                      {handlePaymentMethods(payment?.paymentMethod)}
-                    </p>
-                    <p>
-                      <strong>Ngày tạo:</strong>{' '}
-                      {moment(payment?.paidDate, dateTimeConvert)
-                        .add(7, 'hours')
-                        .format(defaultDateTimePickerRange)}
-                    </p>
-                    <p>
-                      <strong>Số tiền:</strong>{' '}
-                      {new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                      }).format(payment?.amount)}
-                    </p>
-                  </div>
+            return (
+              <div key={index} style={{ display: 'flex' }}>
+                <p>{'#' + parseInt(index + 1)}</p>
+                <div style={{ paddingLeft: 10 }}>
+                  <p>
+                    <strong>Phương thức thức thanh toán:</strong>{' '}
+                    {handlePaymentMethods(payment?.paymentMethod)}
+                  </p>
+                  <p>
+                    <strong>Ngày tạo:</strong>{' '}
+                    {moment(payment?.paidDate, dateTimeConvert)
+                      .add(7, 'hours')
+                      .format(defaultDateTimePickerRange)}
+                  </p>
+                  <p>
+                    <strong>Số tiền:</strong>{' '}
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(payment?.amount)}
+                  </p>
                 </div>
-              );
-            }
+              </div>
+            );
           })}
         </>
       ),
@@ -522,12 +522,10 @@ const OrderDetail = () => {
   const addPaymentOrderById = async (orderId) => {
     try {
       const body = {
-        amount: parseInt(customerOrder.totalPrice - payments[0]?.amount),
+        amount: parseInt(paidAmount),
         paymentMethod: parseInt(selectedPayment),
         orderId: parseInt(orderId),
-        payInAdvance: parseInt(
-          100 - (payments[0]?.amount / customerOrder.totalPrice) * 100,
-        ),
+        payInAdvance: parseInt(100 - customerOrder.totalPayInAdvance),
       };
       console.log('Payment Body: ', body);
       // call api payment
@@ -540,7 +538,8 @@ const OrderDetail = () => {
   };
 
   const handleAddPaymentToOrder = (orderId) => {
-    if (selectedPayment === '') {
+    console.log(typeof paidAmount);
+    if (selectedPayment === '' || paidAmount === '-1') {
       setErrorPayment(true);
       return;
     } else if (selectedPayment) {
@@ -634,7 +633,11 @@ const OrderDetail = () => {
                       textAlign: 'left',
                       height: 350,
                     }}
-                    className="card-content"
+                    className={
+                      item.title === 'Thanh toán'
+                        ? 'card-content payment-scroll'
+                        : 'card-content'
+                    }
                   >
                     {item.content}
                   </Card>
@@ -716,8 +719,7 @@ const OrderDetail = () => {
               <>
                 {customerOrder.status === accepted ? (
                   <>
-                    {payments[0]?.paymentMethod === 3 ||
-                    payments.length !== 1 ? (
+                    {customerOrder.totalPayInAdvance === 100 ? (
                       <Col className="mx-2">
                         <Button
                           className="success-btn"
@@ -926,11 +928,37 @@ const OrderDetail = () => {
                       </option>
                     ))}
                   </Form.Select>
+                  <Form.Control
+                    type="number"
+                    placeholder="Số tiền"
+                    style={{ marginTop: 20 }}
+                    value={paidAmount}
+                    min="0"
+                    max={(
+                      customerOrder.totalPrice - handleSumPaidAmount()
+                    ).toString()}
+                    isInvalid={
+                      paidAmount &&
+                      paidAmount >
+                        customerOrder.totalPrice - handleSumPaidAmount()
+                    }
+                    onChange={(e) => {
+                      setPaidAmount(e.target.value);
+                      setErrorPayment(false);
+                    }}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {checkPaidAmount(
+                      paidAmount,
+                      customerOrder.totalPrice - handleSumPaidAmount(),
+                    )}
+                  </Form.Control.Feedback>
                 </Form.Group>
                 {errorPayment && (
                   <Alert
                     banner
-                    message="Vui lòng chọn phương thức thanh toán"
+                    message="Vui lòng chọn phương thức thanh toán và số tiền"
                     type="error"
                     className="my-2"
                   />

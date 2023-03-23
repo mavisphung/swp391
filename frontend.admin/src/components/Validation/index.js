@@ -117,3 +117,13 @@ export const checkBirdAge = (age) => {
     return MSG58;
   }
 };
+
+export const checkPaidAmount = (input, amount) => {
+  if (input.length === 0) {
+    return MSG54;
+  } else if (parseInt(input) <= 0) {
+    return MSG55;
+  } else if (parseInt(input) > amount) {
+    return 'Số tiền vượt qua số tiền còn lại cần trả';
+  }
+};
