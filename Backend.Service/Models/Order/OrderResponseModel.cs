@@ -14,6 +14,7 @@ namespace Backend.Service.Models.Order
         public string? CancelReason { get; set; }
         public ICollection<OrderDetailRM> OrderDetails { get; set; }
         public ICollection<PaymentRM> Payments { get; set; }
+        public int TotalPayInAdvance { get; set; }
 
         public SAddressRM CustomerInfo { get; set; }
 
@@ -43,6 +44,8 @@ namespace Backend.Service.Models.Order
         public PaymentMethod PaymentMethod { get; set; }
         public DateTime PaidDate { get; set; }
 
+        public int PayInAdvance { get; set; }
+
         public PaymentRM(Entities.Payment entity) : base(entity)
         {
             Amount = entity.Amount;
@@ -50,6 +53,7 @@ namespace Backend.Service.Models.Order
             OrderId = entity.OrderId;
             PaymentMethod = entity.PaymentMethod;
             PaidDate = entity.PaidDate;
+            PayInAdvance = entity.PayInAdvance;
         }
     }
 

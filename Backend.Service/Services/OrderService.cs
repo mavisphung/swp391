@@ -84,6 +84,15 @@ namespace Backend.Service.Services
             return found;
         }
 
+        public async Task<OrderResponseModel> GetOrderResponseAsync(int id)
+        {
+            var found = await GetOneAsync(id);
+
+            int totalPayInAdvance = found.Payments.Sum(p => p.PayInAdvance);
+
+            return new OrderResponseModel(found) { TotalPayInAdvance = totalPayInAdvance };
+        }
+
         public async Task<OrderResponseModel> ProcessAddToCartUnauth(UnauthOrderRequestModel model)
         {
             // kiểm tra user đã tồn tại hay chưa
