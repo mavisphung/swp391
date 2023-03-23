@@ -50,6 +50,10 @@ function PaymentPage() {
   // };
 
   const postOrder = async () => {
+    let payInAdvance = 100;
+    if (paymentMethod === paymentMethodType.payInAdvance50) {
+      payInAdvance = 50;
+    }
     const data = await createOrder({
       paymentMethod,
       note,
@@ -64,6 +68,7 @@ function PaymentPage() {
       },
       cart,
       dispatch,
+      payInAdvance,
     });
     if (data) {
       console.log("ORDER SUCCESS INFORMATION", data);

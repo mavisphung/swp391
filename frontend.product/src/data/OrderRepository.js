@@ -8,6 +8,7 @@ export async function createOrder({
   customer,
   cart,
   dispatch,
+  payInAdvance,
 }) {
   let items = cart.map((c) => {
     return {
@@ -22,6 +23,7 @@ export async function createOrder({
       paymentMethod,
       note,
       customer,
+      payInAdvance,
     };
 
     const response = await api.post("/order/unauth", order);
@@ -31,7 +33,7 @@ export async function createOrder({
         type: "EMPTY_CART",
       });
       removeLocalPaymentInfo();
-      console.log("Order success", order);
+      console.log("Order success", response);
       return response.data;
     } else {
       console.log("createOrder failed Response", response);

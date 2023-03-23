@@ -6,6 +6,7 @@ import CustomSpinner from "~/components/CustomSpinner";
 import { getLocalPaymentInfo } from "~/context/LocalPaymentInfo";
 import { createOrder } from "~/data/OrderRepository";
 import { useUserCart } from "~/context/UserCartContext";
+import { paymentMethodType } from "~/models/CategoryType";
 
 function PaymentInfo() {
   const navigate = useNavigate();
@@ -34,12 +35,19 @@ function PaymentInfo() {
 
       const postOrder = async () => {
         const paymentInfo = getLocalPaymentInfo();
+
+        let payInAdvance = 100;
+        if (paymentInfo.paymentMethod === paymentMethodType.payInAdvance50) {
+          payInAdvance = 50;
+        }
+
         const data = await createOrder({
           paymentMethod: paymentInfo.paymentMethod,
           note: paymentInfo.note,
           customer: paymentInfo.customer,
           cart,
           dispatch,
+          payInAdvance,
         });
         if (data) {
           console.log("ORDER SUCCESS INFORMATION", data);

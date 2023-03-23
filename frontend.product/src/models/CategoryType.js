@@ -22,8 +22,8 @@ export const mediaType = {
 export const paymentMethodType = {
   vnpay: 1,
   atStore: 2,
-  payInAdvance50: 3,
-  cod: 4,
+  cod: 3,
+  payInAdvance50: 4,
 };
 
 export function getPaymentMethodStr(type) {
