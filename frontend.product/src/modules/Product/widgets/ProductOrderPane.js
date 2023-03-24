@@ -41,7 +41,7 @@ function ProductOrderPane({ pro }) {
       <br />
       <span className="pro-des-label">Mô tả: </span>
       <div>
-        <p>{pro.shortDescription}</p>
+        {/* <p>{pro.shortDescription}</p> */}
         <p>{pro.description}</p>
       </div>
       <br />
