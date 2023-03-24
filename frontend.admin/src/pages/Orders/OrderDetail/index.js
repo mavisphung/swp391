@@ -20,11 +20,15 @@ import moment from 'moment';
 import { useUserAuth } from '~/context/UserAuthContext';
 import {
   accepted,
+  atStore,
   cancelled,
+  cod,
   dateTimeConvert,
   defaultDateTimePickerRange,
   finished,
+  payInAdvance,
   pending,
+  vnpay,
 } from '~/system/Constants/constants';
 import CustomModal from '~/components/Modal';
 import { PROVINCEVN } from '~/system/Constants/provinceVN';
@@ -36,51 +40,18 @@ import {
   MSG28,
   MSG43,
   MSG44,
+  MSG60,
+  MSG61,
 } from '~/system/Messages/messages';
-import { getCustomerOrderDetailDataByOrderId, updateOrder } from '~/api/orders';
+import {
+  addPaymentOrder,
+  getCustomerOrderDetailDataByOrderId,
+  updateOrder,
+} from '~/api/orders';
 import '../OrdersList/OrdersList.scss';
 import './OrderDetail.scss';
 import CustomSpinner from '~/ui/CustomSpinner';
-
-const orderDetailsData = {
-  id: 'OCH0123456',
-  customerInfo: {
-    id: 3,
-    fullname: 'Thái Đăng Linh',
-    email: 'linhtd@gmail.com.vn',
-    gender: true,
-    password: 'linhtd123',
-    dob: '1995-04-15',
-    roleId: 3,
-    status: true,
-    phone: '0901565565',
-    address: '250 Nguyễn Thị Minh Khai',
-    ward: '27139',
-    district: '770',
-    province: '79',
-  },
-  payment: [
-    {
-      id: 1232,
-      paymentCode: '12145',
-      amount: 1600000,
-      paymentMethod: 2,
-      paidDate: '2023-01-09T08:15:00',
-    },
-    {
-      id: 1235,
-      paymentCode: '12155',
-      amount: 2000000,
-      paymentMethod: 1,
-      paidDate: '',
-    },
-  ],
-  status: 1,
-  orderDate: '2023-01-09',
-  estimatedReceiveDate: '2023-01-12',
-  closeDate: '',
-  totalPrice: '3600000',
-};
+import { checkPaidAmount } from '~/components/Validation';
 
 // Deny reason samples
 const reasonsList = [
@@ -98,11 +69,28 @@ const reasonsList = [
   },
 ];
 
+// Payment methods
+const paymentMethodList = [
+  {
+    id: 1,
+    name: 'Chuyển khoản qua Vnpay',
+  },
+  {
+    id: 2,
+    name: 'Thanh toán tiền mặt',
+  },
+  {
+    id: 3,
+    name: 'Ship COD',
+  },
+];
+
 const OrderDetail = () => {
   let navigate = useNavigate();
   const { orderId } = useParams();
   const [customerOrder, setCustomerOrder] = useState({});
   const [orderDetails, setOrderDetails] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [communeObj, setCommuneObj] = useState({});
   const [districtObj, setDistrictObj] = useState({});
@@ -117,6 +105,10 @@ const OrderDetail = () => {
   const [errorDeny, setErrorDeny] = useState(false);
   const [enoughQuantity, setEnoughQuantity] = useState(true);
   const [showFinish, setShowFinish] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [errorPayment, setErrorPayment] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState('');
+  const [paidAmount, setPaidAmount] = useState('');
 
   //Get current user
   const { getCurrentUser } = useUserAuth();
@@ -126,9 +118,9 @@ const OrderDetail = () => {
   const getOrderDataByOrderId = useCallback(async (orderId) => {
     try {
       const data = await getCustomerOrderDetailDataByOrderId(orderId);
-      console.log('apiData:', data);
       setCustomerOrder(data);
       setOrderDetails(data.orderDetails?.map((product) => product));
+      setPayments(data.payments?.map((payment) => payment));
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -186,6 +178,31 @@ const OrderDetail = () => {
     } else if (customerOrder.status === cancelled) {
       return 'Đã hủy';
     }
+  };
+
+  // Transform payment methods
+  const handlePaymentMethods = (payment) => {
+    if (payment === vnpay) {
+      return 'Vnpay';
+    } else if (payment === atStore) {
+      return 'Thanh toán tiền mặt tại quầy';
+    } else if (payment === cod) {
+      return 'Ship COD';
+    } else if (payment === payInAdvance) {
+      return 'Cọc';
+    }
+  };
+
+  // Tổng tiền đã thanh toán
+  const handleSumPaidAmount = () => {
+    let sum = 0;
+    payments?.forEach((element) => {
+      // if (element.paymentMethod !== atStore && element.paymentMethod !== cod) {
+      //   sum += element.amount;
+      // }
+      sum += element.amount;
+    });
+    return sum;
   };
 
   // Render list
@@ -261,13 +278,55 @@ const OrderDetail = () => {
       title: 'Thanh toán',
       content: (
         <>
-          <p>
-            <strong>Hình thức thanh toán:</strong> COD
-          </p>
-
-          <p>
-            <strong>Số tiền đã cọc:</strong> Không có
-          </p>
+          {/* {payments[0]?.paymentMethod === 4 ? (
+            <>
+              <p>
+                <strong>Đặt cọc trước:</strong>
+              </p>
+              <p>
+                &emsp; <strong>Ngày cọc:</strong>{' '}
+                {moment(payments[0]?.paidDate, dateTimeConvert)
+                  .add(7, 'hours')
+                  .format(defaultDateTimePickerRange)}
+              </p>
+              <p>
+                &emsp; <strong>Số tiền đã cọc:</strong>{' '}
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(payments[0]?.amount)}
+              </p>
+              <hr />
+            </>
+          ) : (
+            <></>
+          )} */}
+          {payments.map((payment, index) => {
+            return (
+              <div key={index} style={{ display: 'flex' }}>
+                <p>{'#' + parseInt(index + 1)}</p>
+                <div style={{ paddingLeft: 10 }}>
+                  <p>
+                    <strong>Phương thức thức thanh toán:</strong>{' '}
+                    {handlePaymentMethods(payment?.paymentMethod)}
+                  </p>
+                  <p>
+                    <strong>Ngày tạo:</strong>{' '}
+                    {moment(payment?.paidDate, dateTimeConvert)
+                      .add(7, 'hours')
+                      .format(defaultDateTimePickerRange)}
+                  </p>
+                  <p>
+                    <strong>Số tiền:</strong>{' '}
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(payment?.amount)}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </>
       ),
     },
@@ -310,6 +369,7 @@ const OrderDetail = () => {
       title: 'Đơn giá',
       dataIndex: ['product', 'price'],
       key: 'price',
+      align: 'right',
       render: (text, record) =>
         new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -337,6 +397,7 @@ const OrderDetail = () => {
       title: 'Thành tiền',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
+      align: 'right',
       render: (text, record) => {
         let price = new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -447,6 +508,49 @@ const OrderDetail = () => {
     setShow(true);
   };
 
+  //At Order Payment Modal
+  const handleClosePayment = () => {
+    setShowPayment(false);
+    setSelectedPayment('');
+    setPaidAmount('');
+    setErrorPayment(false);
+  };
+
+  const handleShowPayment = () => {
+    setShowPayment(true);
+  };
+
+  // Add payment
+  const addPaymentOrderById = async (orderId) => {
+    try {
+      const body = {
+        amount: parseInt(paidAmount),
+        paymentMethod: parseInt(selectedPayment),
+        orderId: parseInt(orderId),
+        payInAdvance: (parseInt(paidAmount) / customerOrder.totalPrice) * 100,
+      };
+      console.log('Payment Body: ', body);
+      // call api payment
+      await addPaymentOrder(orderId, body);
+      handleClosePayment();
+      getOrderDataByOrderId(orderId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddPaymentToOrder = (orderId) => {
+    console.log(typeof paidAmount);
+    if (selectedPayment === '' || paidAmount === '-1') {
+      setErrorPayment(true);
+      return;
+    } else if (selectedPayment) {
+      addPaymentOrderById(orderId);
+      toast.success(MSG61, { autoClose: 1500 });
+      handleCloseDeny();
+    }
+  };
+
   // Finish order modal
   const handleCloseFinish = () => {
     setShowFinish(false);
@@ -529,9 +633,13 @@ const OrderDetail = () => {
                     title={item.title}
                     style={{
                       textAlign: 'left',
-                      height: 280,
+                      height: 350,
                     }}
-                    className="card-content"
+                    className={
+                      item.title === 'Thanh toán'
+                        ? 'card-content payment-scroll'
+                        : 'card-content'
+                    }
                   >
                     {item.content}
                   </Card>
@@ -558,16 +666,47 @@ const OrderDetail = () => {
                     : 'allowed'
                 }
               />
-              <Row justify="end" className="mx-3">
-                <h4>
-                  Tổng cộng:
-                  <span className="mx-2">
-                    {new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                    }).format(customerOrder.totalPrice)}
-                  </span>
-                </h4>
+              <Row justify="end" className="mt-3 me-2">
+                <Col style={{ marginRight: 20 }}>
+                  <h6>Tổng tiền hàng:</h6>
+                  <h6>Tổng tiền đã thanh toán:</h6>
+                  <h4 style={{ color: '#099E2A' }}>Tổng thanh toán:</h4>
+                </Col>
+                <Col
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'end',
+                  }}
+                >
+                  <h6>
+                    <span className="mx-2">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(customerOrder.totalPrice)}
+                    </span>
+                  </h6>
+                  <h6>
+                    <span className="mx-2">
+                      -{' '}
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(handleSumPaidAmount())}
+                    </span>
+                  </h6>
+                  <h4 style={{ color: '#099E2A' }}>
+                    <span className="mx-2">
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(
+                        customerOrder.totalPrice - handleSumPaidAmount(),
+                      )}
+                    </span>
+                  </h4>
+                </Col>
               </Row>
             </Card>
           </>
@@ -582,15 +721,31 @@ const OrderDetail = () => {
               <>
                 {customerOrder.status === accepted ? (
                   <>
-                    <Col className="mx-2">
-                      <Button
-                        className="success-btn"
-                        type="primary"
-                        onClick={() => handleShowFinish(customerOrder.orderId)}
-                      >
-                        Hoàn thành
-                      </Button>
-                    </Col>
+                    {customerOrder.totalPayInAdvance === 100 ? (
+                      <Col className="mx-2">
+                        <Button
+                          className="success-btn"
+                          type="primary"
+                          onClick={() =>
+                            handleShowFinish(customerOrder.orderId)
+                          }
+                        >
+                          Hoàn thành
+                        </Button>
+                      </Col>
+                    ) : (
+                      <Col className="mx-2">
+                        <Button
+                          type="primary"
+                          disabled={!enoughQuantity}
+                          onClick={() =>
+                            handleShowPayment(customerOrder.orderId)
+                          }
+                        >
+                          Thêm thanh toán
+                        </Button>
+                      </Col>
+                    )}
                     <Col>
                       <Button danger onClick={() => handleShowDeny()}>
                         Từ chối
@@ -748,6 +903,72 @@ const OrderDetail = () => {
             }
             handleClose={handleCloseDeny}
             handleSubmit={() => handleDenyOrder(orderId)}
+          />
+
+          <CustomModal
+            show={showPayment}
+            title="Thêm thanh toán"
+            body={
+              <>
+                {MSG60 + ' ' + orderId}
+                <br />
+                <br />
+                <Form.Group className="mb-3">
+                  <Form.Select
+                    value={selectedPayment}
+                    onChange={(e) => {
+                      setSelectedPayment(e.target.value);
+                      setErrorPayment(false);
+                    }}
+                    aria-label="Chọn phương thức thanh toán"
+                    required
+                  >
+                    <option value="">Chọn phương thức thanh toán</option>
+                    {paymentMethodList.map((method, index) => (
+                      <option key={index} value={method.id}>
+                        {method.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Form.Control
+                    type="number"
+                    placeholder="Số tiền"
+                    style={{ marginTop: 20 }}
+                    value={paidAmount}
+                    min="0"
+                    max={(
+                      customerOrder.totalPrice - handleSumPaidAmount()
+                    ).toString()}
+                    isInvalid={
+                      paidAmount &&
+                      parseInt(paidAmount) >
+                        customerOrder.totalPrice - handleSumPaidAmount()
+                    }
+                    onChange={(e) => {
+                      setPaidAmount(e.target.value);
+                      setErrorPayment(false);
+                    }}
+                    required
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {checkPaidAmount(
+                      paidAmount,
+                      customerOrder.totalPrice - handleSumPaidAmount(),
+                    )}
+                  </Form.Control.Feedback>
+                </Form.Group>
+                {errorPayment && (
+                  <Alert
+                    banner
+                    message="Vui lòng chọn phương thức thanh toán và số tiền"
+                    type="error"
+                    className="my-2"
+                  />
+                )}
+              </>
+            }
+            handleClose={handleClosePayment}
+            handleSubmit={() => handleAddPaymentToOrder(orderId)}
           />
         </>
       )}

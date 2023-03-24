@@ -32,7 +32,7 @@ function Navbar() {
         <Link className="render-link" to={config.routes.home}>
           Trang chủ
         </Link>
-        <Link className="render-link">Tin tức</Link>
+        {/* <Link className="render-link">Tin tức</Link> */}
         <div className="dropdown">
           <button className="render-link">Giống chim</button>
           <div className="dropdown-content">
@@ -43,9 +43,6 @@ function Navbar() {
                   {cate.name}
                 </Link>
               ))}
-            {/* <Link className="render-link">Loại 1</Link>
-            <Link className="render-link">Loại 2</Link>
-            <Link className="render-link">Loại 3</Link> */}
           </div>
         </div>
         <div className="dropdown">

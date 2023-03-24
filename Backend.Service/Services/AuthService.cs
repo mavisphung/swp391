@@ -189,7 +189,9 @@ namespace Backend.Service.Services
         {
             // Query account table in DB
 
-            var checkUser = _accountRepository.GetFirstOrDefault(filter: x => x.Email == loginRequest.Email);
+            var checkUser = _accountRepository.GetFirstOrDefault(
+                filter: x => x.Email == loginRequest.Email,
+                includeProperties: "ShippingAddresses");
             if (checkUser == null)
             {
                 throw new NotFoundException(BaseError.USER_NOT_FOUND.ToString());
@@ -209,6 +211,8 @@ namespace Backend.Service.Services
                 Status = checkUser.Status,
                 Fullname = checkUser.Fullname,
                 Avatar = checkUser.Avatar,
+                PhoneNumber = checkUser.Phone,
+                ShippingAddresses = checkUser.ShippingAddresses.Select(x => new Models.Order.SAddressRM(x)).ToList(),
                 JwtToken = null
             };
             return (viewLoginModel, checkUser.Password);

@@ -21,11 +21,27 @@ const CartReducer = (state, action) => {
           return e;
         });
         action.type = "DONE";
+        toast.success("Thêm sản phẩm vào giỏ hàng thành công.");
         return { ...state };
       }
       state.cart.push({ ...pro, amount: 1 });
       action.type = "DONE";
       toast.success("Thêm sản phẩm vào giỏ hàng thành công.");
+      return { ...state };
+    case "UPDATE_AMOUNT":
+      const amount = action.payload.amount;
+      const proId = action.payload.proId;
+      updateAmountLocalCart(proId, amount);
+      const existed1 = state.cart.findIndex((e) => e.id === proId);
+      if (existed1 !== -1) {
+        state.cart.map((e) => {
+          if (e.id === proId) {
+            e.amount = amount;
+          }
+          return e;
+        });
+        action.type = "DONE";
+      }
       return { ...state };
     case "REMOVE_FROM_CART":
       removeFromLocalCart(action.payload);
@@ -74,7 +90,7 @@ function getLocalCart() {
   return cart ? JSON.parse(cart) : [];
 }
 
-export function setLocalCart(newCart) {
+function setLocalCart(newCart) {
   localStorage.setItem("CART", JSON.stringify(newCart));
 }
 
@@ -93,6 +109,20 @@ function addToLocalCart(pro) {
   }
   cart.push({ ...pro, amount: 1 });
   setLocalCart(cart);
+}
+
+function updateAmountLocalCart(proId, amount) {
+  const cart = getLocalCart();
+  const existed = cart.findIndex((e) => e.id === proId);
+  if (existed !== -1) {
+    const newCart = cart.map((e) => {
+      if (e.id === proId) {
+        e.amount = amount;
+      }
+      return e;
+    });
+    setLocalCart(newCart);
+  }
 }
 
 function removeFromLocalCart(id) {

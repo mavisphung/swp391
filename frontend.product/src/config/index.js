@@ -1,10 +1,10 @@
-import { routes, dashboardRoutes, cartRoutes, personalRoutes } from "./routes";
+import { routes, dashboardRoutes, cartRoutes, settingsRoutes } from "./routes";
 
 const config = {
   routes,
   dashboardRoutes,
   cartRoutes,
-  personalRoutes,
+  settingsRoutes,
 };
 
 export default config;

@@ -1,20 +1,20 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { useLocation, useNavigate, Link, redirect } from "react-router-dom";
-import { formatPrice } from "~/common/Helper";
-import CartItems from "./components/CartItems";
-import "./PaymentLayout.scss";
-import { toast } from "react-toastify";
-import config from "~/config";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
-import { setLocalCart, useUserCart } from "~/context/UserCartContext";
+import "./PaymentLayout.scss";
+import CartItems from "./components/CartItems";
+import config from "~/config";
+import { formatPrice } from "~/common/Helper";
 import { vnpPayment } from "./PaymentFunctions";
+import { paymentMethodType } from "~/models/CategoryType";
+import { setLocalPaymentInfo } from "~/context/LocalPaymentInfo";
+import { createOrder } from "~/data/OrderRepository";
+import { useUserCart } from "~/context/UserCartContext";
 
 function PaymentPage() {
+  const { dispatch } = useUserCart();
   const location = useLocation();
-  const userCart = useUserCart();
-  const [ip, setIp] = useState("");
   const {
     name,
     tel,
@@ -33,97 +33,80 @@ function PaymentPage() {
   const [paymentMethod, setPaymentMethod] = useState(2);
   const [note, setNote] = useState("");
 
-  // console.log("NAME", name);
-  // console.log("TEL", tel);
-  // console.log("EMAIL", email);
-  // console.log("COMMUNE", commune);
-  // console.log("DISTRICT", district);
-  // console.log("PROVINCE", province);
-  // console.log("ADDRESS", address);
-  // console.log("CART", cart);
-  // console.log("UserCart", userCart.cart);
-  // console.log("COMMUNE_ID", communeId);
-  console.log(`Commune ID: ${communeId}`);
-  console.log(`District ID: ${districtId}`);
-
-  console.log(`Province ID: ${provinceId}`);
-
   const navigate = useNavigate();
 
   let sum = 0;
 
-  cart.map((c) => {
+  cart.forEach((c) => {
     sum = sum + c.price * c.amount;
   });
 
-  const getIp = () => {
-    // const res = await axios.get("https://geolocation-db.com/json/");
-    // console.log(res.data);
+  // const getIp = () => {
+  //   // const res = await axios.get("https://geolocation-db.com/json/");
+  //   // console.log(res.data);
 
-    setIp("127.0.0.1");
-    // return "127.0.0.1";
-  };
+  //   setIp("127.0.0.1");
+  //   // return "127.0.0.1";
+  // };
 
-  const notify = () => {
-    toast("Đặt hàng thành công!");
-  };
-
-  let items = userCart.cart.map((c) => {
-    return {
-      productId: c.id,
-      quantity: c.amount,
-    };
-  });
   const postOrder = async () => {
-    try {
-      const order = {
-        cartItems: items,
-        paymentMethod: paymentMethod,
-        note: note,
-        customer: {
-          email: email,
-          fullname: name,
-          phoneNumber: tel,
-          address: address,
-          ward: communeId,
-          district: districtId,
-          province: provinceId,
-        },
-      };
-
-      const response = await axios.post(
-        "https://localhost:7179/api/order/unauth",
-        order
-      );
-      toast("Đặt hàng thành công!");
-      // console.log(request.data);
-      setLocalCart([]);
-    } catch (e) {
-      toast("Đặt hàng không thành công! Vui lòng thử lại!");
-      console.log(e);
+    let payInAdvance = 100;
+    if (paymentMethod === paymentMethodType.payInAdvance50) {
+      payInAdvance = 50;
+    }
+    const data = await createOrder({
+      paymentMethod,
+      note,
+      customer: {
+        email: email,
+        fullname: name,
+        phoneNumber: tel,
+        address: address,
+        ward: communeId,
+        district: districtId,
+        province: provinceId,
+      },
+      cart,
+      dispatch,
+      payInAdvance,
+    });
+    if (data) {
+      console.log("ORDER SUCCESS INFORMATION", data);
+      navigate(config.routes.orderNotification, { state: { order: data } });
     }
   };
 
-  const handleNoteChanged = (event) => {
-    setNote(event.target.value);
-    console.log(event.target.value);
+  const setPaymentInfo = () => {
+    const data = {
+      paymentMethod,
+      note,
+      customer: {
+        email: email,
+        fullname: name,
+        phoneNumber: tel,
+        address: address,
+        ward: communeId,
+        district: districtId,
+        province: provinceId,
+      },
+    };
+    setLocalPaymentInfo(data);
   };
 
-  async function checkout() {
-    if (paymentMethod === 1) {
-      await postOrder();
+  function checkout() {
+    setPaymentInfo();
+    if (paymentMethod === paymentMethodType.vnpay) {
       vnpPayment(sum);
-      // postOrder();
+    } else if (paymentMethod === paymentMethodType.payInAdvance50) {
+      vnpPayment(sum / 2);
     } else {
-      // notify();
-      await postOrder();
-      navigate(config.routes.home);
+      postOrder();
     }
   }
 
-  useEffect(() => {
-    getIp();
-  }, []);
+  // useEffect(() => {
+  //   getIp();
+  // }, []);
 
   return (
     <Container>
@@ -207,12 +190,12 @@ function PaymentPage() {
               placeholder="Ghi chú nếu địa chỉ khó tìm"
               required
               value={note}
-              onChange={handleNoteChanged}
+              onChange={(e) => setNote(e.target.value)}
             ></textarea>
           </Row>
         </Col>
         <Col xs lg="3" md>
-          <Row className="h5">Hình thức thanh toán</Row>
+          <Row className="h5">Phuơng thức thanh toán</Row>
           <Row>
             <Form>
               <Form.Check
@@ -220,10 +203,9 @@ function PaymentPage() {
                 name="paymentGroup"
                 id="vnPayRadio"
                 label="Bằng VNPay"
-                // checked={payAdvanced === "VNPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(1);
+                  setPaymentMethod(paymentMethodType.vnpay);
                 }}
               />
               <Form.Check
@@ -232,10 +214,9 @@ function PaymentPage() {
                 id="cashPayRadio"
                 label="Thanh toán tại cửa hàng"
                 defaultChecked={true}
-                // checked={payAdvanced === "CashPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(2);
+                  setPaymentMethod(paymentMethodType.atStore);
                 }}
               />
               <Form.Check
@@ -245,7 +226,7 @@ function PaymentPage() {
                 label="Đặt cọc trước 50%"
                 onClick={() => {
                   setPayAdvanced(true);
-                  setPaymentMethod(3);
+                  setPaymentMethod(paymentMethodType.payInAdvance50);
                 }}
               />
               <Form.Check
@@ -253,10 +234,9 @@ function PaymentPage() {
                 name="paymentGroup"
                 id="shippingPayRadio"
                 label="Thanh toán trực tiếp cho nhân viên giao hàng"
-                // checked={payAdvanced === "ShippingPay"}
                 onClick={() => {
                   setPayAdvanced(false);
-                  setPaymentMethod(4);
+                  setPaymentMethod(paymentMethodType.cod);
                 }}
               />
             </Form>
@@ -269,7 +249,6 @@ function PaymentPage() {
             >
               Thanh toán
             </Button>
-            {/* <Button onClick={notify}>Toast</Button> */}
           </Row>
         </Col>
       </Container>

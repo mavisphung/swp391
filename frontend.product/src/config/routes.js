@@ -6,13 +6,19 @@ const routes = {
   dashboard: "/dashboard",
   home: "/dashboard/home",
   aboutUs: "/dashboard/aboutUs",
-  productDetails: "/dashboard/:category?/:productId",
   paymentMethods: "/dashboard/payments",
   category: "/dashboard/category",
   productDetails: "/product",
   birdDetails: "/bird",
   cart: "/cart",
   confirmLogin: "/cart/confirm-login",
+  settings: "/user",
+  profile: "/user/profile",
+  passwordManagement: "/user/change-password",
+  paymentInfo: "/payment-info",
+  orderNotification: "/order-notification",
+  orderList: "/user/order-list",
+  orderDetail: "/user/order-detail",
 };
 
 const dashboardRoutes = {
@@ -28,9 +34,11 @@ const cartRoutes = {
   cart: "/cart/*",
 };
 
-const personalRoutes = {
+const settingsRoutes = {
+  settings: "/user/*",
   profile: "/profile",
-  passwordManagement: "/passwordManagement",
+  passwordManagement: "/change-password",
+  orderList: "/order-list",
 };
 
-export { routes, dashboardRoutes, cartRoutes, personalRoutes };
+export { routes, dashboardRoutes, cartRoutes, settingsRoutes };

@@ -3,7 +3,6 @@
   background-color: #fff;
   color: #000;
   display: list-item;
-  // justify-content: left;
   margin-left: 160px;
 }
 
@@ -48,4 +47,67 @@
   a:hover {
     color: black;
   }
+}
+
+.btn-search-2 {
+  background-color: #f2635f;
+  border: 1px solid white;
+  border-radius: 7px;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  color: white;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.drop button {
+  background-color: white;
+  border-radius: 7px;
+  display: inline-block;
+  padding: 8px 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 16px;
+  border: none;
+}
+
+.drop button:hover {
+  background-color: rgb(240, 240, 240);
+}
+
+.drop {
+  position: relative;
+  display: inline-block;
+}
+
+.drop-content {
+  width: 200px !important;
+  color: black;
+  background-color: white;
+  box-shadow: 0px 5px 10px 0px #92929233;
+  display: none !important;
+  position: absolute;
+  z-index: 1;
+}
+
+.drop-content a {
+  color: black;
+  display: block;
+  font-size: 16px;
+  padding: 15px 10px;
+}
+
+.drop-content a:hover {
+  text-decoration: none !important;
+  color: #f2635f !important;
+  background-color: #92929233;
+}
+
+.drop:hover .drop-content {
+  display: block !important;
+  z-index: 10;
 }

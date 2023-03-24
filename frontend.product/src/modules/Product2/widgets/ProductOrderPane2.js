@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import "../Product2Layout.scss";
 import config from "~/config";
-import { formatPrice } from "~/common/Helper";
+import { formatDate, formatPrice } from "~/common/Helper";
 import { useUserCart } from "~/context/UserCartContext";
 
 function ProductOrderPane2({ bird }) {
@@ -20,6 +20,8 @@ function ProductOrderPane2({ bird }) {
   };
 
   const isRetail = bird.age && bird.gender != null ? true : false;
+  const saleAmount = bird.categoryType / 10 + 1.1;
+  const fakePrice = bird.price * saleAmount;
 
   return (
     <div id="order-pane">
@@ -42,7 +44,7 @@ function ProductOrderPane2({ bird }) {
         </>
       )}
       <span className="pro2-des-label">Ngày đăng: </span>
-      <span>{bird.createdDate.substring(0, 10)}</span>
+      <span>{formatDate(bird.createdDate)}</span>
       <br />
       <span className="pro2-des-label">Mô tả: </span>
       <div>
@@ -55,6 +57,7 @@ function ProductOrderPane2({ bird }) {
       <br />
       <span className="pro2-des-label">Giá: </span>
       <span className="price">{formatPrice(bird.price)} đ</span>
+      <span className="fake-price">{formatPrice(fakePrice)} đ</span>
       <div className="pro-order-ctr">
         <Button className="btn-buy" onClick={handleBuyClick}>
           Mua ngay

@@ -10,3 +10,17 @@ export const vnpHashSecret = "XGJLPDAXNSVTYJFOZDUUOSJTJAYEWNNK";
 
 export const secureHashType = "HmacSHA512";
 export const locale = "vn";
+
+export const menuKeys = {
+  dashboard: "dashboard",
+  orderList: "order-list",
+  accountProfile: "profile",
+  changePassword: "change-password",
+  viewCategoryList: "category-list",
+  addCategory: "add-category",
+  viewProductList: "product-list",
+  addProduct: "add-product",
+  addAccount: "add-account",
+};
+
+export const loadingText = "Đang tải dữ liệu..";

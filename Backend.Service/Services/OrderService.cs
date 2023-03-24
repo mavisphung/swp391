@@ -5,6 +5,7 @@ using Backend.Service.Entities;
 using Backend.Service.Exceptions;
 using Backend.Service.Extensions;
 using Backend.Service.Helper;
+using Backend.Service.Models.Email;
 using Backend.Service.Models.Order;
 using Backend.Service.Models.Product;
 using Backend.Service.Repositories;
@@ -20,23 +21,30 @@ namespace Backend.Service.Services
         private readonly IShippingAddressRepository _addressRepository;
         private readonly IProductRepository _productRepository;
         private readonly IPaymentRepository _paymentRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly EmailService _emailService;
 
         public OrderService(
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             IShippingAddressRepository shippingAddressRepository,
             IProductRepository productRepository,
-            IPaymentRepository paymentRepository)
+            IPaymentRepository paymentRepository,
+            ICategoryRepository categoryRepository,
+            EmailService emailService)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _addressRepository = shippingAddressRepository;
             _productRepository = productRepository;
             _paymentRepository = paymentRepository;
+            _emailService = emailService;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<PagedList<OrderResponseModel>> GetAllAsync(OrderFilterParameter filter)
         {
+            Console.WriteLine($"Ascending: {filter.Ascending}");
             var predicate = PredicateBuilder.New<Order>(o => !o.IsDeleted);
             if (filter.OrderStatus != null)
             {
@@ -52,7 +60,7 @@ namespace Backend.Service.Services
             {
                 predicate = predicate.And(o => o.OrderDate <= filter.To.SetKindUtc());
             }
-            
+
             IEnumerable<Order> query = await _orderRepository.GetAllAsync(
                 filter: predicate,
                 orderBy: que => filter.Ascending == false
@@ -74,6 +82,15 @@ namespace Backend.Service.Services
             if (found == null)
                 throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
             return found;
+        }
+
+        public async Task<OrderResponseModel> GetOrderResponseAsync(int id)
+        {
+            var found = await GetOneAsync(id);
+
+            int totalPayInAdvance = found.Payments.Sum(p => p.PayInAdvance);
+
+            return new OrderResponseModel(found) { TotalPayInAdvance = totalPayInAdvance };
         }
 
         public async Task<OrderResponseModel> ProcessAddToCartUnauth(UnauthOrderRequestModel model)
@@ -124,27 +141,35 @@ namespace Backend.Service.Services
             // Tạo order details
             // Lấy sản phẩm
             IEnumerable<Product> products = await _productRepository.GetAllAsync(
-                p => !p.IsDeleted 
+                p => !p.IsDeleted
                     && model.CartItems.Select(ci => ci.ProductId).Contains(p.Id));
             products = products.ToList(); //cached
 
             // TODO: trừ số lượng sản phẩm trong product
             // Kiểm tra xem tất cả product có cái nào có quantity <= 0 không
-            bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
-            if (isInsufficientQuantity)
-            {
-                throw new BaseException(
-                    errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
-                    statusCode: StatusCodes.Status409Conflict,
-                    httpStatus: HttpStatusCode.Conflict
-                );
-            }
+            //bool isInsufficientQuantity = products.Where(product => product.Quantity <= 0).Any();
+            //if (isInsufficientQuantity)
+            //{
+            //    throw new BaseException(
+            //        errorMessage: BaseError.INSUFFICIENT_QUANTITY.ToString(),
+            //        statusCode: StatusCodes.Status409Conflict,
+            //        httpStatus: HttpStatusCode.Conflict
+            //    );
+            //}
+
+            // Get all category
+            IEnumerable<Category> categories = await _categoryRepository.GetAllAsync();
+
             IEnumerable<OrderDetail> orderDetails = model.CartItems.Select(ci =>
             {
                 var foundProd = products.Where(p => p.Id == ci.ProductId).First();
+                // found category for curent product
+                var foundCate = categories.Where(c => c.Id == foundProd.CategoryId).First();
+                foundProd.Category = foundCate;
                 return new OrderDetail()
                 {
                     ProductId = ci.ProductId.GetValueOrDefault(),
+                    Product = foundProd,
                     Quantity = ci.Quantity.GetValueOrDefault(),
                     Price = ci.Quantity.GetValueOrDefault() * foundProd.Price,
                 };
@@ -169,11 +194,11 @@ namespace Backend.Service.Services
             await _addressRepository.SaveDbChangeAsync(); // Cập nhật hoặc thêm mới địa chỉ ship
             //await _productRepository.SaveDbChangeAsync(); // Cập nhật lại số lượng sản phẩm
 
-            // TODO: Thêm payment vào version sau
+            // TODO: Thêm payment vào version sau - CHECKED
             // Nếu user tồn tại thì gán payment này cho user, không thì gán cho shipping address
             Payment payment = new Payment
             {
-                Amount = (int)newOrder.TotalPrice, // TODO: Sua Amount trong payment thanh int
+                Amount = model.PayInAdvance == 100 ? newOrder.TotalPrice : newOrder.TotalPrice * model.PayInAdvance!.Value / 100,
                 IsSuccess = true,
                 PaymentMethod = model.PaymentMethod,
             };
@@ -185,6 +210,8 @@ namespace Backend.Service.Services
             newOrder.Payments.Add(payment);
             _orderRepository.Update(newOrder);
             await _orderRepository.SaveDbChangeAsync();
+
+            _ = Task.Run(() => SendMailAsync(newOrder));
 
             return new OrderResponseModel(newOrder);
         }
@@ -217,6 +244,9 @@ namespace Backend.Service.Services
 
             //await _orderRepository.SaveDbChangeAsync();
             // TODO: Gửi email sau khi admin chấp nhận đơn hàng
+
+            _ = Task.Run(() => SendMailAsync(order));
+
             return order;
         }
 
@@ -232,6 +262,9 @@ namespace Backend.Service.Services
             order.CancelledReason = model.Reason;
             order.CloseDate = DateTime.UtcNow;
             order.Status = OrderStatus.Cancelled;
+
+            _ = Task.Run(() => SendMailAsync(order));
+
             return order;
         }
 
@@ -246,6 +279,9 @@ namespace Backend.Service.Services
             }
             order.CloseDate = DateTime.UtcNow;
             order.Status = OrderStatus.Finished;
+
+            _ = Task.Run(() => SendMailAsync(order));
+
             return order;
         }
 
@@ -275,16 +311,56 @@ namespace Backend.Service.Services
 
             _orderRepository.Update(found);
             await _orderRepository.SaveDbChangeAsync();
+
             return found;
         }
 
-        internal dynamic GetStatisticAsync()
+        private async Task SendMailAsync(Order order)
         {
-            var query = _orderRepository.GetDbSet().GroupBy(ord => ord.CreatedDate.Date)
-                .Select(g => new { CreatedDate = g.Key, Orders = g.Count() })
-                .OrderBy(g => g.CreatedDate)
-                .ToList();
-            return query;
+            EmailModel mailData = null;
+            switch (order.Status)
+            {
+                case OrderStatus.Accepted:
+                    mailData = new EmailModel(
+                        new List<string> { 
+                            order.ShippingAddress.Email 
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_ACCEPT,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_ACCEPT,
+                        order));
+                    break;
+                case OrderStatus.Finished:
+                    mailData = new EmailModel(
+                        new List<string> {
+                            order.ShippingAddress.Email
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_FINISH,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_FINISH,
+                        order));
+                    break;
+                case OrderStatus.Cancelled:
+                    mailData = new EmailModel(
+                        new List<string> {
+                            order.ShippingAddress.Email
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_CANCEL,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_CANCEL,
+                        order));
+                    break;
+                case OrderStatus.Pending:
+                    mailData = new EmailModel(
+                        new List<string> {
+                            order.ShippingAddress.Email
+                        },
+                        BirdStoreConst.EmailSubject.ORDER_CREATE,
+                        _emailService.GetEmailTemplate(BirdStoreConst.FilePath.EmailTemplate.ORDER_CREATE,
+                        order));
+                    break;
+            }
+            if (mailData != null)
+            {
+                _ = Task.Run(() => _emailService.SendAsync(mailData, new CancellationToken()));
+            }
         }
     }
 }

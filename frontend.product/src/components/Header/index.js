@@ -7,6 +7,7 @@ import "./HeaderLayout.scss";
 import config from "~/config";
 import AppIcons from "~/assets/icons";
 import { useUserCart } from "~/context/UserCartContext";
+import { useUserAuth } from "~/context/UserAuthContext";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
@@ -14,6 +15,8 @@ import { Button } from "antd";
 import api from "~/context/AppApi";
 
 function Header() {
+  const { getUser, logOut } = useUserAuth();
+  const user = getUser();
   const navigate = useNavigate();
 
   const [prodList, setProdList] = useState([]);
@@ -31,8 +34,8 @@ function Header() {
 
       // console.log("RES", response);
       if (response.data) {
-        await setProdList(response.data);
-        console.log("Prod.DATA", prodList);
+        setProdList(response.data);
+        console.log("Prod.DATA", response.data);
       }
     } catch (error) {
       console.log("Get /product/ Error", error);
@@ -98,10 +101,10 @@ function Header() {
                           return prodName && prodName.startsWith(searchTerm);
                         })
                         .slice(0, 10)
-                        .map((p) => (
+                        .map((p, index) => (
                           <div
+                            key={index}
                             className="dropdown-item"
-                            // onClick={() => onSearch(p.name)}
                             onClick={() => {
                               onSearch(p.name);
                               const params = {
@@ -157,18 +160,47 @@ function Header() {
                 {/* <Button onClick={() => onSearch(value)}>Search</Button> */}
               </Nav>
 
-              <div className="d-flex header-link">
+              <>
                 <Link to={config.routes.cart} className="pl-2">
                   <BsCartFill color="#ee3e6a" /> ({cartAmount})
                 </Link>
-                <Link to={config.routes.login} className="px-2">
-                  Đăng nhập
-                </Link>
-                <div className="px-1">|</div>
-                <Link to={config.routes.register} className="px-2">
-                  Đăng ký
-                </Link>
-              </div>
+
+                {user ? (
+                  <div>
+                    <div style={{ textAlign: "end", marginRight: "16px" }}>
+                      ChyStore kính chào
+                    </div>
+                    <div className="drop">
+                      <button>
+                        <img
+                          src={user.avatar}
+                          alt="User avatar"
+                          className="user-avatar"
+                        />
+                        <div style={{ display: "inline-block" }}>
+                          <span style={{ marginLeft: "10px" }}>
+                            {user.fullname}
+                          </span>
+                        </div>
+                      </button>
+                      <div className="drop-content">
+                        <Link to={config.routes.settings}>Cài đặt</Link>
+                        <Link onClick={logOut}>Đăng xuất</Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="d-flex header-link">
+                    <Link to={config.routes.login} className="px-2">
+                      Đăng nhập
+                    </Link>
+                    <div className="px-1">|</div>
+                    <Link to={config.routes.register} className="px-2">
+                      Đăng ký
+                    </Link>
+                  </div>
+                )}
+              </>
             </Navbar.Collapse>
           </Container>
         </Navbar>

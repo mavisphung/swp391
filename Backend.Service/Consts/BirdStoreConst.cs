@@ -21,7 +21,26 @@
         public string GetUTC7TimeZone()
         {
             return _configuration["AppSettings:TimeZoneId"];
-        }        
+        }
+
+        public class EmailSubject
+        {
+            public static string ORDER_ACCEPT = "Đơn hàng của bạn đã được chấp thuận";
+            public static string ORDER_FINISH = "Đơn hàng của bạn đã được hoàn thành";
+            public static string ORDER_CANCEL = "Đơn hàng của bạn đã bị hủy";
+            public static string ORDER_CREATE = "Đơn hàng của bạn đã được khởi tạo";
+        }
+
+        public class FilePath
+        {
+            public class EmailTemplate
+            {
+                public static string ORDER_ACCEPT = "OrderApprove/public/orderApprove";
+                public static string ORDER_FINISH = "OrderFinish/public/orderFinish";
+                public static string ORDER_CANCEL = "OrderCancel/public/orderCancel";
+                public static string ORDER_CREATE = "OrderCreate/public/orderCreate";
+            }
+        }
     }
 }
 

@@ -17,9 +17,9 @@ namespace Backend.Service.Examples
                     Fullname = "Nguyễn Phùng Phong Ba",
                     PhoneNumber = "0349797319",
                     Address = "216 Hồng Bàng",
-                    Ward = "Phường 12",
-                    District = "Quận 5",
-                    Province = "Tp. Hồ Chí Minh"
+                    Ward = "22333",
+                    District = "568",
+                    Province = "56"
                 },
                 Note = "Có hay không đều được",
                 PaymentMethod = PaymentMethod.Vnpay,

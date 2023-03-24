@@ -123,9 +123,15 @@ const OrdersList = () => {
       key: 'customer',
     },
     {
+      title: 'Điện thoại',
+      dataIndex: ['customerInfo', 'phoneNumber'],
+      key: 'phoneNumber',
+    },
+    {
       title: 'Ngày đặt hàng',
       dataIndex: 'orderDate',
       key: 'orderDate',
+      align: 'center',
       render: (text, record) => {
         return moment(record.orderDate, dateConvert).format(
           defaultDatePickerRange,
@@ -136,6 +142,7 @@ const OrdersList = () => {
       title: 'Ngày dự kiến giao',
       dataIndex: 'estimatedReceiveDate',
       key: 'estimatedReceiveDate',
+      align: 'center',
       render: (text, record) => {
         if (record.estimatedReceiveDate) {
           if (record.status === cancelled) {
@@ -154,6 +161,8 @@ const OrdersList = () => {
       title: 'Tổng tiền',
       dataIndex: 'totalPrice',
       key: 'totalPrice',
+      align: 'right',
+      width: 100,
       render: (text, record) => {
         let price = new Intl.NumberFormat('vi-VN', {
           style: 'currency',
@@ -278,6 +287,7 @@ const OrdersList = () => {
                 current: pageIndex,
                 pageSize: pageSize,
                 total: totalCount,
+                showSizeChanger: false,
                 position: ['none', 'bottomCenter'],
                 onChange: (page) => {
                   setPageIndex(page);

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import "../ProductLayout.scss";
 import config from "~/config";
-import { formatPrice } from "~/common/Helper";
+import { formatDate, formatPrice } from "~/common/Helper";
 import { useUserCart } from "~/context/UserCartContext";
 
 function ProductOrderPane({ pro }) {
@@ -21,6 +21,9 @@ function ProductOrderPane({ pro }) {
     navigate(config.routes.cart);
   };
 
+  const saleAmount = pro.categoryType / 10 + 1.1;
+  const fakePrice = pro.price * saleAmount;
+
   return (
     <div id="order-pane">
       <h4 style={{ fontWeight: 400 }}>{pro.name}</h4>
@@ -34,7 +37,7 @@ function ProductOrderPane({ pro }) {
       />
       <span>({pro.rating})</span> */}
       <span className="pro-des-label">Ngày đăng: </span>
-      <span>{pro.createdDate.substring(0, 10)}</span>
+      <span>{formatDate(pro.createdDate)}</span>
       <br />
       <span className="pro-des-label">Mô tả: </span>
       <div>
@@ -47,6 +50,7 @@ function ProductOrderPane({ pro }) {
       <br />
       <span className="pro-des-label">Giá: </span>
       <span className="price">{formatPrice(pro.price)} đ</span>
+      <span className="fake-price">{formatPrice(fakePrice)} đ</span>
       <div className="pro-order-ctr">
         <Button className="btn-buy" onClick={handleBuyClick}>
           Mua ngay

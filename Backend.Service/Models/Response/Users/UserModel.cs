@@ -9,7 +9,7 @@ namespace Backend.Service.Models.Response.Users
         public string Phone { get; set; } = String.Empty;
         public string Avatar { get; set; } = String.Empty;
         public bool Gender { get; set; } = false;
-
+        public int RoleId { get; set; }
         //public UserModel() { }
 
         public UserModel(Entities.User user) : base(user)
@@ -19,6 +19,7 @@ namespace Backend.Service.Models.Response.Users
             Phone = user.Phone;
             Avatar = user.Avatar ?? "";
             Gender = user.Gender ?? false;
+            RoleId = user.RoleId;
         }
     }
 }

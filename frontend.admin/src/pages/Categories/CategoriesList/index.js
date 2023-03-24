@@ -123,6 +123,7 @@ const CategoriesList = () => {
       title: 'Ngày cập nhật',
       dataIndex: 'updatedDate',
       key: 'updatedDate',
+      align: 'center',
       render: (text, record) => {
         return moment(record.updatedDate, dateConvert)
           .add(7, 'hours')
@@ -208,6 +209,7 @@ const CategoriesList = () => {
             pagination={{
               pageSize: pageSize,
               total: totalCount,
+              showSizeChanger: false,
               position: ['none', 'bottomCenter'],
               onChange: (page) => {
                 setPageIndex(page);
