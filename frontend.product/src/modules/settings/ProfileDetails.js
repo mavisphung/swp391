@@ -25,7 +25,7 @@ function ProfileDetails() {
       setEmail(user.email);
       setAvatarURL(user.avatar);
     }
-  }, []);
+  }, [user]);
 
   const requiredMark = <span style={{ color: "red" }}>*</span>;
 
@@ -50,17 +50,15 @@ function ProfileDetails() {
 
         switch (snapshot.state) {
           case "paused":
-            console.log("Upload is pause");
             break;
           case "running":
-            console.log("Upload is running");
             break;
           default:
             break;
         }
       },
       (error) => {
-        console.log(error);
+        console.log("Handle upload image", error);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {

@@ -7,7 +7,7 @@ import {
 import "./OrderLayout.scss";
 
 function Order({ order }) {
-  console.log("WHYYYYY", order);
+  console.log("ORDER DETAILS", order);
   const orderDetails = order.orderDetails;
   const payments = order.payments;
   const customerInfo = order.customerInfo;

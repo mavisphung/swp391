@@ -14,6 +14,7 @@ import Settings from "~/modules/settings";
 import Protected from "~/components/ProtectedComponent";
 import PaymentInfo from "~/modules/Payment/PaymentInfo";
 import OrderInform from "~/modules/Payment/OrderInform";
+import OrderDetail from "~/modules/Order/OrderDetail";
 
 const CustomRoutes = () => {
   return (
@@ -64,6 +65,14 @@ const CustomRoutes = () => {
         element={
           <DefaultLayout>
             <OrderInform />
+          </DefaultLayout>
+        }
+      />
+      <Route
+        path={config.routes.orderDetail}
+        element={
+          <DefaultLayout>
+            <OrderDetail />
           </DefaultLayout>
         }
       />
