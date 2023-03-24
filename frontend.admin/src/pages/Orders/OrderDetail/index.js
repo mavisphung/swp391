@@ -358,7 +358,6 @@ const OrderDetail = () => {
           </div>
         );
       },
-      width: 400,
     },
     {
       title: 'Loại sản phẩm',
@@ -624,16 +623,22 @@ const OrderDetail = () => {
             <List
               grid={{
                 gutter: 16,
-                column: 3,
+                columns: 3,
+              }}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-around',
               }}
               dataSource={dataList}
               renderItem={(item) => (
-                <List.Item>
+                <List.Item style={{ width: '100%' }}>
                   <Card
                     title={item.title}
                     style={{
                       textAlign: 'left',
                       height: 350,
+                      width: '27vw',
+                      minWidth: 400,
                     }}
                     className={
                       item.title === 'Thanh toán'
@@ -941,8 +946,9 @@ const OrderDetail = () => {
                     ).toString()}
                     isInvalid={
                       paidAmount &&
-                      parseInt(paidAmount) >
-                        customerOrder.totalPrice - handleSumPaidAmount()
+                      (parseInt(paidAmount) >
+                        customerOrder.totalPrice - handleSumPaidAmount() ||
+                        parseInt(paidAmount) <= 0)
                     }
                     onChange={(e) => {
                       setPaidAmount(e.target.value);
