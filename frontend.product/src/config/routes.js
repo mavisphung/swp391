@@ -12,11 +12,13 @@ const routes = {
   birdDetails: "/bird",
   cart: "/cart",
   confirmLogin: "/cart/confirm-login",
-  settings: "/settings",
-  profile: "/settings/profile",
-  passwordManagement: "/settings/change-password",
+  settings: "/user",
+  profile: "/user/profile",
+  passwordManagement: "/user/change-password",
   paymentInfo: "/payment-info",
   orderNotification: "/order-notification",
+  orderList: "/user/order-list",
+  orderDetail: "/user/order-detail",
 };
 
 const dashboardRoutes = {
@@ -33,9 +35,10 @@ const cartRoutes = {
 };
 
 const settingsRoutes = {
-  settings: "/settings/*",
+  settings: "/user/*",
   profile: "/profile",
   passwordManagement: "/change-password",
+  orderList: "/order-list",
 };
 
 export { routes, dashboardRoutes, cartRoutes, settingsRoutes };

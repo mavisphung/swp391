@@ -4,6 +4,7 @@ import config from "~/config";
 import ProfileDetails from "./ProfileDetails";
 import DefaultLayout2 from "~/components/DefaultLayout/DefaultLayout2";
 import CustomWrapper from "~/components/CustomWrapper";
+import OrderHistory from "~/modules/Order/OrderHistory";
 
 function Settings() {
   return (
@@ -18,6 +19,14 @@ function Settings() {
           element={
             <CustomWrapper>
               <ProfileDetails />
+            </CustomWrapper>
+          }
+        />
+        <Route
+          path={config.settingsRoutes.orderList}
+          element={
+            <CustomWrapper>
+              <OrderHistory />
             </CustomWrapper>
           }
         />

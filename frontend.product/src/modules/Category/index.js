@@ -61,8 +61,8 @@ function CategoryPage() {
           PageSize: 10,
           Status: inStock,
           FromPrice: minValue,
-          ToPrice: 300000000,
-          // ToPrice: maxValue,
+          // ToPrice: 300000000,
+          ToPrice: maxValue,
           FromDate: minDate,
           ToDate: maxDate,
           Search: queryKey,
@@ -174,6 +174,7 @@ function CategoryPage() {
                   Cao nhất
                 </Checkbox>
               </div>
+              <br />
               <div style={{ marginTop: "9px" }}>
                 <div className="d-flex justify-content-between">
                   <span>Từ</span>
@@ -182,8 +183,8 @@ function CategoryPage() {
                 <Slider
                   range
                   min={10000}
-                  max={40000000}
-                  step={100000}
+                  max={310000000}
+                  step={1000000}
                   defaultValue={[10000, 20010000]}
                   onChange={([val1, val2]) => {
                     setMinValue(val1);

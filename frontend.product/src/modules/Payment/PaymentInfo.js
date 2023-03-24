@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import config from "~/config";
 import CustomSpinner from "~/components/CustomSpinner";
 import { getLocalPaymentInfo } from "~/context/LocalPaymentInfo";
 import { createOrder } from "~/data/OrderRepository";
 import { useUserCart } from "~/context/UserCartContext";
+import { paymentMethodType } from "~/models/CategoryType";
 
 function PaymentInfo() {
   const navigate = useNavigate();
   const { dispatch, cart } = useUserCart();
-
-  const [isSuccess, setIsSucess] = useState();
-  const [orderData, setOrderData] = useState();
 
   const [searchParams] = useSearchParams();
   const vnp_TmnCode = searchParams.get("vnp_TmnCode");
@@ -34,19 +32,25 @@ function PaymentInfo() {
   useEffect(() => {
     if (shouldLog.current) {
       shouldLog.current = false;
+
       const postOrder = async () => {
         const paymentInfo = getLocalPaymentInfo();
+
+        let payInAdvance = 100;
+        if (paymentInfo.paymentMethod === paymentMethodType.payInAdvance50) {
+          payInAdvance = 50;
+        }
+
         const data = await createOrder({
           paymentMethod: paymentInfo.paymentMethod,
           note: paymentInfo.note,
           customer: paymentInfo.customer,
           cart,
           dispatch,
+          payInAdvance,
         });
         if (data) {
           console.log("ORDER SUCCESS INFORMATION", data);
-          // setOrderData(data);
-          // setIsSucess(true);
           navigate(config.routes.orderNotification, {
             state: {
               order: data,
@@ -66,21 +70,10 @@ function PaymentInfo() {
       };
 
       if (vnp_TransactionStatus === "00" && vnp_ResponseCode === "00") {
-        if (!orderData) {
-          console.log("ORDER DATAAAAAAAAAAAAA", orderData);
-          postOrder();
-        }
+        postOrder();
       }
     }
   }, []);
-
-  // if (isSuccess && orderData)
-  //   return (
-  //     <Navigate
-  //       to={config.routes.orderNotification}
-  //       state={}
-  //     />
-  //   );
 
   return <CustomSpinner text="Đang xử lý giao dịch và đặt hàng.." />;
 }
