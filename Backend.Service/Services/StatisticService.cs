@@ -114,8 +114,20 @@ namespace Backend.Service.Services
         public async Task<dynamic> GetProductCountByCities()
         {
             var data = await _db.Orders.GroupBy(ord => ord.ShippingAddress.Province)
-                .Select(group => new { province = group.Key, count = group.Count() })
+                .Select(group => new { province = group.Key, count = group.Count() }) // { province, count }
                 .ToListAsync();
+            int totalProductCount = data.Sum(item => item.count);
+            var other = new List<(string? province, int count)>().Select(o => new { o.province, o.count }).ToList();
+            data.ToList().ForEach(item =>
+            {
+                var rate = item.count / (double)totalProductCount * 100;
+                if (rate < 5)
+                {
+                    other.Add(item);
+                    data.Remove(item);
+                }
+            });
+            data.Add(new { province = "OTHER", count = other.Sum(item => item.count) });
             return data;
         }
 
