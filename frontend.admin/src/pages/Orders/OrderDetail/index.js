@@ -231,6 +231,13 @@ const OrderDetail = () => {
             {', '}
             {provinceObj?.name}
           </p>
+          {customerOrder.note !== '' ? (
+            <p>
+              <strong>Ghi chú:</strong> {customerOrder.note}
+            </p>
+          ) : (
+            <></>
+          )}
         </>
       ),
     },
@@ -363,6 +370,7 @@ const OrderDetail = () => {
       title: 'Loại sản phẩm',
       dataIndex: ['product', 'categoryName'],
       key: ['product', 'categoryName'],
+      responsive: ['lg'],
     },
     {
       title: 'Đơn giá',
@@ -940,6 +948,7 @@ const OrderDetail = () => {
                     placeholder="Số tiền"
                     style={{ marginTop: 20 }}
                     value={paidAmount}
+                    step="1000"
                     min="0"
                     max={(
                       customerOrder.totalPrice - handleSumPaidAmount()

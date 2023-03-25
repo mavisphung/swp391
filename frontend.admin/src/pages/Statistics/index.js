@@ -87,7 +87,7 @@ function Statistics() {
             />
           </div>
           <Row gutter={8}>
-            <Col span={6}>
+            <Col lg={6} md={24} style={{ width: '100%' }}>
               <DashboardCard
                 icon={
                   <ShoppingCartOutlined
@@ -104,7 +104,7 @@ function Statistics() {
                 value={brief?.orders}
               />
             </Col>
-            <Col span={6}>
+            <Col lg={6} md={24} style={{ width: '100%' }}>
               <DashboardCard
                 icon={
                   <ShoppingOutlined
@@ -121,7 +121,7 @@ function Statistics() {
                 value={brief?.products}
               />
             </Col>
-            <Col span={6}>
+            <Col lg={6} md={24} style={{ width: '100%' }}>
               <DashboardCard
                 icon={
                   <UserOutlined
@@ -138,7 +138,7 @@ function Statistics() {
                 value={brief?.customers}
               />
             </Col>
-            <Col span={6}>
+            <Col lg={6} md={24} style={{ width: '100%' }}>
               <DashboardCard
                 icon={
                   <DollarCircleOutlined
@@ -161,18 +161,18 @@ function Statistics() {
           </Row>
           <br />
           <Row>
-            <Col span={12} style={{ paddingRight: 10 }}>
+            <Col lg={12} md={24} style={{ paddingRight: 10, marginTop: 30 }}>
               <LineChart />
             </Col>
-            <Col span={12} style={{ paddingLeft: 10 }}>
+            <Col lg={12} md={24} style={{ paddingLeft: 10, marginTop: 30 }}>
               <PieChart />
             </Col>
           </Row>
-          <Row style={{ marginTop: 30 }}>
-            <Col span={8}>
+          <Row>
+            <Col lg={8} md={24} style={{ marginTop: 30 }}>
               <RecentOrders />
             </Col>
-            <Col span={16} style={{ paddingLeft: 30 }}>
+            <Col lg={16} md={24} style={{ paddingLeft: 30, marginTop: 30 }}>
               <BarChart start={startPeriod} end={endPeriod} />
             </Col>
           </Row>
@@ -254,7 +254,7 @@ function RecentOrders() {
         rowKey="id"
         dataSource={orders}
         loading={loading}
-        pagination={false}
+        pagination={{ pageSize: 5 }}
       ></Table>
     </>
   );

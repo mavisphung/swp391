@@ -17,13 +17,13 @@ function LineChart() {
     data: profit.map((p) => p),
     padding: 'auto',
     xField: 'Date',
-    yField: 'scales',
+    yField: 'profit',
     xAxis: {
-      tickCount: 5,
+      tickCount: 10,
     },
     slider: {
       start: 0,
-      end: 0.5,
+      end: 1,
     },
   };
 
@@ -36,7 +36,7 @@ function LineChart() {
           Date: moment(profit.createdDate, dateConvert).format(
             defaultDatePickerRange,
           ),
-          scales: profit.total,
+          profit: profit.total,
         })),
       );
       setLoading(false);
