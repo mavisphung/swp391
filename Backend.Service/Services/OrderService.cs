@@ -81,6 +81,7 @@ namespace Backend.Service.Services
                 "ShippingAddress,OrderDetails,OrderDetails.Product,OrderDetails.Product.Category,Payments");
             if (found == null)
                 throw new NotFoundException(BaseError.ORDER_NOT_FOUND.ToString());
+            found.Payments = found.Payments.OrderBy(key => key.CreatedDate).ToList();
             return found;
         }
 
@@ -201,6 +202,7 @@ namespace Backend.Service.Services
                 Amount = model.PayInAdvance == 100 ? newOrder.TotalPrice : newOrder.TotalPrice * model.PayInAdvance!.Value / 100,
                 IsSuccess = true,
                 PaymentMethod = model.PaymentMethod,
+                PayInAdvance = model.PayInAdvance.Value,
             };
 
             if (newOrder.Payments == null)

@@ -114,20 +114,32 @@ namespace Backend.Service.Services
         public async Task<dynamic> GetProductCountByCities()
         {
             var data = await _db.Orders.GroupBy(ord => ord.ShippingAddress.Province)
-                .Select(group => new { province = group.Key, count = group.Count() })
+                .Select(group => new { province = group.Key, count = group.Count() }) // { province, count }
                 .ToListAsync();
+            int totalProductCount = data.Sum(item => item.count);
+            var other = new List<(string? province, int count)>().Select(o => new { o.province, o.count }).ToList();
+            data.ToList().ForEach(item =>
+            {
+                var rate = item.count / (double)totalProductCount * 100;
+                if (rate < 5)
+                {
+                    other.Add(item);
+                    data.Remove(item);
+                }
+            });
+            data.Add(new { province = "OTHER", count = other.Sum(item => item.count) });
             return data;
         }
 
         public async Task<dynamic> GetProfitsByDate(StatisticFilterParameter filter)
         {
-            var predicate = PredicateBuilder.New<Order>();
+            var predicate = PredicateBuilder.New<Order>(ord => ord.Status == OrderStatus.Finished);
             if (filter.From.HasValue)
             {
                 predicate = predicate.And(ord => ord.CreatedDate >= filter.From.Value.SetKindUtc());
             } else
             {
-                predicate = predicate.And(ord => ord.CreatedDate >= DateTime.UtcNow);
+                predicate = predicate.And(ord => ord.CreatedDate >= DateTime.UtcNow.AddDays(-90));
             }
 
             if (filter.To.HasValue)
@@ -135,10 +147,11 @@ namespace Backend.Service.Services
                 predicate = predicate.And(ord => ord.CreatedDate <= filter.To.Value.SetKindUtc());
             } else
             {
-                predicate = predicate.And(ord => ord.CreatedDate <= DateTime.UtcNow.AddDays(30));
+                predicate = predicate.And(ord => ord.CreatedDate <= DateTime.UtcNow);
             }
 
-            var query = _db.Orders.GroupBy(ord => ord.CreatedDate.Date)
+            var query = _db.Orders.Where(predicate)
+                .GroupBy(ord => ord.CreatedDate.Date)
                 .Select(g => new { CreatedDate = g.Key, total = g.Where(el => el.Status == OrderStatus.Finished).Sum(sel => sel.TotalPrice) })
                 .OrderBy(g => g.CreatedDate);
             var pagedList = PagedList<dynamic>.ToPagedList(query, filter.PageNumber, filter.PageSize);

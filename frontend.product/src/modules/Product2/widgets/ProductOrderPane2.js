@@ -48,7 +48,6 @@ function ProductOrderPane2({ bird }) {
       <br />
       <span className="pro2-des-label">Mô tả: </span>
       <div>
-        {/* <p>{bird.shortDescription}</p> */}
         <p>{bird.description}</p>
       </div>
       <br />
