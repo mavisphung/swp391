@@ -8,6 +8,16 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
   const { dispatch } = useUserCart();
   const [newAmount, setAmount] = useState(amount);
   const total = price * newAmount;
+
+  const getDescription = () => {
+    const arr = des.split(" ");
+    if (arr.length > 29) {
+      const newDes = arr.slice(0, 29).join(" ");
+      return newDes + "...";
+    }
+    return arr.join(" ");
+  };
+
   return (
     <div className="row cart-row">
       <div className="d-none d-lg-inline col-lg-3">
@@ -17,7 +27,7 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
         <h6>{name}</h6>
         <div className="col-9">
           <div className="row">
-            <span className="col-7">Mô tả: {des}</span>
+            <span className="col-7">Mô tả: {getDescription()}</span>
             <span className="col-5" style={{ textAlign: "right" }}>
               Giá sản phẩm: {formatPrice(price)}đ
             </span>
