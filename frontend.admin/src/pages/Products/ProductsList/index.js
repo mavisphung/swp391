@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Space, Table } from 'antd';
+import { Col, Row, Space, Table } from 'antd';
 import { Button, Image, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEye } from '@fortawesome/free-solid-svg-icons';
 
-import birdData from './birdData.json';
 import { MSG07, MSG34 } from '~/system/Messages/messages';
 import CustomTooltip from '~/ui/CustomTooltip';
 import CustomModal from '~/components/Modal';
@@ -267,53 +266,63 @@ const ProductsList = () => {
               paddingBottom: 15,
             }}
           >
-            <Space>
-              <Form.Control
-                placeholder="Mã sản phẩm"
-                onChange={handleChangeProductCode}
-                value={searchProductCode}
-                type="text"
-              />
-              <Form.Control
-                placeholder="Tên sản phẩm"
-                onChange={handleChangeProductName}
-                value={searchProductName}
-                type="text"
-              />
-              <Form.Select
-                value={searchProductType}
-                onChange={handleChangeProductType}
-                aria-label="Chọn phân loại"
-                required
-              >
-                <option value="">Chọn phân loại</option>
-                {categoriesTypesList.map((type, index) => (
-                  <option key={index} value={type.id}>
-                    {type.name}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Select
-                value={searchProductStatus}
-                onChange={handleChangeProductStatus}
-                aria-label="Chọn trạng thái"
-                required
-              >
-                <option value="">Chọn trạng thái</option>
-                {productStatus.map((status, index) => (
-                  <option key={index} value={status.id}>
-                    {status.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Space>
+            <Row gutter={8}>
+              <Col lg={6} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Control
+                  placeholder="Mã sản phẩm"
+                  onChange={handleChangeProductCode}
+                  value={searchProductCode}
+                  type="text"
+                />
+              </Col>
+              <Col lg={6} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Control
+                  placeholder="Tên sản phẩm"
+                  onChange={handleChangeProductName}
+                  value={searchProductName}
+                  type="text"
+                />
+              </Col>
+              <Col lg={6} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Select
+                  value={searchProductType}
+                  onChange={handleChangeProductType}
+                  aria-label="Chọn phân loại"
+                  required
+                >
+                  <option value="">Chọn phân loại</option>
+                  {categoriesTypesList.map((type, index) => (
+                    <option key={index} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+              <Col lg={6} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Select
+                  value={searchProductStatus}
+                  onChange={handleChangeProductStatus}
+                  aria-label="Chọn trạng thái"
+                  required
+                >
+                  <option value="">Chọn trạng thái</option>
+                  {productStatus.map((status, index) => (
+                    <option key={index} value={status.id}>
+                      {status.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+            </Row>
           </div>
 
           <div className="my-3">
             <Table
+              style={{ maxWidth: '100%' }}
               rowKey="productCode"
               locale={{ emptyText: MSG07 }}
               columns={columns}
+              scroll={{ x: true }}
               dataSource={products}
               pagination={{
                 defaultCurrent: 1,

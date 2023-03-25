@@ -481,6 +481,7 @@ const OrderDetail = () => {
       // call api approve
       await updateOrder(orderId, body);
       handleClose();
+      setLoading(true);
       getOrderDataByOrderId(orderId);
     } catch (error) {
       console.log(error);
@@ -540,6 +541,7 @@ const OrderDetail = () => {
       // call api payment
       await addPaymentOrder(orderId, body);
       handleClosePayment();
+      setLoading(true);
       getOrderDataByOrderId(orderId);
     } catch (error) {
       console.log(error);
@@ -581,6 +583,7 @@ const OrderDetail = () => {
       // call api finish
       await updateOrder(orderId, body);
       handleCloseFinish();
+      setLoading(true);
       getOrderDataByOrderId(orderId);
     } catch (e) {
       console.log(e);
@@ -659,6 +662,7 @@ const OrderDetail = () => {
                 </List.Item>
               )}
             />
+
             <Card
               style={{
                 marginBottom: '20px',
@@ -666,10 +670,12 @@ const OrderDetail = () => {
               className="card-content"
             >
               <Table
+                style={{ maxWidth: '100%' }}
                 className="mb-3"
                 rowKey={(record) => record?.id}
                 loading={loading}
                 columns={columns}
+                scroll={{ x: true }}
                 pagination={false}
                 dataSource={orderDetails}
                 rowClassName={(record, index) =>

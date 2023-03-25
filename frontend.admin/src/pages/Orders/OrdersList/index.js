@@ -278,9 +278,11 @@ const OrdersList = () => {
           </Row>
           <div className="my-3">
             <Table
+              style={{ maxWidth: '100%' }}
               rowKey="id"
               locale={{ emptyText: MSG07 }}
               columns={columns}
+              scroll={{ x: true }}
               dataSource={orders}
               pagination={{
                 defaultCurrent: 1,
