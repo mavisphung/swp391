@@ -61,7 +61,7 @@ builder.Services.AddSwaggerGen(options =>
         TermsOfService = new Uri("https://example.com/terms"),
         Contact = new OpenApiContact
         {
-            Name = "Huy Phùng",
+            Name = "Huy Phï¿½ng",
             Url = new Uri("https://example.com/contact")
         },
         License = new OpenApiLicense
@@ -139,9 +139,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 
 //--------------------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton(FirebaseApp.Create());
-builder.Services.AddSingleton(new FirebaseAuthProvider(new FirebaseConfig("AIzaSyAqKQm1-vM6I2CTbLajrgmnf4DwUt8-bXo")));
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("AppSettings:MailSettings"));
 
 // Add repositories
 builder.Services.AddTransient<IUserRepository, UserRepository>();

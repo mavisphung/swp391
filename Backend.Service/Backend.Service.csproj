@@ -41,9 +41,4 @@
 	  <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-    <Folder Include="Models\Email\" />
-  </ItemGroup>
-
 </Project>
