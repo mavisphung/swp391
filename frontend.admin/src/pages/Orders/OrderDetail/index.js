@@ -231,6 +231,13 @@ const OrderDetail = () => {
             {', '}
             {provinceObj?.name}
           </p>
+          {customerOrder.note !== '' ? (
+            <p>
+              <strong>Ghi chú:</strong> {customerOrder.note}
+            </p>
+          ) : (
+            <></>
+          )}
         </>
       ),
     },
@@ -358,12 +365,12 @@ const OrderDetail = () => {
           </div>
         );
       },
-      width: 400,
     },
     {
       title: 'Loại sản phẩm',
       dataIndex: ['product', 'categoryName'],
       key: ['product', 'categoryName'],
+      responsive: ['lg'],
     },
     {
       title: 'Đơn giá',
@@ -474,6 +481,7 @@ const OrderDetail = () => {
       // call api approve
       await updateOrder(orderId, body);
       handleClose();
+      setLoading(true);
       getOrderDataByOrderId(orderId);
     } catch (error) {
       console.log(error);
@@ -533,6 +541,7 @@ const OrderDetail = () => {
       // call api payment
       await addPaymentOrder(orderId, body);
       handleClosePayment();
+      setLoading(true);
       getOrderDataByOrderId(orderId);
     } catch (error) {
       console.log(error);
@@ -574,6 +583,7 @@ const OrderDetail = () => {
       // call api finish
       await updateOrder(orderId, body);
       handleCloseFinish();
+      setLoading(true);
       getOrderDataByOrderId(orderId);
     } catch (e) {
       console.log(e);
@@ -624,16 +634,22 @@ const OrderDetail = () => {
             <List
               grid={{
                 gutter: 16,
-                column: 3,
+                columns: 3,
+              }}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-around',
               }}
               dataSource={dataList}
               renderItem={(item) => (
-                <List.Item>
+                <List.Item style={{ width: '100%' }}>
                   <Card
                     title={item.title}
                     style={{
                       textAlign: 'left',
                       height: 350,
+                      width: '27vw',
+                      minWidth: 400,
                     }}
                     className={
                       item.title === 'Thanh toán'
@@ -646,6 +662,7 @@ const OrderDetail = () => {
                 </List.Item>
               )}
             />
+
             <Card
               style={{
                 marginBottom: '20px',
@@ -653,10 +670,12 @@ const OrderDetail = () => {
               className="card-content"
             >
               <Table
+                style={{ maxWidth: '100%' }}
                 className="mb-3"
                 rowKey={(record) => record?.id}
                 loading={loading}
                 columns={columns}
+                scroll={{ x: true }}
                 pagination={false}
                 dataSource={orderDetails}
                 rowClassName={(record, index) =>
@@ -935,14 +954,16 @@ const OrderDetail = () => {
                     placeholder="Số tiền"
                     style={{ marginTop: 20 }}
                     value={paidAmount}
+                    step="1000"
                     min="0"
                     max={(
                       customerOrder.totalPrice - handleSumPaidAmount()
                     ).toString()}
                     isInvalid={
                       paidAmount &&
-                      parseInt(paidAmount) >
-                        customerOrder.totalPrice - handleSumPaidAmount()
+                      (parseInt(paidAmount) >
+                        customerOrder.totalPrice - handleSumPaidAmount() ||
+                        parseInt(paidAmount) <= 0)
                     }
                     onChange={(e) => {
                       setPaidAmount(e.target.value);

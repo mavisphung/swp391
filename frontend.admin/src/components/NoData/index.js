@@ -8,6 +8,7 @@ function NoData() {
       <div
         style={{
           width: '50%',
+          minWidth: 300,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

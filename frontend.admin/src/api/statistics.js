@@ -42,7 +42,7 @@ export const getCitiesRecordsData = async () => {
 
 // Get all orders records
 export const getOrdersRecordsData = async (fromDate, toDate) => {
-  let url = `/${statURL}/${orders}`;
+  let url = `/${statURL}/${orders}?PageSize=20`;
   try {
     // Create url
     if (
@@ -51,7 +51,7 @@ export const getOrdersRecordsData = async (fromDate, toDate) => {
       fromDate !== 'Invalid date' &&
       toDate !== 'Invalid date'
     ) {
-      url = `${url}?From=${fromDate}&To=${toDate}`;
+      url = `${url}&From=${fromDate}&To=${toDate}`;
     }
 
     // Call api
@@ -72,7 +72,7 @@ export const getOrdersRecordsData = async (fromDate, toDate) => {
 // Get store profit records
 export const getProfitRecordsData = async () => {
   try {
-    const response = await api.get(`/${statURL}/${profit}`);
+    const response = await api.get(`/${statURL}/${profit}?PageSize=100`);
     if (response.status !== 200) {
       throw new Error('Store profit records has the problem');
     }

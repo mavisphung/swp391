@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { Alert, Image, Space, Table } from 'antd';
 import CustomSpinner from '~/ui/CustomSpinner';
 import { MSG07, MSG47, MSG48 } from '~/system/Messages/messages';
@@ -7,7 +6,6 @@ import CustomTooltip from '~/ui/CustomTooltip';
 import { Button, Col, Form, ProgressBar, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { viewBannerDetail } from '~/system/Constants/LinkURL';
 import moment from 'moment';
 import {
   dateTimeConvert,
@@ -20,8 +18,6 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '~/firebase';
 
 const BannersList = () => {
-  const { pathname } = useLocation();
-
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [banners, setBanners] = useState([]);
@@ -299,9 +295,11 @@ const BannersList = () => {
 
           <div className="my-3">
             <Table
+              style={{ maxWidth: '100%' }}
               rowKey="id"
               locale={{ emptyText: MSG07 }}
               columns={columns}
+              scroll={{ x: true }}
               dataSource={banners}
               pagination={{
                 defaultCurrent: 1,

@@ -118,6 +118,7 @@ const CategoriesList = () => {
         let obj = categoriesTypesList.find((c) => c.id === record.categoryType);
         return obj.name;
       },
+      responsive: ['lg'],
     },
     {
       title: 'Ngày cập nhật',
@@ -202,9 +203,11 @@ const CategoriesList = () => {
           </div>
 
           <Table
+            style={{ maxWidth: '100%' }}
             locale={{ emptyText: MSG07 }}
             rowKey="id"
             columns={columns}
+            scroll={{ x: true }}
             dataSource={categories}
             pagination={{
               pageSize: pageSize,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Image, Space, Table } from 'antd';
+import { Col, Image, Row, Space, Table } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -261,52 +261,54 @@ function ViewAccountsList() {
               paddingBottom: 15,
             }}
           >
-            <Space>
-              <Form.Control
-                placeholder="Tìm email"
-                onChange={handleChangeAccountEmail}
-                value={searchAccountEmail}
-                type="text"
-              />
-              {/* <Form.Control
-              placeholder="Tìm tên"
-              onChange={handleChangeAccountEmail}
-              value={searchAccountEmail}
-              type="text"
-            /> */}
-              <Form.Select
-                value={searchAccountRole}
-                onChange={handleChangeAccountRole}
-                aria-label="Chọn vai trò"
-                required
-              >
-                <option value="">Chọn vai trò</option>
-                {accountRoles.map((role, index) => (
-                  <option key={index} value={role.id}>
-                    {role.name}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Select
-                value={searchAccountStatus}
-                onChange={handleChangeAccountStatus}
-                aria-label="Chọn trạng thái"
-                required
-              >
-                <option value="">Chọn trạng thái</option>
-                {accountStatus.map((status, index) => (
-                  <option key={index} value={status.value}>
-                    {status.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Space>
+            <Row gutter={8}>
+              <Col lg={8} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Control
+                  placeholder="Tìm email"
+                  onChange={handleChangeAccountEmail}
+                  value={searchAccountEmail}
+                  type="text"
+                />
+              </Col>
+              <Col lg={8} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Select
+                  value={searchAccountRole}
+                  onChange={handleChangeAccountRole}
+                  aria-label="Chọn vai trò"
+                  required
+                >
+                  <option value="">Chọn vai trò</option>
+                  {accountRoles.map((role, index) => (
+                    <option key={index} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+              <Col lg={8} style={{ width: '100%', marginTop: 10 }}>
+                <Form.Select
+                  value={searchAccountStatus}
+                  onChange={handleChangeAccountStatus}
+                  aria-label="Chọn trạng thái"
+                  required
+                >
+                  <option value="">Chọn trạng thái</option>
+                  {accountStatus.map((status, index) => (
+                    <option key={index} value={status.value}>
+                      {status.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
+            </Row>
           </div>
 
           <Table
+            style={{ maxWidth: '100%' }}
             locale={{ emptyText: MSG07 }}
             rowKey="id"
             columns={columns}
+            scroll={{ x: true }}
             dataSource={accounts}
             pagination={{
               pageSize: pageSize,
