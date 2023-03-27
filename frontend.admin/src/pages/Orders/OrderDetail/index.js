@@ -535,7 +535,9 @@ const OrderDetail = () => {
         amount: parseInt(paidAmount),
         paymentMethod: parseInt(selectedPayment),
         orderId: parseInt(orderId),
-        payInAdvance: (parseInt(paidAmount) / customerOrder.totalPrice) * 100,
+        payInAdvance: Math.round(
+          (parseInt(paidAmount) / customerOrder.totalPrice) * 100,
+        ),
       };
       console.log('Payment Body: ', body);
       // call api payment
@@ -549,8 +551,7 @@ const OrderDetail = () => {
   };
 
   const handleAddPaymentToOrder = (orderId) => {
-    console.log(typeof paidAmount);
-    if (selectedPayment === '' || paidAmount === '-1') {
+    if (selectedPayment === '' || paidAmount === '') {
       setErrorPayment(true);
       return;
     } else if (selectedPayment) {
