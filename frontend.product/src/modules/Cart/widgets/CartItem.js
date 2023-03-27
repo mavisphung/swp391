@@ -27,7 +27,7 @@ function CartItem({ id, name, img, des, price, amount, isBuy }) {
         <h6>{name}</h6>
         <div className="col-9">
           <div className="row">
-            <span className="col-7">Mô tả: {getDescription()}</span>
+            <span className="col-7 cut-text">Mô tả: {getDescription()}</span>
             <span className="col-5" style={{ textAlign: "right" }}>
               Giá sản phẩm: {formatPrice(price)}đ
             </span>
